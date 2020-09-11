@@ -3,3 +3,7 @@
 *.filters
 
 *.user
+
+*.sln
+
+*.vcxproj
