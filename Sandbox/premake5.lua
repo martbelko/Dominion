@@ -15,7 +15,8 @@ project "Sandbox"
 
     includedirs
     {
-        "src"
+        "src",
+        "%{wks.location}/Dominion/src"
     }
 
     links
