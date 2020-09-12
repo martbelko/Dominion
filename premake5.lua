@@ -7,20 +7,20 @@ workspace "Dominion"
         architecture "x86"
         defines
         {
-            "DM_X86"
+            "DM_ARCH_X86"
         }
     filter "platforms:x64"
         architecture "x86_64"
         defines
         {
-            "DM_X64"
+            "DM_ARCH_X64"
         }
     
     filter "system:windows"
     systemversion "latest"
     defines
     {
-        "DM_WINDOWS"
+        "DM_PLATFORM_WINDOWS"
     }
 
     filter "configurations:Debug"
