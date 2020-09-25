@@ -29,7 +29,7 @@ namespace Dominion {
 
 	void Application::Test()
 	{
-		std::cout << "Test\n";
+		std::cout << "Application test" << '\n';
 		system("pause");
 	}
 
