@@ -1,0 +1,3 @@
+[submodule "Dominion/vendor/spdlog"]
+	path = Dominion/vendor/spdlog
+	url = https://github.com/gabime/spdlog
