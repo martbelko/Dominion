@@ -75,7 +75,9 @@ namespace Dominion {
 	public:
 		String() = default;
 		String(const char* string);
+		String(const std::string& string);
 		String(const String& string);
+
 		~String() = default;
 
 		String& operator=(const char* string);
@@ -107,8 +109,6 @@ namespace Dominion {
 		friend std::ostream& operator<<(std::ostream& os, const String& string);
 		friend std::istream& operator>>(std::istream& is, String& string);
 	private:
-		String(const std::string& string);
-	private:
 		std::string m_String;
 	};
 
@@ -119,6 +119,7 @@ namespace Dominion {
 	public:
 		WString() = default;
 		WString(const wchar_t* string);
+		WString(const std::wstring& string);
 		WString(const WString& string);
 
 		~WString() = default;
@@ -152,8 +153,6 @@ namespace Dominion {
 
 		friend std::wostream& operator<<(std::wostream& os, const WString& string);
 		friend std::wistream& operator>>(std::wistream& is, WString& string);
-	private:
-		WString(const std::wstring& string);
 	private:
 		std::wstring m_String;
 	};
