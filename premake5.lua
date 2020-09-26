@@ -15,7 +15,7 @@ workspace "Dominion"
         {
             "DM_ARCH_X64"
         }
-    
+
     filter "system:windows"
     systemversion "latest"
     defines
@@ -27,12 +27,12 @@ workspace "Dominion"
         defines "DM_DEBUG"
         runtime "Debug"
         symbols "on"
-    
+
     filter "configurations:Release"
         defines "DM_RELEASE"
         runtime "Release"
         optimize "on"
-    
+
     filter "configurations:Dist"
         defines "DM_DIST"
         runtime "Release"
