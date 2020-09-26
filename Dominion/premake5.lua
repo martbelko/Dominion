@@ -21,3 +21,8 @@ project "Dominion"
         "src",
         "vendor/spdlog/include"
     }
+
+    links
+    {
+        "GLFW"
+    }

@@ -57,7 +57,14 @@ workspace "Dominion"
         "MultiProcessorCompile"
     }
 
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+    outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-include "Dominion"
-include "Sandbox"
+    IncludeDir = {}
+    IncludeDir["GLFW"] = "%{wks.location}/Dominion/vendor/GLFW/include"
+
+    group "Dependencies"
+	    include "Dominion/vendor/GLFW"
+    group ""
+
+    include "Dominion"
+    include "Sandbox"
