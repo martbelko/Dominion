@@ -1,11 +1,11 @@
-#include "Dominion/Dominion.h"
+#include <Dominion.h>
 
 class Sandbox : public Dominion::Application
 {
 public:
 	Sandbox()
 	{
-		WString s(L"ABC");
+
 	}
 
 	~Sandbox()
