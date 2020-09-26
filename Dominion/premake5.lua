@@ -18,5 +18,6 @@ project "Dominion"
 
     includedirs
     {
-        "src"
+        "src",
+        "vendor/spdlog/include"
     }
