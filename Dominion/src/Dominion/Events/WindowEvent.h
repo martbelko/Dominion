@@ -62,12 +62,12 @@ namespace Dominion {
 		WindowMovedEvent(void* window, float x, float y)
 			: WindowEvent(window), m_PosX(x), m_PosY(y) {}
 
-		unsigned int GetX() const { return m_PosX; }
-		unsigned int GetY() const { return m_PosY; }
+		float GetX() const { return m_PosX; }
+		float GetY() const { return m_PosY; }
 
 		EVENT_TYPE(EventType::WindowMoved);
 	private:
-		unsigned int m_PosX, m_PosY;
+		float m_PosX, m_PosY;
 	};
 
 	class WindowFocusEvent : public WindowEvent
