@@ -19,7 +19,8 @@ project "Dominion"
     includedirs
     {
         "src",
-        "vendor/spdlog/include"
+        "vendor/spdlog/include",
+        "%{IncludeDir.GLFW}"
     }
 
     links
