@@ -13,8 +13,6 @@ namespace Dominion {
 		virtual ~Application();
 
 		static Application& Get();
-
-		void Test();
 	private:
 		static Application* s_Application;
 		std::string m_Name;

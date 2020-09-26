@@ -27,10 +27,4 @@ namespace Dominion {
 		return *s_Application;
 	}
 
-	void Application::Test()
-	{
-		std::cout << "Application test" << '\n';
-		system("pause");
-	}
-
 }

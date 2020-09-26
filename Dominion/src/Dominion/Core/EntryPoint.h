@@ -9,7 +9,6 @@ int main(int argc, char** argv)
 	DM_INFO("Initialized client logger");
 
 	Dominion::Application* app = Dominion::CreateApplication();
-	app->Test();
 
 	return 0;
 }
