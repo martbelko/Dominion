@@ -26,10 +26,15 @@ namespace Dominion {
 		virtual EventType GetType() const = 0;
 
 		template <typename T, typename F>
-		void Dispatch(F f)
+		bool Dispatch(F f)
 		{
 			if (T::GetStaticType() == GetType())
+			{
 				f(static_cast<T&>(*this));
+				return true;
+			}
+
+			return false;
 		}
 	private:
 		bool m_Handled = false;
