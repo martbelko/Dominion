@@ -16,7 +16,8 @@ project "Sandbox"
     includedirs
     {
         "src",
-        "%{wks.location}/Dominion/src"
+        "%{wks.location}/Dominion/src",
+        "%{wks.location}/Dominion/vendor/spdlog/include"
     }
 
     links
