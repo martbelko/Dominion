@@ -7,5 +7,6 @@
 #include "Dominion/Events/Event.h"
 #include "Dominion/Events/KeyEvent.h"
 #include "Dominion/Events/MouseEvent.h"
+#include "Dominion/Events/WindowEvent.h"
 
 #include "Dominion/Core/EntryPoint.h"
