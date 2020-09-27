@@ -13,6 +13,7 @@ namespace Dominion {
 		{
 			s_Application = this;
 			m_Window = std::unique_ptr<Window>(Window::Create());
+			m_Window->SetEventCallback(DM_BIND_EVENT_FN(Application::OnEvent));
 		}
 		else
 		{
@@ -33,6 +34,11 @@ namespace Dominion {
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
 		}
+	}
+
+	void Application::OnEvent(Event& event)
+	{
+		DM_CORE_INFO("{0}", event.ToString());
 	}
 
 	Application& Dominion::Application::Get()
