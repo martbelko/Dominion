@@ -25,5 +25,6 @@ project "Dominion"
 
     links
     {
-        "GLFW"
+        "GLFW",
+        "opengl32.lib"
     }
