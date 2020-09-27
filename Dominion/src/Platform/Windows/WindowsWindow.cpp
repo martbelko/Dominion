@@ -7,9 +7,13 @@ namespace Dominion {
 
 	static bool s_GLFWInitialized = false;
 
+	std::vector<Window*> Window::s_Windows;
+
 	Window* Window::Create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		Window* wnd = new WindowsWindow(props);
+		s_Windows.push_back(wnd);
+		return wnd;
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -29,13 +33,24 @@ namespace Dominion {
 
 		m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
+
+		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
+		{
+			WindowsWindow* wnd =  static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			WindowClosedEvent event(wnd);
+			wnd->m_Data.EventCallback(event);
+		});
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
 		glfwDestroyWindow(m_Window);
+		if (s_Windows.size() == 0)
+		{
+
+		}
 	}
 
 	void WindowsWindow::OnUpdate()
