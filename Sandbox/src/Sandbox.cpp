@@ -5,7 +5,7 @@ class Sandbox : public Dominion::Application
 public:
 	Sandbox()
 	{
-		Dominion::Event& x = Dominion::MouseMovedEvent(1254.1f, -5.4f);
+
 	}
 
 	~Sandbox()
