@@ -4,6 +4,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 #include <functional>
 
 namespace Dominion {
@@ -36,6 +37,8 @@ namespace Dominion {
 		virtual bool IsVSync() const = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
+	protected:
+		static std::vector<Window*> s_Windows;
 	};
 
 }
