@@ -5,11 +5,12 @@ namespace Dominion {
 
 	Application* Application::s_Application = nullptr;
 
-	Application::Application(const std::string& name /*= "Dominion App"*/)
+	Application::Application()
 	{
 		if (s_Application == nullptr)
 		{
 			s_Application = this;
+			m_Window = std::unique_ptr<Window>(Window::Create());
 		}
 		else
 		{
@@ -20,6 +21,14 @@ namespace Dominion {
 	Application::~Application()
 	{
 
+	}
+
+	void Application::Run()
+	{
+		while (m_Running)
+		{
+			m_Window->OnUpdate();
+		}
 	}
 
 	Application& Dominion::Application::Get()

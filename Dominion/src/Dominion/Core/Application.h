@@ -3,19 +3,23 @@
 #include <string>
 
 #include "Dominion/Core/Base.h"
+#include "Dominion/Core/Window.h"
 
 namespace Dominion {
 
 	class Application
 	{
 	public:
-		Application(const std::string& name = "Dominion App");
+		Application();
 		virtual ~Application();
+
+		void Run();
 
 		static Application& Get();
 	private:
 		static Application* s_Application;
-		std::string m_Name;
+		std::unique_ptr<Window> m_Window;
+		bool m_Running = true;
 	};
 
 	Application* CreateApplication();
