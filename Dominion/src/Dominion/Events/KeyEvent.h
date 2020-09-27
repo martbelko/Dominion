@@ -23,7 +23,7 @@ namespace Dominion {
 
 		unsigned int GetRepeatCount() const { return m_RepeatCount; }
 
-		std::string Tostring() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyPressed: " << m_KeyCode << " (" << m_RepeatCount << ')';
@@ -41,7 +41,7 @@ namespace Dominion {
 		KeyReleasedEvent(unsigned int keyCode)
 			: KeyEvent(keyCode) {}
 
-		std::string Tostring() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyReleasedEvent: " << m_KeyCode;
@@ -57,7 +57,7 @@ namespace Dominion {
 		KeyTypedEvent(unsigned int keyCode)
 			: KeyEvent(keyCode) {}
 
-		std::string Tostring() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyTypedEvent: " << m_KeyCode;

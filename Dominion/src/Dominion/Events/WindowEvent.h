@@ -27,6 +27,13 @@ namespace Dominion {
 		unsigned int GetWidth() const { return m_Width; }
 		unsigned int GetHeight() const { return m_Height; }
 
+		virtual std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowCreated: Position: (" << m_PosX << "; " << m_PosY << ") / Size: (" << m_Width << "; " << m_Height << ')';
+			return ss.str();
+		}
+
 		EVENT_TYPE(EventType::WindowCreated);
 	private:
 		float m_PosX, m_PosY;
@@ -38,6 +45,11 @@ namespace Dominion {
 	public:
 		WindowClosedEvent(void* window)
 			: WindowEvent(window) {}
+
+		virtual std::string ToString() const override
+		{
+			return "WindowClosed";
+		}
 
 		EVENT_TYPE(EventType::WindowClosed);
 	};

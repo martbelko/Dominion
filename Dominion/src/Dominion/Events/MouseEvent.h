@@ -24,7 +24,7 @@ namespace Dominion {
 		MousePressedEvent(unsigned int button)
 			: MouseButtonEvent(button) {}
 
-		std::string ToString() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MousePressedEvent Button: " << m_Button;
@@ -40,7 +40,7 @@ namespace Dominion {
 		MouseReleasedEvent(unsigned int button)
 			: MouseButtonEvent(button) {}
 
-		std::string ToString() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseReleasedEvent Button: " << m_Button;
@@ -59,7 +59,7 @@ namespace Dominion {
 		float GetX() const { return m_MouseX; }
 		float GetY() const { return m_MouseY; }
 
-		std::string Tostring() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseMovedEvent (" << m_MouseX << "; " << m_MouseY << ')';
@@ -80,7 +80,7 @@ namespace Dominion {
 		float GetXOffset() const { return m_OffsetX; }
 		float GetYOffset() const { return m_OffsetY; }
 
-		std::string Tostring() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseScrolledEvent (" << m_OffsetX << "; " << m_OffsetY << ')';
