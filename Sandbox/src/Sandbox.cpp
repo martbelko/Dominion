@@ -10,12 +10,12 @@ public:
 
 	void OnUpdate() override
 	{
-		DM_INFO("ExampleLayer Update");
+
 	}
 
 	void OnEvent(Dominion::Event& e) override
 	{
-		DM_TRACE(e);
+
 	}
 };
 
