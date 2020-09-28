@@ -19,5 +19,6 @@
 #include "Dominion/Core/Window.h"
 #include "Dominion/Core/Layer.h"
 #include "Dominion/Core/LayerStack.h"
+#include "Dominion/Core/Input.h"
 
 #include "Dominion/Core/EntryPoint.h"
