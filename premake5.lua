@@ -58,6 +58,8 @@ workspace "Dominion"
     }
 
     outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+    targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+    objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
     IncludeDir = {}
     IncludeDir["GLFW"] = "%{wks.location}/Dominion/vendor/GLFW/include"
