@@ -39,12 +39,19 @@ namespace Dominion {
 	void Application::OnEvent(Event& event)
 	{
 		DM_CORE_INFO("{0}", event.ToString());
+		event.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
 		event.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
+	}
+
+	bool Application::OnWindowCreated(WindowCreatedEvent& event)
+	{
+		DM_CORE_INFO(event);
+		return true;
 	}
 
 	bool Application::OnWindowClosed(WindowClosedEvent& event)
 	{
-		DM_CORE_INFO("Closing window");
+		DM_CORE_INFO(event);
 		m_Window->Close();
 		m_Running = false;
 		return true;

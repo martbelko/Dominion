@@ -20,6 +20,7 @@ namespace Dominion {
 
 		static Application& Get();
 	private:
+		bool OnWindowCreated(WindowCreatedEvent& event);
 		bool OnWindowClosed(WindowClosedEvent& event);
 	private:
 		static Application* s_Application;
