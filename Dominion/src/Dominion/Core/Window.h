@@ -29,6 +29,8 @@ namespace Dominion {
 
 		virtual void OnUpdate() = 0;
 
+		virtual int GetPosX() const = 0;
+		virtual int GetPosY() const = 0;
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 
@@ -38,7 +40,7 @@ namespace Dominion {
 
 		virtual void Close() = 0;
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Window* Create(const EventCallbackFn& callback, const WindowProps& props = WindowProps());
 	protected:
 		static std::vector<Window*> s_Windows;
 	};
