@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <utility>
 #include <memory>
 
 #include "Dominion/Core/Base.h"
