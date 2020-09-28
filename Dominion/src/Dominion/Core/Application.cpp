@@ -1,8 +1,6 @@
 #include "dmpch.h"
 #include "Application.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Dominion {
 
 	Application* Application::s_Application = nullptr;
@@ -29,9 +27,9 @@ namespace Dominion {
 	{
 		while (m_Running)
 		{
-			glClearColor(1, 0, 0, 1);
+			/*glClearColor(1, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-
+			*/
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
