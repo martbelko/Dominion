@@ -12,6 +12,7 @@ namespace Dominion {
 	{
 	public:
 		static void Init();
+		static void Shutdown();
 		static std::shared_ptr<spdlog::logger>& GetCoreLogger();
 		static std::shared_ptr<spdlog::logger>& GetClientLogger();
 	private:
