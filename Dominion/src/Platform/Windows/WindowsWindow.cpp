@@ -167,6 +167,11 @@ namespace Dominion {
 		return m_Height;
 	}
 
+	void* WindowsWindow::GetNativeWindow() const
+	{
+		return m_Window;
+	}
+
 	void WindowsWindow::SetEventCallback(const EventCallbackFn& callback)
 	{
 		m_EventCallbackFn = callback;

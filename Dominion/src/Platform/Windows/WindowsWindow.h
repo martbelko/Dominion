@@ -19,6 +19,8 @@ namespace Dominion {
 		unsigned int GetWidth() const override;
 		unsigned int GetHeight() const override;
 
+		virtual void* GetNativeWindow() const override;
+
 		void SetEventCallback(const EventCallbackFn& callback) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
