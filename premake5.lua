@@ -1,7 +1,7 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
 
 workspace "Dominion"
-    platforms { "x32", "x64" }
+    architecture "x86_64"
 
     startproject "Sandbox"
 
@@ -10,25 +10,18 @@ workspace "Dominion"
 		".editorconfig"
 	}
 
-    filter "platforms:x32"
-        architecture "x86"
-        defines
-        {
-            "DM_ARCH_X86"
-        }
-    filter "platforms:x64"
-        architecture "x86_64"
-        defines
-        {
-            "DM_ARCH_X64"
-        }
-
-    filter "system:windows"
-    systemversion "latest"
     defines
     {
-        "DM_PLATFORM_WINDOWS"
+        "DM_ARCH_X64",
+		"_CRT_SECURE_NO_WARNINGS"
     }
+
+    filter "system:windows"
+		systemversion "latest"
+		defines
+		{
+			"DM_PLATFORM_WINDOWS"
+		}
 
     filter "configurations:Debug"
         defines "DM_DEBUG"
@@ -46,11 +39,6 @@ workspace "Dominion"
         optimize "on"
 
     filter {}
-
-    defines
-    {
-        "_CRT_SECURE_NO_WARNINGS"
-    }
 
     configurations
     {
