@@ -18,7 +18,8 @@ project "Dominion"
         "src",
         "vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}"
+        "%{IncludeDir.Glad}",
+		"%{IncludeDir.glm}"
     }
 
     links

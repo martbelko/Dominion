@@ -17,7 +17,8 @@ project "Sandbox"
     {
         "src",
         "%{wks.location}/Dominion/src",
-        "%{wks.location}/Dominion/vendor/spdlog/include"
+        "%{wks.location}/Dominion/vendor/spdlog/include",
+		"%{IncludeDir.glm}"
     }
 
     links

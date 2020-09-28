@@ -59,6 +59,7 @@ workspace "Dominion"
     IncludeDir = {}
     IncludeDir["GLFW"] = "%{wks.location}/Dominion/vendor/GLFW/include"
     IncludeDir["Glad"] = "%{wks.location}/Dominion/vendor/Glad/include"
+	IncludeDir["glm"] = "%{wks.location}/Dominion/vendor/glm"
 
     group "Dependencies"
         include "vendor/premake"
