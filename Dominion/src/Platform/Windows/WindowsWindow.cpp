@@ -5,7 +5,7 @@
 #include "Dominion/Events/MouseEvent.h"
 #include "Dominion/Events/WindowEvent.h"
 
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Dominion {
 
@@ -32,6 +32,8 @@ namespace Dominion {
 
 		m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		DM_CORE_ASSERT(status, "Failed to initialize Glad!");
 		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
 
