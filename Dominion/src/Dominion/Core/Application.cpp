@@ -41,7 +41,6 @@ namespace Dominion {
 
 	void Application::OnEvent(Event& e)
 	{
-		DM_CORE_INFO(e);
 		e.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
 		e.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
 
