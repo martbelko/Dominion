@@ -3,6 +3,8 @@
 
 #include "Dominion/Events/WindowEvent.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Dominion {
 
 	static bool s_GLFWInitialized = false;
