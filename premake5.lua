@@ -1,7 +1,14 @@
+include "./vendor/premake/premake_customization/solution_items.lua"
+
 workspace "Dominion"
     platforms { "x32", "x64" }
 
     startproject "Sandbox"
+
+    solution_items
+	{
+		".editorconfig"
+	}
 
     filter "platforms:x32"
         architecture "x86"
