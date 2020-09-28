@@ -20,8 +20,11 @@ namespace Dominion {
 		void SetEventCallback(const EventCallbackFn& callback) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
+
+		virtual void Close() override;
 	private:
 		GLFWwindow* m_Window;
+		bool m_Active = true;
 
 		std::string m_Title;
 		unsigned int m_Width, m_Height;

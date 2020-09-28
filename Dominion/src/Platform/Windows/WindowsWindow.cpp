@@ -43,17 +43,15 @@ namespace Dominion {
 
 	WindowsWindow::~WindowsWindow()
 	{
-		glfwDestroyWindow(m_Window);
-		if (s_Windows.size() == 0)
-		{
-
-		}
+		if (m_Active)
+			Close();
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		if (m_Active)
+			glfwSwapBuffers(m_Window);
 	}
 
 	unsigned int WindowsWindow::GetWidth() const
@@ -84,6 +82,13 @@ namespace Dominion {
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_VSync;
+	}
+
+	void WindowsWindow::Close()
+	{
+		DM_CORE_ASSERT(m_Active, "Window is already closed!");
+		glfwDestroyWindow(m_Window);
+		m_Active = false;
 	}
 
 }

@@ -36,6 +36,8 @@ namespace Dominion {
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		virtual void Close() = 0;
+
 		static Window* Create(const WindowProps& props = WindowProps());
 	protected:
 		static std::vector<Window*> s_Windows;
