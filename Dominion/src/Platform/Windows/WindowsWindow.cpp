@@ -21,8 +21,6 @@ namespace Dominion {
 	WindowsWindow::WindowsWindow(const EventCallbackFn& callback, const WindowProps& props)
 		: m_Title(props.title), m_Width(props.width), m_Height(props.height), m_EventCallbackFn(callback)
 	{
-		DM_CORE_INFO("Creating window {0} ({1}, {2})", props.title, props.width, props.height);
-
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();
