@@ -44,7 +44,7 @@ namespace Dominion {
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
+			ss << "KeyReleased: " << m_KeyCode;
 			return ss.str();
 		}
 
@@ -60,7 +60,7 @@ namespace Dominion {
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << m_KeyCode;
+			ss << "KeyTyped: " << m_KeyCode;
 			return ss.str();
 		}
 

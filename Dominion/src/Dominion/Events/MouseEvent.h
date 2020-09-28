@@ -27,7 +27,7 @@ namespace Dominion {
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MousePressedEvent Button: " << m_Button;
+			ss << "MousePressed Button: " << m_Button;
 			return ss.str();
 		}
 
@@ -43,7 +43,7 @@ namespace Dominion {
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseReleasedEvent Button: " << m_Button;
+			ss << "MouseReleased Button: " << m_Button;
 			return ss.str();
 		}
 
@@ -62,7 +62,7 @@ namespace Dominion {
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseMovedEvent (" << m_MouseX << "; " << m_MouseY << ')';
+			ss << "MouseMoved (" << m_MouseX << "; " << m_MouseY << ')';
 			return ss.str();
 		}
 
@@ -83,7 +83,7 @@ namespace Dominion {
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseScrolledEvent (" << m_OffsetX << "; " << m_OffsetY << ')';
+			ss << "MouseScrolled (" << m_OffsetX << "; " << m_OffsetY << ')';
 			return ss.str();
 		}
 
