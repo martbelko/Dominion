@@ -9,4 +9,4 @@
 	url = https://github.com/g-truc/glm
 [submodule "Dominion/vendor/ImGui"]
 	path = Dominion/vendor/ImGui
-	url = https://github.com/martbelko/imgui
+	url = https://github.com/martbelko/imgui/
