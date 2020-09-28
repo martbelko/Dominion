@@ -3,6 +3,7 @@
 
 #include "Dominion/Core/Input.h"
 
+#include <imgui.h>
 #include <Glad/glad.h> // Temporary
 
 namespace Dominion {
@@ -15,6 +16,9 @@ namespace Dominion {
 		{
 			s_Application = this;
 			m_Window = Window::Create(DM_BIND_EVENT_FN(Application::OnEvent));
+
+			m_ImGuiLayer = new ImGuiLayer();
+			PushOverlay(m_ImGuiLayer);
 		}
 		else
 		{
@@ -24,6 +28,8 @@ namespace Dominion {
 
 	Application::~Application()
 	{
+		m_LayerStack.PopOverlay(m_ImGuiLayer);
+		delete m_ImGuiLayer;
 		delete m_Window;
 	}
 
@@ -37,8 +43,13 @@ namespace Dominion {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			auto [x, y] = Input::GetMousePosition();
-			DM_CORE_TRACE("{0}; {1}", x, y);
+			m_ImGuiLayer->Begin();
+			static bool show = true;
+			ImGui::ShowDemoWindow(&show);
+			m_ImGuiLayer->End();
+
+			//auto [x, y] = Input::GetMousePosition();
+			//DM_CORE_TRACE("{0}; {1}", x, y);
 
 			m_Window->OnUpdate();
 		}
