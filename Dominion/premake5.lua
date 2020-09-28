@@ -27,3 +27,8 @@ project "Dominion"
         "opengl32.lib",
         "Glad"
     }
+
+    defines
+    {
+        "GLFW_INCLUDE_NONE"
+    }
