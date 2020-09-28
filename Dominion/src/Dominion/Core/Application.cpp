@@ -60,6 +60,11 @@ namespace Dominion {
 		m_LayerStack.PopOverlay(overlay);
 	}
 
+	Dominion::Window& Application::GetWindow() const
+	{
+		return *m_Window;
+	}
+
 	bool Application::OnWindowCreated(WindowCreatedEvent& event)
 	{
 		return false;

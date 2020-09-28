@@ -23,6 +23,8 @@ namespace Dominion {
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
+		Window& GetWindow() const;
+
 		static Application& Get();
 	private:
 		bool OnWindowCreated(WindowCreatedEvent& event);
