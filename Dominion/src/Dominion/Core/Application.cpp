@@ -1,6 +1,8 @@
 #include "dmpch.h"
 #include "Application.h"
 
+#include "Dominion/Core/Input.h"
+
 namespace Dominion {
 
 	Application* Application::s_Application = nullptr;
@@ -32,6 +34,9 @@ namespace Dominion {
 			*/
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			auto [x, y] = Input::GetMousePosition();
+			DM_CORE_TRACE("{0}; {1}", x, y);
 
 			m_Window->OnUpdate();
 		}
