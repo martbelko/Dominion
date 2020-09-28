@@ -19,14 +19,16 @@ project "Dominion"
         "vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
     }
 
     links
     {
         "GLFW",
         "opengl32.lib",
-        "Glad"
+        "Glad",
+		"ImGui"
     }
 
     defines
