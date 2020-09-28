@@ -4,6 +4,7 @@
 
 #pragma warning(disable : 26812 6387 26495 26451) // Disable warnings from spdlog
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 #pragma warning(default : 26812 6387 26495 26451) // Enable warnings to default
 
 namespace Dominion {

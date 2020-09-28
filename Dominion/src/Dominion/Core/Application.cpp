@@ -37,7 +37,7 @@ namespace Dominion {
 
 	void Application::OnEvent(Event& event)
 	{
-		DM_CORE_INFO("{0}", event.ToString());
+		DM_CORE_INFO(event);
 		event.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
 		event.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
 	}
