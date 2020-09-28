@@ -12,7 +12,7 @@ namespace Dominion {
 		if (s_Application == nullptr)
 		{
 			s_Application = this;
-			m_Window = std::unique_ptr<Window>(Window::Create());
+			m_Window = Window::Create();
 			m_Window->SetEventCallback(DM_BIND_EVENT_FN(Application::OnEvent));
 		}
 		else
@@ -23,7 +23,7 @@ namespace Dominion {
 
 	Application::~Application()
 	{
-
+		delete m_Window;
 	}
 
 	void Application::Run()

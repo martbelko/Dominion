@@ -16,5 +16,7 @@ int main(int argc, char** argv)
 	Dominion::Application* app = Dominion::CreateApplication();
 	app->Run();
 
+	delete app;
+
 	return 0;
 }

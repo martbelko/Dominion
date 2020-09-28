@@ -91,6 +91,9 @@ namespace Dominion {
 		DM_CORE_ASSERT(m_Active, "Window is already closed!");
 		glfwDestroyWindow(m_Window);
 		m_Active = false;
+		s_Windows.erase(std::find(s_Windows.begin(), s_Windows.end(), this));
+		if (s_Windows.empty())
+			glfwTerminate();
 	}
 
 }

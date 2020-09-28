@@ -23,7 +23,7 @@ namespace Dominion {
 		bool OnWindowClosed(WindowClosedEvent& event);
 	private:
 		static Application* s_Application;
-		std::unique_ptr<Window> m_Window;
+		Window* m_Window;
 		bool m_Running = true;
 	};
 
