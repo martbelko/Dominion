@@ -17,11 +17,13 @@ project "Dominion"
     {
         "src",
         "vendor/spdlog/include",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}"
     }
 
     links
     {
         "GLFW",
-        "opengl32.lib"
+        "opengl32.lib",
+        "Glad"
     }
