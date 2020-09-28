@@ -51,7 +51,7 @@ namespace Dominion {
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
-			if (e.IsHandled())
+			if (e.Handled)
 				break;
 			(*it)->OnEvent(e);
 		}
