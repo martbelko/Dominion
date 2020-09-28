@@ -63,6 +63,13 @@ namespace Dominion {
 		unsigned int GetWidth() const { return m_Width; }
 		unsigned int GetHeight() const { return m_Height; }
 
+		virtual std::string ToString() const
+		{
+			std::stringstream ss;
+			ss << "WindowResized: Size: (" << m_Width << "; " << m_Height << ')';
+			return ss.str();
+		}
+
 		EVENT_TYPE(EventType::WindowResized);
 	private:
 		unsigned int m_Width, m_Height;
@@ -77,6 +84,13 @@ namespace Dominion {
 		int GetX() const { return m_PosX; }
 		int GetY() const { return m_PosY; }
 
+		virtual std::string ToString() const
+		{
+			std::stringstream ss;
+			ss << "WindowMoved: Position: (" << m_PosX << "; " << m_PosY << ')';
+			return ss.str();
+		}
+
 		EVENT_TYPE(EventType::WindowMoved);
 	private:
 		int m_PosX, m_PosY;
@@ -88,6 +102,11 @@ namespace Dominion {
 		WindowFocusEvent(void* window)
 			: WindowEvent(window) {}
 
+		virtual std::string ToString() const
+		{
+			return "WindowFocus";
+		}
+
 		EVENT_TYPE(EventType::WindowFocus);
 	};
 
@@ -96,6 +115,11 @@ namespace Dominion {
 	public:
 		WindowFocusLostEvent(void* window)
 			: WindowEvent(window) {}
+
+		virtual std::string ToString() const
+		{
+			return "WindowFocusLost";
+		}
 
 		EVENT_TYPE(EventType::WindowLostFocus);
 
