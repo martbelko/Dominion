@@ -106,6 +106,7 @@ namespace Dominion {
 		glfwDestroyWindow(m_Window);
 		m_Active = false;
 		s_Windows.erase(std::find(s_Windows.begin(), s_Windows.end(), this));
+		m_EventCallbackFn(WindowClosedEvent(this));
 		if (s_Windows.empty())
 			glfwTerminate();
 	}
