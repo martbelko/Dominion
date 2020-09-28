@@ -23,7 +23,7 @@ namespace Dominion {
 		bool OnWindowClosed(WindowClosedEvent& event);
 	private:
 		static Application* s_Application;
-		Window* m_Window;
+		Window* m_Window = nullptr;
 		bool m_Running = true;
 	};
 
