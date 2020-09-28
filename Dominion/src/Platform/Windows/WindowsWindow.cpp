@@ -56,6 +56,21 @@ namespace Dominion {
 		glfwSwapBuffers(m_Window);
 	}
 
+	unsigned int WindowsWindow::GetWidth() const
+	{
+		return m_Width;
+	}
+
+	unsigned int WindowsWindow::GetHeight() const
+	{
+		return m_Height;
+	}
+
+	void WindowsWindow::SetEventCallback(const EventCallbackFn& callback)
+	{
+		m_EventCallbackFn = callback;
+	}
+
 	void WindowsWindow::SetVSync(bool enabled)
 	{
 		if (enabled)

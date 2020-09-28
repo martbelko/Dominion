@@ -14,10 +14,10 @@ namespace Dominion {
 
 		void OnUpdate() override;
 
-		unsigned int GetWidth() const override { return m_Width; }
-		unsigned int GetHeight() const override { return m_Height; }
+		unsigned int GetWidth() const override;
+		unsigned int GetHeight() const override;
 
-		void SetEventCallback(const EventCallbackFn& callback) override { m_EventCallbackFn = callback; }
+		void SetEventCallback(const EventCallbackFn& callback) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 	private:
