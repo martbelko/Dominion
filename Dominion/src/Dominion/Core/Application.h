@@ -5,6 +5,7 @@
 #include "Dominion/Events/WindowEvent.h"
 #include "Dominion/Core/Layer.h"
 #include "Dominion/Core/LayerStack.h"
+#include "Dominion/ImGui/ImGuiLayer.h"
 
 #include <string>
 
@@ -34,6 +35,7 @@ namespace Dominion {
 		Window* m_Window = nullptr;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		ImGuiLayer* m_ImGuiLayer;
 	};
 
 	Application* CreateApplication();
