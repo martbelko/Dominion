@@ -7,14 +7,14 @@
 
 namespace Dominion {
 
-	bool Input::IsKeyPressed(int key)
+	bool Input::IsKeyPressed(KeyCode key)
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		int state = glfwGetKey(window, key);
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool Input::IsMousePressed(int button)
+	bool Input::IsMousePressed(MouseCode button)
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		int state = glfwGetMouseButton(window, button);

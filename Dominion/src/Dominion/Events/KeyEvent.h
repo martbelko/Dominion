@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Dominion/Core/KeyCodes.h"
 
 namespace Dominion {
 
@@ -12,7 +13,7 @@ namespace Dominion {
 
 		unsigned int GetKeyCode() const { return m_KeyCode; }
 	protected:
-		unsigned int m_KeyCode;
+		KeyCode m_KeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent

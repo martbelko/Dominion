@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Dominion/Core/MouseCodes.h"
 
 #include <string>
 #include <sstream>
@@ -15,7 +16,7 @@ namespace Dominion {
 
 		unsigned int GetButton() const { return m_Button; }
 	protected:
-		unsigned int m_Button;
+		MouseCode m_Button;
 	};
 
 	class MousePressedEvent : public MouseButtonEvent
