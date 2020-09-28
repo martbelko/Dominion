@@ -28,7 +28,7 @@ namespace Dominion {
 
 		std::string m_Title;
 		unsigned int m_Width, m_Height;
-		bool m_VSync;
+		bool m_VSync = true;
 
 		EventCallbackFn m_EventCallbackFn;
 	};
