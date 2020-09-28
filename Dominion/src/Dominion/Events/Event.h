@@ -21,8 +21,6 @@ namespace Dominion {
 		Event() = default;
 		~Event() = default;
 
-		bool IsHandled() const { return m_Handled; }
-
 		virtual EventType GetType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual std::string ToString() const { return GetName(); }
@@ -32,14 +30,14 @@ namespace Dominion {
 		{
 			if (T::GetStaticType() == GetType())
 			{
-				m_Handled = f(static_cast<T&>(*this));
+				Handled = f(static_cast<T&>(*this));
 				return true;
 			}
 
 			return false;
 		}
-	private:
-		bool m_Handled = false;
+	public:
+		bool Handled = false;
 	};
 
 	inline std::ostream& operator<<(std::ostream& os, const Event& e)
