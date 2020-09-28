@@ -18,11 +18,11 @@ namespace Dominion {
 	class WindowCreatedEvent : public WindowEvent
 	{
 	public:
-		WindowCreatedEvent(void* window, float x, float y, unsigned int width, unsigned int height)
+		WindowCreatedEvent(void* window, int x, int y, unsigned int width, unsigned int height)
 			: WindowEvent(window), m_PosX(x), m_PosY(y), m_Width(width), m_Height(height) {}
 
-		float GetX() const { return m_PosX; }
-		float GetY() const { return m_PosY; }
+		int GetX() const { return m_PosX; }
+		int GetY() const { return m_PosY; }
 
 		unsigned int GetWidth() const { return m_Width; }
 		unsigned int GetHeight() const { return m_Height; }
@@ -36,7 +36,7 @@ namespace Dominion {
 
 		EVENT_TYPE(EventType::WindowCreated);
 	private:
-		float m_PosX, m_PosY;
+		int m_PosX, m_PosY;
 		unsigned int m_Width, m_Height;
 	};
 
@@ -71,15 +71,15 @@ namespace Dominion {
 	class WindowMovedEvent : public WindowEvent
 	{
 	public:
-		WindowMovedEvent(void* window, float x, float y)
+		WindowMovedEvent(void* window, int x, int y)
 			: WindowEvent(window), m_PosX(x), m_PosY(y) {}
 
-		float GetX() const { return m_PosX; }
-		float GetY() const { return m_PosY; }
+		int GetX() const { return m_PosX; }
+		int GetY() const { return m_PosY; }
 
 		EVENT_TYPE(EventType::WindowMoved);
 	private:
-		float m_PosX, m_PosY;
+		int m_PosX, m_PosY;
 	};
 
 	class WindowFocusEvent : public WindowEvent
