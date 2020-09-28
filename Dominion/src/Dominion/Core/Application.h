@@ -1,10 +1,12 @@
 #pragma once
 
-#include <string>
-
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Window.h"
 #include "Dominion/Events/WindowEvent.h"
+#include "Dominion/Core/Layer.h"
+#include "Dominion/Core/LayerStack.h"
+
+#include <string>
 
 namespace Dominion {
 
@@ -18,6 +20,9 @@ namespace Dominion {
 
 		void OnEvent(Event& event);
 
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* overlay);
+
 		static Application& Get();
 	private:
 		bool OnWindowCreated(WindowCreatedEvent& event);
@@ -26,6 +31,7 @@ namespace Dominion {
 		static Application* s_Application;
 		Window* m_Window = nullptr;
 		bool m_Running = true;
+		LayerStack m_LayerStack;
 	};
 
 	Application* CreateApplication();

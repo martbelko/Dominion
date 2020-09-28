@@ -31,27 +31,48 @@ namespace Dominion {
 		{
 			glClearColor(1, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate();
+
 			m_Window->OnUpdate();
 		}
 	}
 
-	void Application::OnEvent(Event& event)
+	void Application::OnEvent(Event& e)
 	{
-		DM_CORE_INFO(event);
-		event.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
-		event.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
+		DM_CORE_INFO(e);
+		e.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
+		e.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
+
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
+		{
+			if (e.IsHandled())
+				break;
+			(*it)->OnEvent(e);
+		}
+	}
+
+	void Application::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* overlay)
+	{
+		m_LayerStack.PopOverlay(overlay);
 	}
 
 	bool Application::OnWindowCreated(WindowCreatedEvent& event)
 	{
-		return true;
+		return false;
 	}
 
 	bool Application::OnWindowClosed(WindowClosedEvent& event)
 	{
 		m_Window->Close();
 		m_Running = false;
-		return true;
+		return false;
 	}
 
 	Application& Dominion::Application::Get()
