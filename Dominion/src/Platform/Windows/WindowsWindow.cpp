@@ -17,11 +17,8 @@ namespace Dominion {
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
+		: m_Title(props.title), m_Width(props.width), m_Height(props.height)
 	{
-		m_Data.title = props.title;
-		m_Data.width = props.width;
-		m_Data.height = props.height;
-
 		DM_CORE_INFO("Creating window {0} ({1}, {2})", props.title, props.width, props.height);
 
 		if (!s_GLFWInitialized)
@@ -31,7 +28,7 @@ namespace Dominion {
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Data.title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
@@ -40,7 +37,7 @@ namespace Dominion {
 		{
 			WindowsWindow* wnd =  static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
 			WindowClosedEvent event(wnd);
-			wnd->m_Data.EventCallback(event);
+			wnd->m_EventCallbackFn(event);
 		});
 	}
 
@@ -66,12 +63,12 @@ namespace Dominion {
 		else
 			glfwSwapInterval(0);
 
-		m_Data.vSync = enabled;
+		m_VSync = enabled;
 	}
 
 	bool WindowsWindow::IsVSync() const
 	{
-		return m_Data.vSync;
+		return m_VSync;
 	}
 
 }
