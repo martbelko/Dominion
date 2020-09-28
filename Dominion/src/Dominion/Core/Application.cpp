@@ -44,13 +44,11 @@ namespace Dominion {
 
 	bool Application::OnWindowCreated(WindowCreatedEvent& event)
 	{
-		DM_CORE_INFO(event);
 		return true;
 	}
 
 	bool Application::OnWindowClosed(WindowClosedEvent& event)
 	{
-		DM_CORE_INFO(event);
 		m_Window->Close();
 		m_Running = false;
 		return true;
