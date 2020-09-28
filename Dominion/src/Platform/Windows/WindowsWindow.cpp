@@ -1,6 +1,8 @@
 #include "dmpch.h"
 #include "WindowsWindow.h"
 
+#include "Dominion/Events/KeyEvent.h"
+#include "Dominion/Events/MouseEvent.h"
 #include "Dominion/Events/WindowEvent.h"
 
 #include <GLFW/glfw3.h>
@@ -41,6 +43,91 @@ namespace Dominion {
 		{
 			WindowsWindow* wnd =  static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
 			WindowClosedEvent event(wnd);
+			wnd->m_EventCallbackFn(event);
+		});
+
+		glfwSetWindowPosCallback(m_Window, [](GLFWwindow* window, int x, int y)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			WindowMovedEvent event(wnd, x, y);
+			wnd->m_EventCallbackFn(event);
+			wnd->m_PosX = static_cast<unsigned int>(x);
+			wnd->m_PosY = static_cast<unsigned int>(y);
+		});
+
+		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			WindowResizedEvent event(wnd, static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+			wnd->m_EventCallbackFn(event);
+			wnd->m_Width = static_cast<unsigned int>(width);
+			wnd->m_Height = static_cast<unsigned int>(height);
+		});
+
+		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent event(key, 0);
+					wnd->m_EventCallbackFn(event);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent event(key);
+					wnd->m_EventCallbackFn(event);
+					break;
+				}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent event(key, 1);
+					wnd->m_EventCallbackFn(event);
+					break;
+				}
+			}
+		});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			KeyTypedEvent event(keycode);
+			wnd->m_EventCallbackFn(event);
+		});
+
+		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					MousePressedEvent event(button);
+					wnd->m_EventCallbackFn(event);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					MouseReleasedEvent event(button);
+					wnd->m_EventCallbackFn(event);
+					break;
+				}
+			}
+		});
+
+		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
+			wnd->m_EventCallbackFn(event);
+		});
+
+		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
+		{
+			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+			MouseMovedEvent event(static_cast<float>(xPos), static_cast<float>(yPos));
 			wnd->m_EventCallbackFn(event);
 		});
 	}
@@ -105,7 +192,10 @@ namespace Dominion {
 		m_Active = false;
 		s_Windows.erase(std::find(s_Windows.begin(), s_Windows.end(), this));
 		if (s_Windows.empty())
+		{
+			s_GLFWInitialized = false;
 			glfwTerminate();
+		}
 	}
 
 }
