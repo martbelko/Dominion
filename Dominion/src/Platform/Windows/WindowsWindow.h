@@ -9,11 +9,13 @@ namespace Dominion {
 	class WindowsWindow : public Window
 	{
 	public:
-		WindowsWindow(const WindowProps& props);
+		WindowsWindow(const EventCallbackFn& callback, const WindowProps& props);
 		virtual ~WindowsWindow() override;
 
 		void OnUpdate() override;
 
+		int GetPosX() const override;
+		int GetPosY() const override;
 		unsigned int GetWidth() const override;
 		unsigned int GetHeight() const override;
 
@@ -27,6 +29,7 @@ namespace Dominion {
 		bool m_Active = true;
 
 		std::string m_Title;
+		int m_PosX, m_PosY;
 		unsigned int m_Width, m_Height;
 		bool m_VSync = true;
 

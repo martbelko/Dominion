@@ -11,15 +11,15 @@ namespace Dominion {
 
 	std::vector<Window*> Window::s_Windows;
 
-	Window* Window::Create(const WindowProps& props)
+	Window* Window::Create(const EventCallbackFn& callback, const WindowProps& props)
 	{
-		Window* wnd = new WindowsWindow(props);
+		Window* wnd = new WindowsWindow(callback, props);
 		s_Windows.push_back(wnd);
 		return wnd;
 	}
 
-	WindowsWindow::WindowsWindow(const WindowProps& props)
-		: m_Title(props.title), m_Width(props.width), m_Height(props.height)
+	WindowsWindow::WindowsWindow(const EventCallbackFn& callback, const WindowProps& props)
+		: m_Title(props.title), m_Width(props.width), m_Height(props.height), m_EventCallbackFn(callback)
 	{
 		DM_CORE_INFO("Creating window {0} ({1}, {2})", props.title, props.width, props.height);
 
@@ -34,6 +34,10 @@ namespace Dominion {
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
+
+		glfwGetWindowPos(m_Window, &m_PosX, &m_PosY);
+
+		m_EventCallbackFn(WindowCreatedEvent(this, m_PosX, m_PosY, m_Width, m_Height));
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 		{
@@ -54,6 +58,16 @@ namespace Dominion {
 		glfwPollEvents();
 		if (m_Active)
 			glfwSwapBuffers(m_Window);
+	}
+
+	int WindowsWindow::GetPosX() const
+	{
+		return m_PosX;
+	}
+
+	int WindowsWindow::GetPosY() const
+	{
+		return m_PosY;
 	}
 
 	unsigned int WindowsWindow::GetWidth() const
