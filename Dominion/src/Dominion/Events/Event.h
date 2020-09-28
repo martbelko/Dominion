@@ -21,7 +21,6 @@ namespace Dominion {
 		Event() = default;
 		~Event() = default;
 
-		void Handled() { m_Handled = true; }
 		bool IsHandled() const { return m_Handled; }
 
 		virtual EventType GetType() const = 0;
