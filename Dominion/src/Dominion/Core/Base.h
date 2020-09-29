@@ -12,6 +12,14 @@
 	#define DM_DEBUGBREAK()
 #endif
 
+#if defined(DM_DEBUG)
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #ifdef DM_ENABLE_ASSERTS
 	#define DM_ASSERT(x, ...) { if(!(x)) { DM_ERROR("Assertion Failed: {0}", __VA_ARGS__); DM_DEBUGBREAK(); } }
 	#define DM_CORE_ASSERT(x, ...) { if(!(x)) { DM_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); DM_DEBUGBREAK(); } }
