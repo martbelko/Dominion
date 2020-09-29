@@ -5,7 +5,7 @@
 #include "Dominion/Events/MouseEvent.h"
 #include "Dominion/Events/WindowEvent.h"
 
-#include <glad/glad.h>
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Dominion {
 
@@ -31,9 +31,10 @@ namespace Dominion {
 		}
 
 		m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		DM_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+
 		glfwSetWindowUserPointer(m_Window, this);
 		SetVSync(true);
 
@@ -144,7 +145,7 @@ namespace Dominion {
 	{
 		glfwPollEvents();
 		if (m_Active)
-			glfwSwapBuffers(m_Window);
+			m_Context->SwapBuffers();
 	}
 
 	int WindowsWindow::GetPosX() const

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Dominion/Core/Window.h"
+#include "Dominion/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -36,5 +37,7 @@ namespace Dominion {
 		bool m_VSync = true;
 
 		EventCallbackFn m_EventCallbackFn;
+
+		GraphicsContext* m_Context;
 	};
 }
