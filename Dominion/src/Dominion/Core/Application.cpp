@@ -3,7 +3,14 @@
 
 #include "Dominion/Core/Input.h"
 
-#include <imgui.h>
+#if defined(new)
+	#undef new
+	#include <imgui.h>
+	#define new DEBUG_NEW
+#else
+	#include <imgui.h>
+#endif
+
 #include <Glad/glad.h> // Temporary
 
 namespace Dominion {

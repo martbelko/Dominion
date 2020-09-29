@@ -3,9 +3,17 @@
 
 #include "Dominion/Core/Application.h"
 
-#include <imgui.h>
-#include <examples/imgui_impl_glfw.h>
-#include <examples/imgui_impl_opengl3.h>
+#if defined(new)
+	#undef new
+	#include <imgui.h>
+	#include <examples/imgui_impl_glfw.h>
+	#include <examples/imgui_impl_opengl3.h>
+	#define new DEBUG_NEW
+#else
+	#include <imgui.h>
+	#include <examples/imgui_impl_glfw.h>
+	#include <examples/imgui_impl_opengl3.h>
+#endif
 
 // Temporary
 #include <GLFW/glfw3.h>
