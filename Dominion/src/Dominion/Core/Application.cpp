@@ -51,6 +51,8 @@ namespace Dominion {
 				0, 1, 2
 			};
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+			m_Shader = Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
 		}
 		else
 		{
@@ -60,6 +62,7 @@ namespace Dominion {
 
 	Application::~Application()
 	{
+		delete m_Shader;
 		m_LayerStack.PopOverlay(m_ImGuiLayer);
 		delete m_ImGuiLayer;
 		delete m_Window;
@@ -73,6 +76,7 @@ namespace Dominion {
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			glBindVertexArray(m_VertexArray);
+			m_Shader->Bind();
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)

@@ -7,6 +7,8 @@
 #include "Dominion/Core/LayerStack.h"
 #include "Dominion/ImGui/ImGuiLayer.h"
 
+#include "Dominion/Renderer/Shader.h"
+
 #include <string>
 
 namespace Dominion {
@@ -38,6 +40,7 @@ namespace Dominion {
 		ImGuiLayer* m_ImGuiLayer;
 
 		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		Shader* m_Shader;
 	};
 
 	Application* CreateApplication();
