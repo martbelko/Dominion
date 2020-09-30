@@ -11,8 +11,8 @@ namespace Dominion {
 	{
 		switch (s_API)
 		{
-			case RendererAPI::API::None:    DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
-			case RendererAPI::API::OpenGL:  return std::make_unique<OpenGLRendererAPI>();
+			case RendererAPI::API::None:    DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); break;
+			case RendererAPI::API::OpenGL:  return std::make_unique<OpenGLRendererAPI>(); break;
 		}
 
 		DM_CORE_ASSERT(false, "Unknown RendererAPI!");
