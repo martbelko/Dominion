@@ -1,5 +1,13 @@
 #include <Dominion.h>
 
+#if defined(new)
+#undef new
+#include "../imgui/imgui.h"
+#define new DEBUG_NEW
+#else
+#include "../imgui/imgui.h"
+#endif
+
 class ExampleLayer : public Dominion::Layer
 {
 public:
@@ -16,6 +24,12 @@ public:
 	void OnEvent(Dominion::Event& e) override
 	{
 
+	}
+
+	void OnImGuiRender() override
+	{
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
 	}
 };
 
