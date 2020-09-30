@@ -83,9 +83,6 @@ namespace Dominion {
 			ImGui::ShowDemoWindow(&show);
 			m_ImGuiLayer->End();
 
-			//auto [x, y] = Input::GetMousePosition();
-			//DM_CORE_TRACE("{0}; {1}", x, y);
-
 			m_Window->OnUpdate();
 		}
 	}
