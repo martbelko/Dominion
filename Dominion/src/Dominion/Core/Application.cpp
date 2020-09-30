@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "Dominion/Core/Input.h"
+#include "Dominion/Renderer/RenderCommand.h"
 
 #if defined(new)
 	#undef new
@@ -26,6 +27,8 @@ namespace Dominion {
 
 			m_ImGuiLayer = new ImGuiLayer();
 			PushOverlay(m_ImGuiLayer);
+
+			RenderCommand::Init();
 
 			glCreateVertexArrays(1, &m_VertexArray);
 			glBindVertexArray(m_VertexArray);
@@ -72,8 +75,8 @@ namespace Dominion {
 	{
 		while (m_Running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			RenderCommand::Clear();
 
 			glBindVertexArray(m_VertexArray);
 			m_Shader->Bind();
