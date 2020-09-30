@@ -79,8 +79,8 @@ namespace Dominion {
 				layer->OnUpdate();
 
 			m_ImGuiLayer->Begin();
-			static bool show = true;
-			ImGui::ShowDemoWindow(&show);
+			for (Layer* layer : m_LayerStack)
+				layer->OnImGuiRender();
 			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
