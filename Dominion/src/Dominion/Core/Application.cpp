@@ -3,6 +3,7 @@
 
 #include "Dominion/Core/Input.h"
 #include "Dominion/Renderer/RenderCommand.h"
+#include "Dominion/Renderer/Buffer.h"
 
 #if defined(new)
 	#undef new
@@ -30,30 +31,22 @@ namespace Dominion {
 
 			RenderCommand::Init();
 
-			glCreateVertexArrays(1, &m_VertexArray);
-			glBindVertexArray(m_VertexArray);
-
-			glCreateBuffers(1, &m_VertexBuffer);
-			glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
 			float vertices[] = {
 				-0.5f, -0.5f, 0.0f,
 				 0.5f, -0.5f, 0.0f,
 				 0.0f,  0.5f, 0.0f
 			};
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-			glCreateBuffers(1, &m_IndexBuffer);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-
 			unsigned int indices[] = {
 				0, 1, 2
 			};
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+			m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int));
 
 			m_Shader = Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
 		}
@@ -78,9 +71,10 @@ namespace Dominion {
 			RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			RenderCommand::Clear();
 
-			glBindVertexArray(m_VertexArray);
 			m_Shader->Bind();
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			m_VertexBuffer->Bind();
+			m_IndexBuffer->Bind();
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();

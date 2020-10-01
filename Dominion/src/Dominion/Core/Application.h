@@ -8,6 +8,7 @@
 #include "Dominion/ImGui/ImGuiLayer.h"
 
 #include "Dominion/Renderer/Shader.h"
+#include "Dominion/Renderer/Buffer.h"
 
 #include <string>
 
@@ -39,7 +40,8 @@ namespace Dominion {
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_ImGuiLayer;
 
-		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 		Shader* m_Shader;
 	};
 
