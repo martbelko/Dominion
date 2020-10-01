@@ -4,6 +4,7 @@
 #include "Dominion/Core/Input.h"
 #include "Dominion/Renderer/RenderCommand.h"
 #include "Dominion/Renderer/Buffer.h"
+#include "Dominion/Renderer/InputLayout.h"
 
 #if defined(new)
 	#undef new
@@ -39,8 +40,11 @@ namespace Dominion {
 
 			m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+			m_Layout = InputLayout::Create(
+				{
+					{ "Position", DataType::Float3 }
+				}
+			);
 
 			unsigned int indices[] = {
 				0, 1, 2
@@ -49,6 +53,29 @@ namespace Dominion {
 			m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int));
 
 			m_Shader = Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
+
+			float vertices2[] = {
+				-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+				 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+				 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
+			};
+
+			m_VertexBuffer2 = VertexBuffer::Create(vertices2, sizeof(vertices2));
+
+			m_Layout2 = InputLayout::Create(
+				{
+					{ "Position", DataType::Float3 },
+					{ "Color", DataType::Float4 }
+				}
+			);
+
+			unsigned int indices2[] = {
+				0, 1, 2
+			};
+
+			m_IndexBuffer2 = IndexBuffer::Create(indices2, sizeof(indices2) / sizeof(unsigned int));
+
+			m_Shader2 = Shader::Create("Test2", "TestVS2.glsl", "TestPS2.glsl");
 		}
 		else
 		{
@@ -59,6 +86,7 @@ namespace Dominion {
 	Application::~Application()
 	{
 		delete m_Shader;
+		delete m_Shader2;
 		m_LayerStack.PopOverlay(m_ImGuiLayer);
 		delete m_ImGuiLayer;
 		delete m_Window;
@@ -72,9 +100,16 @@ namespace Dominion {
 			RenderCommand::Clear();
 
 			m_Shader->Bind();
+			m_Layout->Bind();
 			m_VertexBuffer->Bind();
 			m_IndexBuffer->Bind();
 			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+
+			m_Shader2->Bind();
+			m_Layout2->Bind();
+			m_VertexBuffer2->Bind();
+			m_IndexBuffer2->Bind();
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer2->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();

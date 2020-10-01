@@ -9,6 +9,7 @@
 
 #include "Dominion/Renderer/Shader.h"
 #include "Dominion/Renderer/Buffer.h"
+#include "Dominion/Renderer/InputLayout.h"
 
 #include <string>
 
@@ -42,7 +43,13 @@ namespace Dominion {
 
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		std::shared_ptr<InputLayout> m_Layout;
 		Shader* m_Shader;
+
+		std::shared_ptr<VertexBuffer> m_VertexBuffer2;
+		std::shared_ptr<IndexBuffer> m_IndexBuffer2;
+		std::shared_ptr<InputLayout> m_Layout2;
+		Shader* m_Shader2;
 	};
 
 	Application* CreateApplication();
