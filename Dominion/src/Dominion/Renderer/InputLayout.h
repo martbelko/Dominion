@@ -24,18 +24,18 @@ namespace Dominion {
 	{
 		switch (type)
 		{
-			case Dominion::DataType::Float:  return sizeof(float);
-			case Dominion::DataType::Float2: return 2 * sizeof(float);
-			case Dominion::DataType::Float3: return 3 * sizeof(float);
-			case Dominion::DataType::Float4: return 4 * sizeof(float);
-			case Dominion::DataType::Mat2:   return 2 * 2 * sizeof(float);
-			case Dominion::DataType::Mat3:   return 3 * 3 * sizeof(float);
-			case Dominion::DataType::Mat4:   return 4 * 4 * sizeof(float);
-			case Dominion::DataType::Int:    return sizeof(int);
-			case Dominion::DataType::Int2:   return 2 * sizeof(int);
-			case Dominion::DataType::Int3:   return 3 * sizeof(int);
-			case Dominion::DataType::Int4:   return 4 * sizeof(int);
-			case Dominion::DataType::Bool:   return sizeof(bool);
+			case DataType::Float:  return sizeof(float);
+			case DataType::Float2: return 2 * sizeof(float);
+			case DataType::Float3: return 3 * sizeof(float);
+			case DataType::Float4: return 4 * sizeof(float);
+			case DataType::Mat2:   return 2 * 2 * sizeof(float);
+			case DataType::Mat3:   return 3 * 3 * sizeof(float);
+			case DataType::Mat4:   return 4 * 4 * sizeof(float);
+			case DataType::Int:    return sizeof(int);
+			case DataType::Int2:   return 2 * sizeof(int);
+			case DataType::Int3:   return 3 * sizeof(int);
+			case DataType::Int4:   return 4 * sizeof(int);
+			case DataType::Bool:   return sizeof(bool);
 		}
 
 		DM_CORE_ASSERT(false, "Unknown DataType!");

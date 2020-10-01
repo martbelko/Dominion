@@ -148,7 +148,7 @@ namespace Dominion {
 		overlay->OnAttach();
 	}
 
-	Dominion::Window& Application::GetWindow() const
+	Window& Application::GetWindow() const
 	{
 		return *m_Window;
 	}
@@ -165,7 +165,7 @@ namespace Dominion {
 		return false;
 	}
 
-	Application& Dominion::Application::Get()
+	Application& Application::Get()
 	{
 		return *s_Application;
 	}
