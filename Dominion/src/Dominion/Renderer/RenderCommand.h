@@ -27,6 +27,4 @@ namespace Dominion {
 		static std::unique_ptr<RendererAPI> s_RendererAPI;
 	};
 
-	std::unique_ptr<RendererAPI> RenderCommand::s_RendererAPI = RendererAPI::Create();
-
 }
