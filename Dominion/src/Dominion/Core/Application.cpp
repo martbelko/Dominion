@@ -14,7 +14,7 @@
 	#include <imgui.h>
 #endif
 
-#include <Glad/glad.h> // Temporary
+#include <glad/glad.h> // Temporary
 
 namespace Dominion {
 
