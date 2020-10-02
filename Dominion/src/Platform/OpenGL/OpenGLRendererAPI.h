@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/RendererAPI.h"
 
 namespace Dominion {

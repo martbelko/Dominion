@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/Bindable.h"
 #include "Dominion/Renderer/Buffer.h"
 #include "Dominion/Renderer/InputLayout.h"

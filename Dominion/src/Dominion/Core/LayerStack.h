@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
 #include "Dominion/Core/Layer.h"
 
 #include <vector>

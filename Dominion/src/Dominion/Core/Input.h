@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
 #include "Dominion/Core/KeyCodes.h"
 #include "Dominion/Core/MouseCodes.h"
 

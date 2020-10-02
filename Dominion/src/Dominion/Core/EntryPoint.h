@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
+
 extern Dominion::Application* Dominion::CreateApplication();
 
 int main(int argc, char** argv)

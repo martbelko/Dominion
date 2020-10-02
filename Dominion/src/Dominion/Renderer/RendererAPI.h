@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
+
 #include <memory>
 
 namespace Dominion {

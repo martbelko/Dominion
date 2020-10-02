@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
 #include "Event.h"
 #include "Dominion/Core/KeyCodes.h"
 
