@@ -7,7 +7,7 @@
 
 namespace Dominion {
 
-	std::shared_ptr<InputLayout> InputLayout::Create(const std::initializer_list<InputLayoutElement>& elements_t)
+	Ref<InputLayout> InputLayout::Create(const std::initializer_list<InputLayoutElement>& elements_t)
 	{
 		std::vector<InputLayoutElement> elements(elements_t);
 
@@ -21,7 +21,7 @@ namespace Dominion {
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLInputLayout>(elements, offset);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLInputLayout>(elements, offset);
 		}
 
 		DM_CORE_ASSERT(false, "Unknown RendererAPI!");

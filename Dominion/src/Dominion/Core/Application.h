@@ -42,10 +42,10 @@ namespace Dominion {
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_ImGuiLayer;
 
-		std::shared_ptr<Pipeline> m_Pipeline;
+		Ref<Pipeline> m_Pipeline;
 		Shader* m_Shader;
 
-		std::shared_ptr<Pipeline> m_Pipeline2;
+		Ref<Pipeline> m_Pipeline2;
 		Shader* m_Shader2;
 	};
 

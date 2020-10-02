@@ -12,9 +12,9 @@ namespace Dominion {
 	class Pipeline : public Bindable
 	{
 	public:
-		static std::shared_ptr<Pipeline> Create(std::shared_ptr<VertexBuffer>& vertexBuffer, std::shared_ptr<IndexBuffer>& indexBuffer, std::shared_ptr<InputLayout>& inputLayout);
+		static Ref<Pipeline> Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout);
 
-		virtual std::shared_ptr<IndexBuffer> GetIndexBuffer() const = 0;
+		virtual Ref<IndexBuffer> GetIndexBuffer() const = 0;
 	};
 
 }

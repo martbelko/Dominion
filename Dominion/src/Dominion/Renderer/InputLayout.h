@@ -59,7 +59,7 @@ namespace Dominion {
 	class InputLayout : public Bindable
 	{
 	public:
-		static std::shared_ptr<InputLayout> Create(const std::initializer_list<InputLayoutElement>& elements);
+		static Ref<InputLayout> Create(const std::initializer_list<InputLayoutElement>& elements);
 	};
 
 }

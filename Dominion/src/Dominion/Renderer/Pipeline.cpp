@@ -7,12 +7,12 @@
 
 namespace Dominion {
 
-	std::shared_ptr<Dominion::Pipeline> Pipeline::Create(std::shared_ptr<VertexBuffer>& vertexBuffer, std::shared_ptr<IndexBuffer>& indexBuffer, std::shared_ptr<InputLayout>& inputLayout)
+	Ref<Dominion::Pipeline> Pipeline::Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLPipeline>(vertexBuffer, indexBuffer, inputLayout);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLPipeline>(vertexBuffer, indexBuffer, inputLayout);
 		}
 	}
 
