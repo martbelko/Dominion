@@ -44,12 +44,14 @@ namespace Dominion {
 
 	struct InputLayoutElement
 	{
-		const char* name;
+		std::string name;
 		DataType type;
 		unsigned int size;
 		unsigned int offset = 0;
 
 		InputLayoutElement(const char* name, DataType type)
+			: name(name), type(type), size(DataTypeSize(type)) {}
+		InputLayoutElement(const std::string_view& name, DataType type)
 			: name(name), type(type), size(DataTypeSize(type)) {}
 	};
 
