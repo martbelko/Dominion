@@ -1,6 +1,5 @@
 #pragma once
 
-#include "dmpch.h"
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Log.h"
 #include "Dominion/Core/Application.h"
