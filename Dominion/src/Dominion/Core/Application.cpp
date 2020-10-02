@@ -100,15 +100,15 @@ namespace Dominion {
 			RenderCommand::Clear();
 
 			m_Shader->Bind();
-			m_Layout->Bind();
 			m_VertexBuffer->Bind();
 			m_IndexBuffer->Bind();
+			m_Layout->Bind();
 			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			m_Shader2->Bind();
-			m_Layout2->Bind();
 			m_VertexBuffer2->Bind();
 			m_IndexBuffer2->Bind();
+			m_Layout2->Bind();
 			glDrawElements(GL_TRIANGLES, m_IndexBuffer2->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
