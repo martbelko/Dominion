@@ -38,19 +38,15 @@ namespace Dominion {
 				 0.0f,  0.5f, 0.0f
 			};
 
-			m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-
-			m_Layout = InputLayout::Create(
-				{
-					{ "Position", DataType::Float3 }
-				}
-			);
-
 			unsigned int indices[] = {
 				0, 1, 2
 			};
 
-			m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int));
+			m_Pipeline = Pipeline::Create(VertexBuffer::Create(vertices, sizeof(vertices)), IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)), InputLayout::Create(
+				{
+					{ "Position", DataType::Float3 }
+				}
+			));
 
 			m_Shader = Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
 
@@ -60,20 +56,16 @@ namespace Dominion {
 				 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 			};
 
-			m_VertexBuffer2 = VertexBuffer::Create(vertices2, sizeof(vertices2));
-
-			m_Layout2 = InputLayout::Create(
-				{
-					{ "Position", DataType::Float3 },
-					{ "Color", DataType::Float4 }
-				}
-			);
-
 			unsigned int indices2[] = {
 				0, 1, 2
 			};
 
-			m_IndexBuffer2 = IndexBuffer::Create(indices2, sizeof(indices2) / sizeof(unsigned int));
+			m_Pipeline2 = Pipeline::Create(VertexBuffer::Create(vertices2, sizeof(vertices2)), IndexBuffer::Create(indices2, sizeof(indices2) / sizeof(unsigned int)), InputLayout::Create(
+				{
+					{ "Position", DataType::Float3 },
+					{ "Color", DataType::Float4 }
+				}
+			));
 
 			m_Shader2 = Shader::Create("Test2", "TestVS2.glsl", "TestPS2.glsl");
 		}
@@ -100,16 +92,12 @@ namespace Dominion {
 			RenderCommand::Clear();
 
 			m_Shader->Bind();
-			m_VertexBuffer->Bind();
-			m_IndexBuffer->Bind();
-			m_Layout->Bind();
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_Pipeline->Bind();
+			glDrawElements(GL_TRIANGLES, m_Pipeline->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			m_Shader2->Bind();
-			m_VertexBuffer2->Bind();
-			m_IndexBuffer2->Bind();
-			m_Layout2->Bind();
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer2->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_Pipeline2->Bind();
+			glDrawElements(GL_TRIANGLES, m_Pipeline2->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();

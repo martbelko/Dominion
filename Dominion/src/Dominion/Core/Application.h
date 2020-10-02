@@ -10,6 +10,7 @@
 #include "Dominion/Renderer/Shader.h"
 #include "Dominion/Renderer/Buffer.h"
 #include "Dominion/Renderer/InputLayout.h"
+#include "Dominion/Renderer/Pipeline.h"
 
 #include <string>
 
@@ -41,14 +42,10 @@ namespace Dominion {
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_ImGuiLayer;
 
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
-		std::shared_ptr<InputLayout> m_Layout;
+		std::shared_ptr<Pipeline> m_Pipeline;
 		Shader* m_Shader;
 
-		std::shared_ptr<VertexBuffer> m_VertexBuffer2;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer2;
-		std::shared_ptr<InputLayout> m_Layout2;
+		std::shared_ptr<Pipeline> m_Pipeline2;
 		Shader* m_Shader2;
 	};
 
