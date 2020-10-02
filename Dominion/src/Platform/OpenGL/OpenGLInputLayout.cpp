@@ -52,18 +52,36 @@ namespace Dominion {
 		return 0;
 	}
 
-	OpenGLInputLayout::OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, unsigned int stride)
+	class VertexArray
 	{
-		glCreateVertexArrays(1, &m_RendererID);
-		glBindVertexArray(m_RendererID);
-
-		unsigned int index = 0;
-		for (auto& element : elements)
+	public:
+		VertexArray()
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, GetComponentCount(element.type), DataTypeToOpenGLType(element.type), GL_FALSE, stride, (const void*)element.offset);
+			glCreateVertexArrays(1, &m_RendererID);
+			glBindVertexArray(m_RendererID);
+		}
 
-			++index;
+		~VertexArray()
+		{
+			glDeleteVertexArrays(1, &m_RendererID);
+		}
+	private:
+		unsigned int m_RendererID;
+	};
+
+
+	OpenGLInputLayoutElelent::OpenGLInputLayoutElelent(const InputLayoutElement& element)
+		: type(DataTypeToOpenGLType(element.type)), componentCount(GetComponentCount(element.type)), offset(reinterpret_cast<void*>(element.offset)) {}
+
+
+	OpenGLInputLayout::OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, unsigned int stride)
+		: m_Stride(stride)
+	{
+		static VertexArray sVertexArray;
+		m_Elements.reserve(elements.size());
+		for (const auto& element : elements)
+		{
+			m_Elements.emplace_back(element);
 		}
 	}
 
@@ -74,7 +92,14 @@ namespace Dominion {
 
 	void OpenGLInputLayout::Bind()
 	{
-		glBindVertexArray(m_RendererID);
+		unsigned int index = 0;
+		for (auto& element : m_Elements)
+		{
+			glEnableVertexAttribArray(index);
+			glVertexAttribPointer(index, element.componentCount, element.type, GL_FALSE, m_Stride, (const void*)element.offset);
+
+			++index;
+		}
 	}
 
 }
