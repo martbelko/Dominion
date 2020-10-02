@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
+#include <iostream>
 
 namespace Dominion {
 

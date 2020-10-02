@@ -3,6 +3,8 @@
 #include "Dominion/Core/Base.h"
 #include "Event.h"
 
+#include <sstream>
+
 namespace Dominion {
 
 	class WindowEvent : public Event

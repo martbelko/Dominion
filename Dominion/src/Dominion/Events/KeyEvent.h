@@ -4,6 +4,8 @@
 #include "Event.h"
 #include "Dominion/Core/KeyCodes.h"
 
+#include <sstream>
+
 namespace Dominion {
 
 	class KeyEvent : public Event
