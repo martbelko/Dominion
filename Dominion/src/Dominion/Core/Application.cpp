@@ -5,6 +5,7 @@
 #include "Dominion/Renderer/RenderCommand.h"
 #include "Dominion/Renderer/Buffer.h"
 #include "Dominion/Renderer/InputLayout.h"
+#include "Dominion/Renderer/Renderer.h"
 
 #if defined(new)
 	#undef new
@@ -13,8 +14,6 @@
 #else
 	#include <imgui.h>
 #endif
-
-#include <glad/glad.h> // Temporary
 
 namespace Dominion {
 
@@ -89,13 +88,10 @@ namespace Dominion {
 			RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			RenderCommand::Clear();
 
-			m_Shader->Bind();
-			m_Pipeline->Bind();
-			glDrawElements(GL_TRIANGLES, m_Pipeline->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-
-			m_Shader2->Bind();
-			m_Pipeline2->Bind();
-			glDrawElements(GL_TRIANGLES, m_Pipeline2->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::BeginScene();
+			Renderer::Submit(m_Shader, m_Pipeline);
+			Renderer::Submit(m_Shader2, m_Pipeline2);
+			Renderer::EndScene();
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
