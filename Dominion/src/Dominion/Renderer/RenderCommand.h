@@ -2,6 +2,7 @@
 
 #include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/RendererAPI.h"
+#include "Dominion/Renderer/Pipeline.h"
 
 #include <memory>
 
@@ -23,6 +24,11 @@ namespace Dominion {
 		static void Clear()
 		{
 			s_RendererAPI->Clear();
+		}
+
+		static void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count = 0)
+		{
+			s_RendererAPI->DrawIndexed(pipeline, count);
 		}
 	private:
 		static Scope<RendererAPI> s_RendererAPI;

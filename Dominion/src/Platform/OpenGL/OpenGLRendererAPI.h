@@ -12,6 +12,7 @@ namespace Dominion {
 
 		virtual void SetClearColor(float r, float g, float b, float a) override;
 		virtual void Clear() override;
+		virtual void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count) override;
 	};
 
 }
