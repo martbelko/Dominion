@@ -77,8 +77,6 @@ namespace Dominion {
 
 	Application::~Application()
 	{
-		delete m_Shader;
-		delete m_Shader2;
 		m_LayerStack.PopOverlay(m_ImGuiLayer);
 		delete m_ImGuiLayer;
 		delete m_Window;

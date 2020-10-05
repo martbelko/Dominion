@@ -43,10 +43,10 @@ namespace Dominion {
 		ImGuiLayer* m_ImGuiLayer;
 
 		Ref<Pipeline> m_Pipeline;
-		Shader* m_Shader;
+		Ref<Shader> m_Shader;
 
 		Ref<Pipeline> m_Pipeline2;
-		Shader* m_Shader2;
+		Ref<Shader> m_Shader2;
 	};
 
 	Application* CreateApplication();
