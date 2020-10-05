@@ -13,7 +13,7 @@ namespace Dominion {
 		m_InputLayout->Bind();
 	}
 
-	Ref<Dominion::IndexBuffer> OpenGLPipeline::GetIndexBuffer() const
+	Ref<IndexBuffer> OpenGLPipeline::GetIndexBuffer() const
 	{
 		return m_IndexBuffer;
 	}

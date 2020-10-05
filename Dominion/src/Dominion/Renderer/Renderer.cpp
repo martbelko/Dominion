@@ -1,29 +1,33 @@
 #include "dmpch.h"
 #include "Renderer.h"
 
-void Dominion::Renderer::Init()
-{
-	RenderCommand::Init();
-	Renderer2D::Init();
-}
+namespace Dominion {
 
-void Dominion::Renderer::Shutdown()
-{
-	Renderer2D::Shutdown();
-}
+	void Renderer::Init()
+	{
+		RenderCommand::Init();
+		Renderer2D::Init();
+	}
 
-void Dominion::Renderer::BeginScene()
-{
-}
+	void Renderer::Shutdown()
+	{
+		Renderer2D::Shutdown();
+	}
 
-void Dominion::Renderer::EndScene()
-{
-}
+	void Renderer::BeginScene()
+	{
+	}
 
-void Dominion::Renderer::Submit(const Ref<Shader>& shader, const Ref<Pipeline>& pipeline)
-{
-	shader->Bind();
-	pipeline->Bind();
+	void Renderer::EndScene()
+	{
+	}
 
-	RenderCommand::DrawIndexed(pipeline);
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<Pipeline>& pipeline)
+	{
+		shader->Bind();
+		pipeline->Bind();
+
+		RenderCommand::DrawIndexed(pipeline);
+	}
+
 }

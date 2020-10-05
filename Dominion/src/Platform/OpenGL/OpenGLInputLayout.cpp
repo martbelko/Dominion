@@ -9,18 +9,18 @@ namespace Dominion {
 	{
 		switch (type)
 		{
-			case Dominion::DataType::Float:  return 1;
-			case Dominion::DataType::Float2: return 2;
-			case Dominion::DataType::Float3: return 3;
-			case Dominion::DataType::Float4: return 4;
-			case Dominion::DataType::Mat2:   return 2 * 2;
-			case Dominion::DataType::Mat3:   return 3 * 3;
-			case Dominion::DataType::Mat4:   return 4 * 4;
-			case Dominion::DataType::Int:    return 1;
-			case Dominion::DataType::Int2:   return 2;
-			case Dominion::DataType::Int3:   return 3;
-			case Dominion::DataType::Int4:   return 4;
-			case Dominion::DataType::Bool:   return 1;
+			case DataType::Float:  return 1;
+			case DataType::Float2: return 2;
+			case DataType::Float3: return 3;
+			case DataType::Float4: return 4;
+			case DataType::Mat2:   return 2 * 2;
+			case DataType::Mat3:   return 3 * 3;
+			case DataType::Mat4:   return 4 * 4;
+			case DataType::Int:    return 1;
+			case DataType::Int2:   return 2;
+			case DataType::Int3:   return 3;
+			case DataType::Int4:   return 4;
+			case DataType::Bool:   return 1;
 		}
 
 		DM_CORE_ASSERT(false, "Unknown data type!");
@@ -31,20 +31,20 @@ namespace Dominion {
 	{
 		switch (type)
 		{
-			case Dominion::DataType::Float:
-			case Dominion::DataType::Float2:
-			case Dominion::DataType::Float3:
-			case Dominion::DataType::Float4:
-			case Dominion::DataType::Mat2:
-			case Dominion::DataType::Mat3:
-			case Dominion::DataType::Mat4:
+			case DataType::Float:
+			case DataType::Float2:
+			case DataType::Float3:
+			case DataType::Float4:
+			case DataType::Mat2:
+			case DataType::Mat3:
+			case DataType::Mat4:
 				return GL_FLOAT;
-			case Dominion::DataType::Int:
-			case Dominion::DataType::Int2:
-			case Dominion::DataType::Int3:
-			case Dominion::DataType::Int4:
+			case DataType::Int:
+			case DataType::Int2:
+			case DataType::Int3:
+			case DataType::Int4:
 				return GL_INT;
-			case Dominion::DataType::Bool:
+			case DataType::Bool:
 				return GL_BYTE;
 		}
 

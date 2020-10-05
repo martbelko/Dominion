@@ -7,7 +7,7 @@
 
 namespace Dominion {
 
-	Ref<Dominion::Pipeline> Pipeline::Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout)
+	Ref<Pipeline> Pipeline::Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout)
 	{
 		switch (Renderer::GetAPI())
 		{
