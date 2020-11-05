@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
+#include "Dominion/Core/Timestep.h"
 #include "Dominion/Events/Event.h"
 
 namespace Dominion {
@@ -13,7 +14,7 @@ namespace Dominion {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(const Timestep& timestep) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 
