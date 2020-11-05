@@ -12,6 +12,8 @@
 #include "Dominion/Renderer/InputLayout.h"
 #include "Dominion/Renderer/Pipeline.h"
 
+#include "Dominion/Scene/Camera.h"
+
 #include <string>
 
 namespace Dominion {
@@ -47,6 +49,8 @@ namespace Dominion {
 
 		Ref<Pipeline> m_Pipeline2;
 		Ref<Shader> m_Shader2;
+
+		OrthographicCamera m_Camera = OrthographicCamera(-1.0f, 1.0f, -1.0f, 1.0f);
 	};
 
 	Application* CreateApplication();
