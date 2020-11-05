@@ -43,6 +43,8 @@ namespace Dominion {
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_ImGuiLayer = nullptr;
+
+		std::chrono::system_clock::time_point m_LastFrameTime;
 	};
 
 	Application* CreateApplication();

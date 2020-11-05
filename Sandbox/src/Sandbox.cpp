@@ -52,7 +52,7 @@ public:
 		m_Shader2 = Dominion::Shader::Create("Test2", "TestVS2.glsl", "TestPS2.glsl");
 	}
 
-	void OnUpdate() override
+	void OnUpdate(const Dominion::Timestep& timestep) override
 	{
 		Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Dominion::RenderCommand::Clear();
@@ -61,6 +61,8 @@ public:
 		Dominion::Renderer::Submit(m_Shader, m_Pipeline);
 		Dominion::Renderer::Submit(m_Shader2, m_Pipeline2);
 		Dominion::Renderer::EndScene();
+
+		DM_TRACE("Timestep: {0}", timestep.GetFPS());
 	}
 
 	void OnEvent(Dominion::Event& e) override

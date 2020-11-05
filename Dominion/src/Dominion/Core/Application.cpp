@@ -30,6 +30,8 @@ namespace Dominion {
 			PushOverlay(m_ImGuiLayer);
 
 			Renderer::Init();
+
+			m_LastFrameTime = std::chrono::system_clock::now();
 		}
 		else
 		{
@@ -48,8 +50,12 @@ namespace Dominion {
 	{
 		while (m_Running)
 		{
+			auto end = std::chrono::system_clock::now();
+			Timestep ts = std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count();
+			m_LastFrameTime = std::chrono::system_clock::now();
+
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(ts);
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
