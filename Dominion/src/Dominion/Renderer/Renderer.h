@@ -5,6 +5,7 @@
 #include "Dominion/Renderer/Renderer2D.h"
 #include "Dominion/Renderer/Shader.h"
 #include "Dominion/Renderer/Pipeline.h"
+#include "Dominion/Scene/Camera.h"
 
 namespace Dominion {
 
@@ -14,12 +15,14 @@ namespace Dominion {
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene();
+		static void BeginScene(const Camera& camera);
 		static void EndScene();
 
 		static void Submit(const Ref<Shader>& shader, const Ref<Pipeline>& pipeline);
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+	private:
+		static glm::mat4& m_ProjectionMatrix;
 	};
 
 }

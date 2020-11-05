@@ -3,6 +3,8 @@
 
 namespace Dominion {
 
+	glm::mat4& Renderer::m_ProjectionMatrix = glm::mat4(1.0f);
+
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
@@ -14,8 +16,9 @@ namespace Dominion {
 		Renderer2D::Shutdown();
 	}
 
-	void Renderer::BeginScene()
+	void Renderer::BeginScene(const Camera& camera)
 	{
+		m_ProjectionMatrix = camera.GetProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
