@@ -12,9 +12,12 @@ namespace Dominion {
 
 		operator float() const { return m_Time; }
 
-		float GetSeconds() const { return m_Time / 1000000.0f; }
-		float GetMiliseconds() const { return m_Time / 1000.0f; }
+		float GetSeconds() const { return m_Time / 1000000000.0f; }
+		float GetMiliseconds() const { return m_Time / 1000000.0f; }
+		float GetMicroseconds() const { return m_Time / 1000.0f; }
 		float GetNanoseconds() const { return m_Time; }
+
+		float GetFPS() const { return 1000000000.0f / m_Time; }
 	private:
 		float m_Time; // In nanoseconds
 	};
