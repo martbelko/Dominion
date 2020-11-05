@@ -3,7 +3,7 @@
 
 namespace Dominion {
 
-	glm::mat4& Renderer::m_ProjectionMatrix = glm::mat4(1.0f);
+	glm::mat4 Renderer::m_ProjectionViewMatrix = glm::mat4(1.0f);
 
 	void Renderer::Init()
 	{
@@ -18,7 +18,7 @@ namespace Dominion {
 
 	void Renderer::BeginScene(const Camera& camera)
 	{
-		m_ProjectionMatrix = camera.GetProjectionMatrix();
+		m_ProjectionViewMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -28,6 +28,7 @@ namespace Dominion {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<Pipeline>& pipeline, const glm::mat4& transform)
 	{
 		shader->Bind();
+		shader->SetMat4("u_ViewProjection", m_ProjectionViewMatrix);
 		shader->SetMat4("u_Transform", transform);
 		pipeline->Bind();
 

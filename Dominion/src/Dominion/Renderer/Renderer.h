@@ -22,7 +22,7 @@ namespace Dominion {
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:
-		static glm::mat4& m_ProjectionMatrix;
+		static glm::mat4 m_ProjectionViewMatrix;
 	};
 
 }
