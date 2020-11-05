@@ -42,7 +42,7 @@ namespace Dominion {
 		Window* m_Window = nullptr;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-		ImGuiLayer* m_ImGuiLayer;
+		ImGuiLayer* m_ImGuiLayer = nullptr;
 	};
 
 	Application* CreateApplication();
