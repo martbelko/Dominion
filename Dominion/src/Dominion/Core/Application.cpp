@@ -29,44 +29,7 @@ namespace Dominion {
 			m_ImGuiLayer = new ImGuiLayer();
 			PushOverlay(m_ImGuiLayer);
 
-			RenderCommand::Init();
-
-			float vertices[] = {
-				-0.5f, -0.5f, 0.0f,
-				 0.5f, -0.5f, 0.0f,
-				 0.0f,  0.5f, 0.0f
-			};
-
-			unsigned int indices[] = {
-				0, 1, 2
-			};
-
-			m_Pipeline = Pipeline::Create(VertexBuffer::Create(vertices, sizeof(vertices)), IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)), InputLayout::Create(
-				{
-					{ "Position", DataType::Float3 }
-				}
-			));
-
-			m_Shader = Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
-
-			float vertices2[] = {
-				-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-				 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-				 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
-			};
-
-			unsigned int indices2[] = {
-				0, 1, 2
-			};
-
-			m_Pipeline2 = Pipeline::Create(VertexBuffer::Create(vertices2, sizeof(vertices2)), IndexBuffer::Create(indices2, sizeof(indices2) / sizeof(unsigned int)), InputLayout::Create(
-				{
-					{ "Position", DataType::Float3 },
-					{ "Color", DataType::Float4 }
-				}
-			));
-
-			m_Shader2 = Shader::Create("Test2", "TestVS2.glsl", "TestPS2.glsl");
+			Renderer::Init();
 		}
 		else
 		{
@@ -85,14 +48,6 @@ namespace Dominion {
 	{
 		while (m_Running)
 		{
-			RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			RenderCommand::Clear();
-
-			Renderer::BeginScene(m_Camera);
-			Renderer::Submit(m_Shader, m_Pipeline);
-			Renderer::Submit(m_Shader2, m_Pipeline2);
-			Renderer::EndScene();
-
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 

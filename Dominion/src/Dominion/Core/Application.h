@@ -43,14 +43,6 @@ namespace Dominion {
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		ImGuiLayer* m_ImGuiLayer;
-
-		Ref<Pipeline> m_Pipeline;
-		Ref<Shader> m_Shader;
-
-		Ref<Pipeline> m_Pipeline2;
-		Ref<Shader> m_Shader2;
-
-		OrthographicCamera m_Camera = OrthographicCamera(-1.0f, 1.0f, -1.0f, 1.0f);
 	};
 
 	Application* CreateApplication();
