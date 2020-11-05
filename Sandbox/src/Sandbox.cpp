@@ -54,6 +54,8 @@ public:
 
 	void OnUpdate(const Dominion::Timestep& timestep) override
 	{
+		m_Camera.SetPosition(m_CameraPos);
+
 		Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Dominion::RenderCommand::Clear();
 
@@ -61,8 +63,6 @@ public:
 		Dominion::Renderer::Submit(m_Shader, m_Pipeline);
 		Dominion::Renderer::Submit(m_Shader2, m_Pipeline2);
 		Dominion::Renderer::EndScene();
-
-		DM_TRACE("Timestep: {0}", timestep.GetFPS());
 	}
 
 	void OnEvent(Dominion::Event& e) override
@@ -72,8 +72,21 @@ public:
 
 	void OnImGuiRender() override
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		/*static bool show = true;
+		ImGui::ShowDemoWindow(&show);*/
+		ImGui::Begin("Camera Control");
+		ImGui::DragFloat("X:", &m_CameraPos.x, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat("Y:", &m_CameraPos.y, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat("Z:", &m_CameraPos.z, 0.01f, -5.0f, 5.0f);
+
+		if (ImGui::Button("Reset Position"))
+		{
+			m_CameraPos[0] = 0.0f;
+			m_CameraPos[1] = 0.0f;
+			m_CameraPos[2] = 0.0f;
+		}
+
+		ImGui::End();
 	}
 private:
 	Dominion::Ref<Dominion::Pipeline> m_Pipeline;
@@ -81,6 +94,8 @@ private:
 
 	Dominion::Ref<Dominion::Pipeline> m_Pipeline2;
 	Dominion::Ref<Dominion::Shader> m_Shader2;
+
+	glm::vec3 m_CameraPos = { 0.0f, 0.0f, 0.0f };
 
 	Dominion::OrthographicCamera m_Camera = Dominion::OrthographicCamera(-1.0f, 1.0f, -1.0f, 1.0f);
 };
