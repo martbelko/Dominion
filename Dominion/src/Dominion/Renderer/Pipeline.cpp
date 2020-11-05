@@ -15,6 +15,7 @@ namespace Dominion {
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLPipeline>(vertexBuffer, indexBuffer, inputLayout);
 		}
 
+		DM_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 
