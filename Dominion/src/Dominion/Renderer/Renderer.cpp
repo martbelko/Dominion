@@ -25,9 +25,10 @@ namespace Dominion {
 	{
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<Pipeline>& pipeline)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<Pipeline>& pipeline, const glm::mat4& transform)
 	{
 		shader->Bind();
+		shader->SetMat4("u_Transform", transform);
 		pipeline->Bind();
 
 		RenderCommand::DrawIndexed(pipeline);
