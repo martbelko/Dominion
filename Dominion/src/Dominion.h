@@ -11,5 +11,8 @@
 #include "Dominion/Core/Layer.h"
 #include "Dominion/Core/LayerStack.h"
 #include "Dominion/Core/Input.h"
+#include "Dominion/Renderer/Shader.h"
+#include "Dominion/Renderer/Pipeline.h"
+#include "Dominion/Renderer/Renderer.h"
 
 #include "Dominion/Core/EntryPoint.h"
