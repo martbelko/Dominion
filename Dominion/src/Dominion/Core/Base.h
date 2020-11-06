@@ -13,6 +13,7 @@
 	#define DM_INCLUDE_IMGUI
 #elif defined(DM_RELEASE)
 	#define DM_INCLUDE_IMGUI
+	#define DM_DEBUGBREAK()
 #else
 	#define DM_DEBUGBREAK()
 #endif
