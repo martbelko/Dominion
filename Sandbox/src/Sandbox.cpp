@@ -1,13 +1,5 @@
 #include <Dominion.h>
 
-#if defined(new)
-#undef new
-#include "../imgui/imgui.h"
-#define new DEBUG_NEW
-#else
-#include "../imgui/imgui.h"
-#endif
-
 class ExampleLayer : public Dominion::Layer
 {
 public:
