@@ -16,4 +16,12 @@
 #include "Dominion/Renderer/Renderer.h"
 #include "Dominion/Core/Timestep.h"
 
+#if defined(new)
+	#undef new
+	#include "../imgui/imgui.h"
+	#define new DEBUG_NEW
+#else
+	#include "../imgui/imgui.h"
+#endif
+
 #include "Dominion/Core/EntryPoint.h"
