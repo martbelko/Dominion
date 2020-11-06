@@ -42,7 +42,9 @@ namespace Dominion {
 		Window* m_Window = nullptr;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+#if defined(DM_INCLUDE_IMGUI)
 		ImGuiLayer* m_ImGuiLayer = nullptr;
+#endif
 
 		std::chrono::system_clock::time_point m_LastFrameTime;
 	};

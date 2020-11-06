@@ -1,7 +1,9 @@
 #include "dmpch.h"
-#include "ImGuiLayer.h"
+
+#if defined(DM_INCLUDE_IMGUI)
 
 #include "Dominion/Core/Application.h"
+#include "ImGuiLayer.h"
 
 #if defined(new)
 	#undef new
@@ -109,3 +111,5 @@ namespace Dominion {
 	}
 
 }
+
+#endif

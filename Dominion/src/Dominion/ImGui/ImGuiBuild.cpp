@@ -1,5 +1,8 @@
+#pragma once
+
 #include "dmpch.h"
 
+#if defined(DM_INCLUDE_IMGUI)
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
 #if defined(new)
@@ -10,4 +13,6 @@
 #else
 	#include <examples/imgui_impl_opengl3.cpp>
 	#include <examples/imgui_impl_glfw.cpp>
+#endif
+
 #endif

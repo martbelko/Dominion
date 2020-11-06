@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(DM_INCLUDE_IMGUI)
+
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Layer.h"
 
@@ -25,3 +27,5 @@ namespace Dominion {
 	};
 
 }
+
+#endif
