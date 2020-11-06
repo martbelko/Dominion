@@ -10,6 +10,9 @@
 	#endif
 
 	#define DM_ENABLE_ASSERTS
+	#define DM_INCLUDE_IMGUI
+#elif defined(DM_RELEASE)
+	#define DM_INCLUDE_IMGUI
 #else
 	#define DM_DEBUGBREAK()
 #endif
