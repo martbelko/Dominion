@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Dominion/Events/Event.h"
+#include "Dominion/Events/WindowEvent.h"
+#include "Dominion/Events/MouseEvent.h"
+
 #include <glm/glm.hpp>
 
 namespace Dominion {
@@ -8,6 +12,8 @@ namespace Dominion {
 	{
 	public:
 		virtual ~Camera() = default;
+
+		virtual void OnEvent(Event& event) { }
 
 		virtual const glm::mat4& GetProjectionMatrix() const = 0;
 		virtual const glm::mat4& GetViewMatrix() const = 0;
@@ -27,6 +33,8 @@ namespace Dominion {
 
 		void SetProjection(float left, float right, float bottom, float top);
 
+		virtual void OnEvent(Event& e) override;
+
 		virtual const glm::vec3& GetPosition() const override;
 		virtual void SetPosition(const glm::vec3& position) override;
 
@@ -37,6 +45,8 @@ namespace Dominion {
 		virtual const glm::mat4& GetViewMatrix() const override;
 		virtual const glm::mat4& GetViewProjectionMatrix() const override;
 	private:
+		bool OnWindowResize(WindowResizedEvent& e);
+		bool OnMouseScrolled(MouseScrolledEvent& e);
 		void RecalculateViewMatrix();
 	private:
 		glm::mat4 m_ProjectionMatrix;
