@@ -29,7 +29,8 @@ namespace Dominion {
 	class OrthographicCamera : public Camera
 	{
 	public:
-		OrthographicCamera(float left, float right, float bottom, float top);
+		OrthographicCamera() = default;
+		OrthographicCamera(float aspectRatio, float zoomLevel = 1.0f);
 
 		void SetProjection(float left, float right, float bottom, float top);
 
@@ -55,5 +56,7 @@ namespace Dominion {
 
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
 		float m_Rotation = 0.0f;
+		float m_AspectRatio;
+		float m_ZoomLevel;
 	};
 }
