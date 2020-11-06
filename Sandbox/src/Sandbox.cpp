@@ -1,5 +1,7 @@
 #include <Dominion.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 class ExampleLayer : public Dominion::Layer
 {
 public:
@@ -9,11 +11,13 @@ public:
 		float vertices[] = {
 				-0.5f, -0.5f, 0.0f,
 				 0.5f, -0.5f, 0.0f,
-				 0.0f,  0.5f, 0.0f
+				 0.5f,  0.5f, 0.0f,
+				-0.5f,  0.5f, 0.0f
 		};
 
 		unsigned int indices[] = {
-			0, 1, 2
+			0, 1, 2,
+			2, 3, 0
 		};
 
 		m_Pipeline = Dominion::Pipeline::Create(Dominion::VertexBuffer::Create(vertices, sizeof(vertices)), Dominion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)), Dominion::InputLayout::Create(
@@ -23,25 +27,6 @@ public:
 		));
 
 		m_Shader = Dominion::Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
-
-		float vertices2[] = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
-		};
-
-		unsigned int indices2[] = {
-			0, 1, 2
-		};
-
-		m_Pipeline2 = Dominion::Pipeline::Create(Dominion::VertexBuffer::Create(vertices2, sizeof(vertices2)), Dominion::IndexBuffer::Create(indices2, sizeof(indices2) / sizeof(unsigned int)), Dominion::InputLayout::Create(
-			{
-				{ "Position", Dominion::DataType::Float3 },
-				{ "Color", Dominion::DataType::Float4 }
-			}
-		));
-
-		m_Shader2 = Dominion::Shader::Create("Test2", "TestVS2.glsl", "TestPS2.glsl");
 	}
 
 	void OnUpdate(const Dominion::Timestep& timestep) override
@@ -53,7 +38,6 @@ public:
 
 		Dominion::Renderer::BeginScene(m_Camera);
 		Dominion::Renderer::Submit(m_Shader, m_Pipeline);
-		Dominion::Renderer::Submit(m_Shader2, m_Pipeline2);
 		Dominion::Renderer::EndScene();
 	}
 
@@ -83,9 +67,6 @@ public:
 private:
 	Dominion::Ref<Dominion::Pipeline> m_Pipeline;
 	Dominion::Ref<Dominion::Shader> m_Shader;
-
-	Dominion::Ref<Dominion::Pipeline> m_Pipeline2;
-	Dominion::Ref<Dominion::Shader> m_Shader2;
 
 	glm::vec3 m_CameraPos = { 0.0f, 0.0f, 0.0f };
 
