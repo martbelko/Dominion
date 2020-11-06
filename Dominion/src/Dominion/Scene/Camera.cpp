@@ -16,6 +16,11 @@ namespace Dominion {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	void OrthographicCamera::OnEvent(Event& event)
+	{
+
+	}
+
 	const glm::vec3& OrthographicCamera::GetPosition() const
 	{
 		return m_Position;
@@ -51,6 +56,16 @@ namespace Dominion {
 	const glm::mat4& OrthographicCamera::GetViewProjectionMatrix() const
 	{
 		return m_ViewProjectionMatrix;
+	}
+
+	bool OrthographicCamera::OnWindowResize(WindowResizedEvent& e)
+	{
+
+	}
+
+	bool OrthographicCamera::OnMouseScrolled(MouseScrolledEvent& e)
+	{
+
 	}
 
 	void OrthographicCamera::RecalculateViewMatrix()
