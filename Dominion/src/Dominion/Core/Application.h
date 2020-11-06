@@ -35,12 +35,14 @@ namespace Dominion {
 
 		static Application& Get();
 	private:
-		bool OnWindowCreated(WindowCreatedEvent& event);
-		bool OnWindowClosed(WindowClosedEvent& event);
+		bool OnWindowCreated(WindowCreatedEvent& e);
+		bool OnWindowClosed(WindowClosedEvent& e);
+		bool OnWindowResized(WindowResizedEvent& e);
 	private:
 		static Application* s_Application;
 		Window* m_Window = nullptr;
 		bool m_Running = true;
+		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 #if DM_INCLUDE_IMGUI == 1
 		ImGuiLayer* m_ImGuiLayer = nullptr;

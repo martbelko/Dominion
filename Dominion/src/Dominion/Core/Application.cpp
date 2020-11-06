@@ -62,8 +62,11 @@ namespace Dominion {
 			Timestep ts = std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count();
 			m_LastFrameTime = std::chrono::system_clock::now();
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(ts);
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(ts);
+			}
 
 			#if DM_INCLUDE_IMGUI == 1
 				m_ImGuiLayer->Begin();
@@ -80,6 +83,7 @@ namespace Dominion {
 	{
 		e.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
 		e.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
+		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(Application::OnWindowResized));
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
@@ -115,6 +119,22 @@ namespace Dominion {
 	{
 		m_Window->Close();
 		m_Running = false;
+		return false;
+	}
+
+	bool Application::OnWindowResized(WindowResizedEvent& e)
+	{
+		uint32_t width = e.GetWidth();
+		uint32_t height = e.GetHeight();
+		if (width == 0 || height == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		Renderer::OnWindowResize(width, height);
+
+		m_Minimized = false;
 		return false;
 	}
 
