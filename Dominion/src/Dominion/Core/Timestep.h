@@ -10,7 +10,7 @@ namespace Dominion {
 		{
 		}
 
-		operator float() const { return m_Time; }
+		operator float() const { return GetSeconds(); }
 
 		float GetSeconds() const { return m_Time / 1000000000.0f; }
 		float GetMiliseconds() const { return m_Time / 1000000.0f; }
