@@ -75,9 +75,9 @@ public:
 		/*static bool show = true;
 		ImGui::ShowDemoWindow(&show);*/
 		ImGui::Begin("Camera Control");
-		ImGui::DragFloat("X:", &m_CameraPos.x, 0.01f, -5.0f, 5.0f);
-		ImGui::DragFloat("Y:", &m_CameraPos.y, 0.01f, -5.0f, 5.0f);
-		ImGui::DragFloat("Z:", &m_CameraPos.z, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat("X", &m_CameraPos.x, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat("Y", &m_CameraPos.y, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat("Z", &m_CameraPos.z, 0.01f, -5.0f, 5.0f);
 
 		if (ImGui::Button("Reset Position"))
 		{
