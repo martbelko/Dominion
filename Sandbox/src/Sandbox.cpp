@@ -28,15 +28,16 @@ public:
 
 		m_Shader = Dominion::Shader::Create("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
 
+		/* Setup camera */
 		float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
 		float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
 		float ratio = wWidth / wHeight;
-		m_Camera.SetProjection(-ratio, ratio, -1.0f, 1.0f);
+		m_Camera = Dominion::OrthographicCamera(ratio, 1.0f);
 	}
 
 	void OnUpdate(const Dominion::Timestep& timestep) override
 	{
-		m_Camera.SetPosition(m_CameraPos);
+		m_Camera.OnUpdate(timestep);
 
 		Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Dominion::RenderCommand::Clear();
@@ -64,7 +65,7 @@ public:
 
 	void OnEvent(Dominion::Event& e) override
 	{
-
+		m_Camera.OnEvent(e);
 	}
 
 	void OnImGuiRender() override
@@ -91,7 +92,7 @@ private:
 
 	glm::vec3 m_CameraPos = { 0.0f, 0.0f, 0.0f };
 
-	Dominion::OrthographicCamera m_Camera = Dominion::OrthographicCamera(-1.0f, 1.0f, -1.0f, 1.0f);
+	Dominion::OrthographicCamera m_Camera;
 };
 
 class Sandbox : public Dominion::Application
