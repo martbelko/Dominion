@@ -7,7 +7,7 @@
 #include "Dominion/Renderer/InputLayout.h"
 #include "Dominion/Renderer/Renderer.h"
 
-#if defined(DM_INCLUDE_IMGUI)
+#if DM_INCLUDE_IMGUI == 1
 
 #if defined(new)
 	#undef new
@@ -30,7 +30,7 @@ namespace Dominion {
 			s_Application = this;
 			m_Window = Window::Create(DM_BIND_EVENT_FN(Application::OnEvent));
 
-			#if defined(DM_INCLUDE_IMGUI)
+			#if DM_INCLUDE_IMGUI == 1
 				m_ImGuiLayer = new ImGuiLayer();
 				PushOverlay(m_ImGuiLayer);
 			#endif
@@ -47,7 +47,7 @@ namespace Dominion {
 
 	Application::~Application()
 	{
-		#if defined(DM_INCLUDE_IMGUI)
+		#if DM_INCLUDE_IMGUI == 1
 			m_LayerStack.PopOverlay(m_ImGuiLayer);
 			delete m_ImGuiLayer;
 		#endif
@@ -65,7 +65,7 @@ namespace Dominion {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(ts);
 
-			#if defined(DM_INCLUDE_IMGUI)
+			#if DM_INCLUDE_IMGUI == 1
 				m_ImGuiLayer->Begin();
 				for (Layer* layer : m_LayerStack)
 					layer->OnImGuiRender();

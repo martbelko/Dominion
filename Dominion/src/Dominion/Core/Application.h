@@ -42,7 +42,7 @@ namespace Dominion {
 		Window* m_Window = nullptr;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-#if defined(DM_INCLUDE_IMGUI)
+#if DM_INCLUDE_IMGUI == 1
 		ImGuiLayer* m_ImGuiLayer = nullptr;
 #endif
 

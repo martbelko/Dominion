@@ -1,6 +1,6 @@
 #include "dmpch.h"
 
-#if defined(DM_INCLUDE_IMGUI)
+#if DM_INCLUDE_IMGUI == 1
 
 #include "Dominion/Core/Application.h"
 #include "ImGuiLayer.h"

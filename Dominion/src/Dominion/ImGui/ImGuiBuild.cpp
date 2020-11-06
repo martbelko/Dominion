@@ -2,7 +2,8 @@
 
 #include "dmpch.h"
 
-#if defined(DM_INCLUDE_IMGUI)
+#if DM_INCLUDE_IMGUI == 1
+
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
 #if defined(new)

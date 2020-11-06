@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(DM_INCLUDE_IMGUI)
+#if DM_INCLUDE_IMGUI == 1
 
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Layer.h"
