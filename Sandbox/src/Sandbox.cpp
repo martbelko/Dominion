@@ -27,6 +27,11 @@ public:
 		));
 
 		m_Shader = Dominion::Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
+
+		float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
+		float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
+		float ratio = wWidth / wHeight;
+		m_Camera.SetProjection(-ratio, ratio, -1.0f, 1.0f);
 	}
 
 	void OnUpdate(const Dominion::Timestep& timestep) override
@@ -37,7 +42,23 @@ public:
 		Dominion::RenderCommand::Clear();
 
 		Dominion::Renderer::BeginScene(m_Camera);
-		Dominion::Renderer::Submit(m_Shader, m_Pipeline);
+
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		float xPos = 0.0f, yPos = 0.0f;
+		for (int y = 0; y < 20; ++y)
+		{
+			for (int x = 0; x < 20; ++x)
+			{
+				glm::vec3 pos(xPos, yPos, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
+				Dominion::Renderer::Submit(m_Shader, m_Pipeline, transform);
+				xPos += 0.11f;
+			}
+			yPos += 0.11f;
+			xPos = 0.0f;
+		}
+
 		Dominion::Renderer::EndScene();
 	}
 
