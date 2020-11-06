@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#ifdef DM_DEBUG
+#if defined(DM_DEBUG)
 	#if defined(DM_PLATFORM_WINDOWS)
 		#define DM_DEBUGBREAK() __debugbreak();
 	#else
@@ -22,7 +22,7 @@
 	#define new DEBUG_NEW
 #endif
 
-#ifdef DM_ENABLE_ASSERTS
+#if defined(DM_ENABLE_ASSERTS)
 	#define DM_ASSERT(x, ...) { if(!(x)) { DM_ERROR("Assertion Failed: {0}", __VA_ARGS__); DM_DEBUGBREAK(); } }
 	#define DM_CORE_ASSERT(x, ...) { if(!(x)) { DM_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); DM_DEBUGBREAK(); } }
 #else
