@@ -40,8 +40,6 @@ namespace Dominion {
 		{
 			m_Position.x += m_ZoomLevel * timestep;
 		}
-
-		RecalculateViewMatrix();
 	}
 
 	void OrthographicCamera::OnEvent(Event& e)
@@ -60,12 +58,22 @@ namespace Dominion {
 		return m_Position;
 	}
 
+	glm::vec3& OrthographicCamera::GetPosition()
+	{
+		return m_Position;
+	}
+
 	void OrthographicCamera::SetPosition(const glm::vec3& position)
 	{
 		m_Position = position;
 	}
 
 	float OrthographicCamera::GetRotation() const
+	{
+		return m_Rotation;
+	}
+
+	float& OrthographicCamera::GetRotation()
 	{
 		return m_Rotation;
 	}
