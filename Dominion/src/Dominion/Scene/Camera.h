@@ -24,9 +24,11 @@ namespace Dominion {
 		virtual const glm::mat4& GetViewProjectionMatrix() const = 0;
 
 		virtual const glm::vec3& GetPosition() const = 0;
+		virtual glm::vec3& GetPosition() = 0;
 		virtual void SetPosition(const glm::vec3& position) = 0;
 
 		virtual float GetRotation() const = 0;
+		virtual float& GetRotation() = 0;
 		virtual void SetRotation(float rotation) = 0;
 	};
 
@@ -44,9 +46,11 @@ namespace Dominion {
 		virtual void Refresh() override;
 
 		virtual const glm::vec3& GetPosition() const override;
+		virtual glm::vec3& GetPosition() override;
 		virtual void SetPosition(const glm::vec3& position) override;
 
 		virtual float GetRotation() const override;
+		virtual float& GetRotation() override;
 		virtual void SetRotation(float rotation) override;
 
 		virtual const glm::mat4& GetProjectionMatrix() const override;
