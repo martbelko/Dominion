@@ -15,12 +15,12 @@ public:
 				-0.5f,  0.5f, 0.0f
 		};
 
-		unsigned int indices[] = {
+		uint32_t indices[] = {
 			0, 1, 2,
 			2, 3, 0
 		};
 
-		m_Pipeline = Dominion::Pipeline::Create(Dominion::VertexBuffer::Create(vertices, sizeof(vertices)), Dominion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)), Dominion::InputLayout::Create(
+		m_Pipeline = Dominion::Pipeline::Create(Dominion::VertexBuffer::Create(vertices, sizeof(vertices)), Dominion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)), Dominion::InputLayout::Create(
 			{
 				{ "Position", Dominion::DataType::Float3 }
 			}
