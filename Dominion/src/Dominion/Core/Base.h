@@ -11,12 +11,18 @@
 
 	#define DM_ENABLE_ASSERTS
 	#define DM_INCLUDE_IMGUI 1
+	#define DM_ENABLE_CORE_LOGGER 1
+	#define DM_ENABLE_CLIENT_LOGGER 1
 #elif defined(DM_RELEASE)
-	#define DM_INCLUDE_IMGUI 1
 	#define DM_DEBUGBREAK()
+	#define DM_INCLUDE_IMGUI 1
+	#define DM_ENABLE_CORE_LOGGER 1
+	#define DM_ENABLE_CLIENT_LOGGER 1
 #else
 	#define DM_DEBUGBREAK()
 	#define DM_INCLUDE_IMGUI 0
+	#define DM_ENABLE_CORE_LOGGER 1
+	#define DM_ENABLE_CLIENT_LOGGER 1
 #endif
 
 #if defined(DM_DEBUG)
