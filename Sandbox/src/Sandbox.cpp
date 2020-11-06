@@ -26,7 +26,7 @@ public:
 			}
 		));
 
-		m_Shader = Dominion::Shader::Create("Test", "TestVS.glsl", "TestPS.glsl");
+		m_Shader = Dominion::Shader::Create("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
 
 		float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
 		float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
