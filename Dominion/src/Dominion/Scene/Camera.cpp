@@ -1,6 +1,8 @@
 #include "dmpch.h"
 #include "Camera.h"
 
+#include "Dominion/Core/Input.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Dominion {
@@ -19,10 +21,38 @@ namespace Dominion {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	void OrthographicCamera::OnUpdate(const Timestep& timestep)
+	{
+		if (Input::IsKeyPressed(Dominion::Key::W))
+		{
+			m_Position.y += m_ZoomLevel * timestep;
+		}
+		else if (Input::IsKeyPressed(Dominion::Key::S))
+		{
+			m_Position.y -= m_ZoomLevel * timestep;
+		}
+
+		if (Input::IsKeyPressed(Dominion::Key::A))
+		{
+			m_Position.x -= m_ZoomLevel * timestep;
+		}
+		else if (Input::IsKeyPressed(Dominion::Key::D))
+		{
+			m_Position.x += m_ZoomLevel * timestep;
+		}
+
+		RecalculateViewMatrix();
+	}
+
 	void OrthographicCamera::OnEvent(Event& e)
 	{
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(OrthographicCamera::OnWindowResize));
 		e.Dispatch<MouseScrolledEvent>(DM_BIND_EVENT_FN(OrthographicCamera::OnMouseScrolled));
+	}
+
+	void OrthographicCamera::Refresh()
+	{
+		RecalculateViewMatrix();
 	}
 
 	const glm::vec3& OrthographicCamera::GetPosition() const
@@ -33,7 +63,6 @@ namespace Dominion {
 	void OrthographicCamera::SetPosition(const glm::vec3& position)
 	{
 		m_Position = position;
-		RecalculateViewMatrix();
 	}
 
 	float OrthographicCamera::GetRotation() const
@@ -44,7 +73,6 @@ namespace Dominion {
 	void OrthographicCamera::SetRotation(float rotation)
 	{
 		m_Rotation = rotation;
-		RecalculateViewMatrix();
 	}
 
 	const glm::mat4& OrthographicCamera::GetProjectionMatrix() const
