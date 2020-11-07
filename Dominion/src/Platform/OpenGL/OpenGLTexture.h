@@ -3,6 +3,8 @@
 #include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/Texture.h"
 
+#include <glad/glad.h>
+
 #include <string_view>
 
 namespace Dominion {
@@ -21,6 +23,7 @@ namespace Dominion {
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Width, m_Height;
+		uint32_t m_InternalFormat, m_DataFormat;
 #ifdef DM_DEBUG
 		std::string path;
 #endif
