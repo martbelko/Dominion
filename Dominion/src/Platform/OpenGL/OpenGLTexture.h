@@ -23,7 +23,7 @@ namespace Dominion {
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Width, m_Height;
-		uint32_t m_InternalFormat, m_DataFormat;
+		GLenum m_InternalFormat, m_DataFormat;
 #ifdef DM_DEBUG
 		std::string path;
 #endif
