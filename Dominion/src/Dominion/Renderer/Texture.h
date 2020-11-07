@@ -10,6 +10,7 @@ namespace Dominion {
 	public:
 		virtual ~Texture() = default;
 
+		virtual void Bind() const = 0;
 		virtual void Bind(uint32_t slot) const = 0;
 	};
 
