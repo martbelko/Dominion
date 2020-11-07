@@ -2,7 +2,6 @@
 #include "OpenGLTexture.h"
 
 #include <stb_image.h>
-#include <glad/glad.h>
 
 namespace Dominion {
 
@@ -15,8 +14,24 @@ namespace Dominion {
 		m_Width = width;
 		m_Height = height;
 
+		if (nChannels == 4)
+		{
+			m_InternalFormat = GL_RGBA8;
+			m_DataFormat = GL_RGBA;
+		}
+		else if (nChannels == 3)
+		{
+			m_InternalFormat = GL_RGB8;
+			m_DataFormat = GL_RGB;
+		}
+		else
+		{
+			m_InternalFormat = 0;
+			m_DataFormat = 0;
+		}
+
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, GL_RGB8, m_Width, m_Height);
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -24,7 +39,7 @@ namespace Dominion {
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
 	}
