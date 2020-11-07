@@ -10,7 +10,7 @@ namespace Dominion {
 	public:
 		OpenGLPipeline(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout);
 
-		virtual void Bind() override;
+		virtual void Bind() const override;
 
 		virtual Ref<IndexBuffer> GetIndexBuffer() const;
 	private:

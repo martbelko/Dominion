@@ -22,7 +22,7 @@ namespace Dominion {
 		OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, unsigned int stride);
 		virtual ~OpenGLInputLayout() override;
 
-		virtual void Bind() override;
+		virtual void Bind() const override;
 	private:
 		unsigned int m_RendererID;
 		unsigned int m_Stride;

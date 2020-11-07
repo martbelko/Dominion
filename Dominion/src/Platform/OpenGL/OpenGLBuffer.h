@@ -11,7 +11,7 @@ namespace Dominion {
 		OpenGLVertexBuffer(const float* vertices, size_t size);
 		virtual ~OpenGLVertexBuffer() override;
 
-		virtual void Bind() override;
+		virtual void Bind() const override;
 	private:
 		unsigned int m_RendererID;
 	};
@@ -22,7 +22,7 @@ namespace Dominion {
 		OpenGLIndexBuffer(const uint32_t* indices, unsigned int count);
 		virtual ~OpenGLIndexBuffer() override;
 
-		virtual void Bind() override;
+		virtual void Bind() const override;
 
 		virtual unsigned int GetCount() const override;
 	private:

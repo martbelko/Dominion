@@ -90,7 +90,7 @@ namespace Dominion {
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
-	void OpenGLInputLayout::Bind()
+	void OpenGLInputLayout::Bind() const
 	{
 		unsigned int index = 0;
 		for (auto& element : m_Elements)

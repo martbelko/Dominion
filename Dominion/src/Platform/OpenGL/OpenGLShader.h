@@ -17,7 +17,7 @@ namespace Dominion {
 		OpenGLShader(const std::string_view& name, const std::string_view& vertexFilepath, const std::string_view& pixelFilepath);
 		virtual ~OpenGLShader() override;
 
-		virtual void Bind() override;
+		virtual void Bind() const override;
 
 		virtual void SetInt(const std::string_view& name, int value) override;
 		virtual void SetIntArray(const std::string_view& name, int* values, uint32_t count) override;

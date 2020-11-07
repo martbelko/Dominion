@@ -26,7 +26,7 @@ namespace Dominion {
 		glDeleteProgram(m_RendererID);
 	}
 
-	void OpenGLShader::Bind()
+	void OpenGLShader::Bind() const
 	{
 		glUseProgram(m_RendererID);
 	}
