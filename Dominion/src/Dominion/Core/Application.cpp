@@ -59,7 +59,7 @@ namespace Dominion {
 		while (m_Running)
 		{
 			auto end = std::chrono::system_clock::now();
-			Timestep ts = std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count();
+			Timestep ts = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count());
 			m_LastFrameTime = std::chrono::system_clock::now();
 
 			if (!m_Minimized)
