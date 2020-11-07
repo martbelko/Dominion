@@ -9,13 +9,13 @@
 
 #if DM_INCLUDE_IMGUI == 1
 
-#if defined(new)
-	#undef new
-	#include <imgui.h>
-	#define new DEBUG_NEW
-#else
-	#include <imgui.h>
-#endif
+	#if defined(new)
+		#undef new
+		#include <imgui.h>
+		#define new DEBUG_NEW
+	#else
+		#include <imgui.h>
+	#endif
 
 #endif
 
