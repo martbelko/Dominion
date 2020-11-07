@@ -9,6 +9,8 @@ namespace Dominion {
 	{
 	public:
 		virtual ~Texture() = default;
+
+		virtual void Bind(uint32_t slot) const = 0;
 	};
 
 	class Texture2D : public Texture

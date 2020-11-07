@@ -17,6 +17,7 @@ namespace Dominion {
 		virtual uint32_t GetHeight() const override;
 
 		virtual void Bind() const override;
+		virtual void Bind(uint32_t slot) const override;
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Width, m_Height;
