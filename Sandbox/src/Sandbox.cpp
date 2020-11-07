@@ -31,7 +31,7 @@ public:
 
 		m_TextureShader = Dominion::Shader::Create("Texture", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
 
-		m_Texture2D = Dominion::Texture2D::Create("assets/Textures/Checkerboard.png");
+		m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 
 		/* Setup camera */
 		float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
