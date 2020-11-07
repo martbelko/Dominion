@@ -9,10 +9,10 @@ public:
 		: Layer("Example")
 	{
 		float vertices[] = {
-				-0.5f, -0.5f, 0.0f,
-				 0.5f, -0.5f, 0.0f,
-				 0.5f,  0.5f, 0.0f,
-				-0.5f,  0.5f, 0.0f
+				-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+				 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+				 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+				-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		uint32_t indices[] = {
@@ -22,11 +22,16 @@ public:
 
 		m_Pipeline = Dominion::Pipeline::Create(Dominion::VertexBuffer::Create(vertices, sizeof(vertices)), Dominion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)), Dominion::InputLayout::Create(
 			{
-				{ "Position", Dominion::DataType::Float3 }
+				{ "Position", Dominion::DataType::Float3 },
+				{ "TexCoord", Dominion::DataType::Float2 }
 			}
 		));
 
 		m_Shader = Dominion::Shader::Create("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
+
+		m_TextureShader = Dominion::Shader::Create("Texture", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
+
+		m_Texture2D = Dominion::Texture2D::Create("assets/Textures/Checkerboard.png");
 
 		/* Setup camera */
 		float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
@@ -61,6 +66,10 @@ public:
 			xPos = 0.0f;
 		}
 
+		m_Texture2D->Bind();
+		m_TextureShader->SetInt("u_Texture", 0);
+		Dominion::Renderer::Submit(m_TextureShader, m_Pipeline);
+
 		Dominion::Renderer::EndScene();
 	}
 
@@ -87,6 +96,9 @@ public:
 private:
 	Dominion::Ref<Dominion::Pipeline> m_Pipeline;
 	Dominion::Ref<Dominion::Shader> m_Shader;
+	Dominion::Ref<Dominion::Shader> m_TextureShader;
+
+	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 
 	Dominion::OrthographicCamera m_Camera;
 };
