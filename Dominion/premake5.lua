@@ -17,6 +17,7 @@ project "Dominion"
     {
         "src",
         "vendor/spdlog/include",
+		"vendor/stb_image",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
