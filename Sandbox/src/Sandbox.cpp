@@ -70,6 +70,7 @@ public:
 		m_Texture2D->Bind();
 
 		auto textureShader = m_ShaderLibrary.Get("Texture");
+		textureShader->Bind();
 		textureShader->SetInt("u_Texture", 0);
 		Dominion::Renderer::Submit(textureShader, m_Pipeline);
 		m_TestTexture->Bind();
