@@ -16,7 +16,6 @@
 #include "Dominion/Renderer/Texture.h"
 #include "Dominion/Renderer/Renderer.h"
 #include "Dominion/Core/Timestep.h"
-#include "Dominion/Debug/Instrumentor.h"
 
 #if defined(new)
 	#undef new
