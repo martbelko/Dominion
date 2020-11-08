@@ -12,3 +12,9 @@ bin-int/
 *.vcxproj
 
 Sandbox/imgui.ini
+
+Sandbox/DominionProfile-Runtime.json
+
+Sandbox/DominionProfile-Shutdown.json
+
+Sandbox/DominionProfile-Startup.json
