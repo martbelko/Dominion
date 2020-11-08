@@ -16,6 +16,7 @@ namespace Dominion {
 	{
 		Ref<Pipeline> QuadPipeline;
 		Ref<Shader> TextureShader;
+		Ref<Texture2D> WhiteTexture;
 	};
 
 	static Renderer2DData s_Data;
@@ -41,7 +42,11 @@ namespace Dominion {
 			}
 		));
 
-		s_Data.TextureShader = Shader::Create("DefaultRenderer2DShader", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
+		s_Data.TextureShader = Shader::Create("DefaultRenderer2DShader", "assets/Shaders/DefaultRenderer2DVS.glsl", "assets/Shaders/DefaultRenderer2DPS.glsl");
+
+		s_Data.WhiteTexture = Texture2D::Create(1, 1);
+		uint32_t whiteTextureData = 0xffffffff;
+		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 	}
 
 	void Renderer2D::Shutdown()
@@ -72,10 +77,37 @@ namespace Dominion {
 
 		DrawQuad(transform, color);
 	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+	{
+		DrawQuad({ position.x, position.y, 0.0f }, size, texture);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+	{
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+		DrawQuad(transform, texture);
+	}
+
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
 	{
 		s_Data.TextureShader->SetMat4("u_Transform", transform);
 		s_Data.TextureShader->SetFloat4("u_Color", color);
+		s_Data.TextureShader->SetInt("u_Texture", 0);
+
+		s_Data.WhiteTexture->Bind(0);
+		s_Data.QuadPipeline->Bind();
+		RenderCommand::DrawIndexed(s_Data.QuadPipeline);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture)
+	{
+		s_Data.TextureShader->SetMat4("u_Transform", transform);
+		s_Data.TextureShader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
+		s_Data.TextureShader->SetInt("u_Texture", 0);
+		texture->Bind(0);
 		s_Data.QuadPipeline->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadPipeline);
 	}
