@@ -24,5 +24,3 @@
 #else
 	#include "../imgui/imgui.h"
 #endif
-
-#include "Dominion/Core/EntryPoint.h"
