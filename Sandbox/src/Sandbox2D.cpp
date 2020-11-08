@@ -4,28 +4,7 @@
 
 Sandbox2D::Sandbox2D()
 {
-	float vertices[] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-				0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-				0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
-	};
-
-	uint32_t indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
-
-	m_Pipeline = Dominion::Pipeline::Create(Dominion::VertexBuffer::Create(vertices, sizeof(vertices)), Dominion::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)), Dominion::InputLayout::Create(
-		{
-			{ "Position", Dominion::DataType::Float3 },
-			{ "TexCoord", Dominion::DataType::Float2 }
-		}
-	));
-
 	m_ShaderLibrary.Load("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
-
-	m_ShaderLibrary.Load("Texture", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
 
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
