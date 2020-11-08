@@ -21,3 +21,4 @@
 
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Log.h"
+#include "Dominion/Debug/Instrumentor.h"
