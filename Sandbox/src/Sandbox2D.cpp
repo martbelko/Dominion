@@ -45,7 +45,7 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 	Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	Dominion::RenderCommand::Clear();
 
-	Dominion::Renderer::BeginScene(m_Camera);
+	Dominion::Renderer2D::BeginScene(m_Camera);
 
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -56,23 +56,17 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		{
 			glm::vec3 pos(xPos, yPos, 0.0f);
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-			Dominion::Renderer::Submit(m_ShaderLibrary.Get("Test"), m_Pipeline, transform);
+			Dominion::Renderer2D::DrawQuad({ xPos, yPos }, { 0.1f, 0.1f }, { 0.8f, 0.2f, 0.3f, 1.0f });
 			xPos += 0.11f;
 		}
 		yPos += 0.11f;
 		xPos = 0.0f;
 	}
 
-	m_Texture2D->Bind();
+	/*Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
+	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture);*/
 
-	auto textureShader = m_ShaderLibrary.Get("Texture");
-	textureShader->Bind();
-	textureShader->SetInt("u_Texture", 0);
-	Dominion::Renderer::Submit(textureShader, m_Pipeline);
-	m_TestTexture->Bind();
-	Dominion::Renderer::Submit(textureShader, m_Pipeline);
-
-	Dominion::Renderer::EndScene();
+	Dominion::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnEvent(Dominion::Event& e)
