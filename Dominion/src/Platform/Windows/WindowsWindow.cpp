@@ -23,14 +23,20 @@ namespace Dominion {
 	WindowsWindow::WindowsWindow(const EventCallbackFn& callback, const WindowProps& props)
 		: m_Title(props.title), m_Width(props.width), m_Height(props.height), m_EventCallbackFn(callback)
 	{
+		DM_PROFILE_FUNCTION();
+
 		if (!s_GLFWInitialized)
 		{
+			DM_PROFILE_SCOPE("glfwInit");
 			int success = glfwInit();
 			DM_CORE_ASSERT(success, "Could not initialize GLFW!");
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Title.c_str(), nullptr, nullptr);
+		{
+			DM_PROFILE_SCOPE("glfwCreateWindow");
+			m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Title.c_str(), nullptr, nullptr);
+		}
 
 		m_Context = new OpenGLContext(m_Window);
 		m_Context->Init();
@@ -137,12 +143,16 @@ namespace Dominion {
 
 	WindowsWindow::~WindowsWindow()
 	{
+		DM_PROFILE_FUNCTION();
+
 		if (m_Active)
 			Close();
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
+		DM_PROFILE_FUNCTION();
+
 		glfwPollEvents();
 		if (m_Active)
 			m_Context->SwapBuffers();
@@ -180,6 +190,8 @@ namespace Dominion {
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		DM_PROFILE_FUNCTION();
+
 		if (enabled)
 			glfwSwapInterval(1);
 		else
@@ -195,6 +207,8 @@ namespace Dominion {
 
 	void WindowsWindow::Close()
 	{
+		DM_PROFILE_FUNCTION();
+
 		DM_CORE_ASSERT(m_Active, "Window is already closed!");
 		delete m_Context;
 		glfwDestroyWindow(m_Window);

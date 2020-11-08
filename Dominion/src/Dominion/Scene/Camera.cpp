@@ -12,17 +12,21 @@ namespace Dominion {
 		  m_ViewMatrix(1.0), m_ViewProjectionMatrix(m_ProjectionMatrix* m_ViewMatrix),
 		  m_AspectRatio(aspectRatio), m_ZoomLevel(zoomLevel)
 	{
-
+		DM_PROFILE_FUNCTION();
 	}
 
 	void OrthographicCamera::SetProjection(float left, float right, float bottom, float top)
 	{
+		DM_PROFILE_FUNCTION();
+
 		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
 	void OrthographicCamera::OnUpdate(const Timestep& timestep)
 	{
+		DM_PROFILE_FUNCTION();
+
 		if (Input::IsKeyPressed(Dominion::Key::W))
 		{
 			m_Position.y += m_ZoomLevel * timestep;
@@ -44,6 +48,8 @@ namespace Dominion {
 
 	void OrthographicCamera::OnEvent(Event& e)
 	{
+		DM_PROFILE_FUNCTION();
+
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(OrthographicCamera::OnWindowResize));
 		e.Dispatch<MouseScrolledEvent>(DM_BIND_EVENT_FN(OrthographicCamera::OnMouseScrolled));
 	}
@@ -100,6 +106,8 @@ namespace Dominion {
 
 	bool OrthographicCamera::OnWindowResize(WindowResizedEvent& e)
 	{
+		DM_PROFILE_FUNCTION();
+
 		m_AspectRatio = static_cast<float>(e.GetWidth()) / static_cast<float>(e.GetHeight());
 		SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
@@ -107,6 +115,8 @@ namespace Dominion {
 
 	bool OrthographicCamera::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		DM_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset();
 		m_ZoomLevel = std::clamp(m_ZoomLevel, 1.0f, 20.0f);
 		SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -115,6 +125,8 @@ namespace Dominion {
 
 	void OrthographicCamera::RecalculateViewMatrix()
 	{
+		DM_PROFILE_FUNCTION();
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation), glm::vec3(0, 0, 1));
 

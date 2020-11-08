@@ -15,6 +15,8 @@ namespace Dominion {
 
 	void OpenGLContext::Init()
 	{
+		DM_PROFILE_FUNCTION();
+
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		DM_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -29,6 +31,8 @@ namespace Dominion {
 
 	void OpenGLContext::SwapBuffers()
 	{
+		DM_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 

@@ -77,6 +77,8 @@ namespace Dominion {
 	OpenGLInputLayout::OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, unsigned int stride)
 		: m_Stride(stride)
 	{
+		DM_PROFILE_FUNCTION();
+
 		static VertexArray sVertexArray;
 		m_Elements.reserve(elements.size());
 		for (const auto& element : elements)
@@ -87,11 +89,15 @@ namespace Dominion {
 
 	OpenGLInputLayout::~OpenGLInputLayout()
 	{
+		DM_PROFILE_FUNCTION();
+
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
 	void OpenGLInputLayout::Bind() const
 	{
+		DM_PROFILE_FUNCTION();
+
 		unsigned int index = 0;
 		for (auto& element : m_Elements)
 		{

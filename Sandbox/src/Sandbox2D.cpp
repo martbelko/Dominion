@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Sandbox2D::Sandbox2D()
+	: Dominion::Layer("Sandbox2D")
 {
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
@@ -19,21 +20,18 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 	DM_PROFILE_FUNCTION();
 
 	// Update
-	{
-		DM_PROFILE_SCOPE("Camera update");
-		m_Camera.OnUpdate(timestep);
-		m_Camera.Refresh();
-	}
+	m_Camera.OnUpdate(timestep);
+	m_Camera.Refresh();
 
 	// Render
 	{
-		DM_PROFILE_SCOPE("Render prep");
+		DM_PROFILE_SCOPE("Render Prep");
 		Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Dominion::RenderCommand::Clear();
 	}
 
 	{
-		DM_PROFILE_SCOPE("Render draw");
+		DM_PROFILE_SCOPE("Render Draw");
 		Dominion::Renderer2D::BeginScene(m_Camera);
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));

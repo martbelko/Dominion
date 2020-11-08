@@ -8,6 +8,8 @@ namespace Dominion {
 
 	void OpenGLPipeline::Bind() const
 	{
+		DM_PROFILE_FUNCTION();
+
 		m_VertexBuffer->Bind();
 		m_IndexBuffer->Bind();
 		m_InputLayout->Bind();

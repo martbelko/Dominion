@@ -7,12 +7,16 @@ namespace Dominion {
 
 	void Renderer::Init()
 	{
+		DM_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer2D::Init();
 	}
 
 	void Renderer::Shutdown()
 	{
+		DM_PROFILE_FUNCTION();
+
 		Renderer2D::Shutdown();
 	}
 

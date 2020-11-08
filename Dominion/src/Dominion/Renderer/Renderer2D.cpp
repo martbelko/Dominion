@@ -23,6 +23,8 @@ namespace Dominion {
 
 	void Renderer2D::Init()
 	{
+		DM_PROFILE_FUNCTION();
+
 		float vertices[] = {
 			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
 			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
@@ -51,18 +53,20 @@ namespace Dominion {
 
 	void Renderer2D::Shutdown()
 	{
-
+		DM_PROFILE_FUNCTION();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		DM_PROFILE_FUNCTION();
+
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
 	{
-
+		DM_PROFILE_FUNCTION();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -72,6 +76,8 @@ namespace Dominion {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		DM_PROFILE_FUNCTION();
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
@@ -85,6 +91,8 @@ namespace Dominion {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
 	{
+		DM_PROFILE_FUNCTION();
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
@@ -93,10 +101,11 @@ namespace Dominion {
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
 	{
+		DM_PROFILE_FUNCTION();
+
 		s_Data.TextureShader->SetMat4("u_Transform", transform);
 		s_Data.TextureShader->SetFloat4("u_Color", color);
 		s_Data.TextureShader->SetInt("u_Texture", 0);
-
 		s_Data.WhiteTexture->Bind(0);
 		s_Data.QuadPipeline->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadPipeline);
@@ -104,6 +113,8 @@ namespace Dominion {
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture)
 	{
+		DM_PROFILE_FUNCTION();
+
 		s_Data.TextureShader->SetMat4("u_Transform", transform);
 		s_Data.TextureShader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
 		s_Data.TextureShader->SetInt("u_Texture", 0);

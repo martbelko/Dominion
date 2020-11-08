@@ -25,17 +25,19 @@ namespace Dominion {
 
 	Application::Application()
 	{
+		DM_PROFILE_FUNCTION();
+
 		if (s_Application == nullptr)
 		{
 			s_Application = this;
 			m_Window = Window::Create(DM_BIND_EVENT_FN(Application::OnEvent));
 
-			#if DM_INCLUDE_IMGUI == 1
-				m_ImGuiLayer = new ImGuiLayer();
-				PushOverlay(m_ImGuiLayer);
-			#endif
-
 			Renderer::Init();
+
+		#if DM_INCLUDE_IMGUI == 1
+			m_ImGuiLayer = new ImGuiLayer();
+			PushOverlay(m_ImGuiLayer);
+		#endif
 
 			m_LastFrameTime = std::chrono::system_clock::now();
 		}
@@ -47,6 +49,8 @@ namespace Dominion {
 
 	Application::~Application()
 	{
+		DM_PROFILE_FUNCTION();
+
 	#if DM_INCLUDE_IMGUI == 1
 		m_LayerStack.PopOverlay(m_ImGuiLayer);
 		delete m_ImGuiLayer;
@@ -57,17 +61,28 @@ namespace Dominion {
 
 	void Application::Run()
 	{
+		DM_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+			DM_PROFILE_SCOPE("Run Loop");
+
 			auto end = std::chrono::system_clock::now();
 			Timestep ts = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count());
 			m_LastFrameTime = std::chrono::system_clock::now();
 
 			if (!m_Minimized)
 			{
-				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate(ts);
+				{
+					DM_PROFILE_SCOPE("LayerStack OnUpdate");
+
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(ts);
+				}
 			}
+
+			{
+				DM_PROFILE_SCOPE("LayerStack OnImGuiRenderr");
 
 			#if DM_INCLUDE_IMGUI == 1
 				m_ImGuiLayer->Begin();
@@ -75,6 +90,7 @@ namespace Dominion {
 					layer->OnImGuiRender();
 				m_ImGuiLayer->End();
 			#endif
+			}
 
 			m_Window->OnUpdate();
 		}
@@ -82,6 +98,8 @@ namespace Dominion {
 
 	void Application::OnEvent(Event& e)
 	{
+		DM_PROFILE_FUNCTION();
+
 		e.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
 		e.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(Application::OnWindowResized));
@@ -96,12 +114,16 @@ namespace Dominion {
 
 	void Application::PushLayer(Layer* layer)
 	{
+		DM_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
+		DM_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
 	}
@@ -125,6 +147,8 @@ namespace Dominion {
 
 	bool Application::OnWindowResized(WindowResizedEvent& e)
 	{
+		DM_PROFILE_FUNCTION();
+
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 		if (width == 0 || height == 0)
