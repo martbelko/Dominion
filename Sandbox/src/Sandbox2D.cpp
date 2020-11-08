@@ -2,42 +2,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <chrono>
-
-
-template<typename Fn>
-class Timer
-{
-public:
-	Timer(const char* name, Fn&& func)
-		: m_Name(name), m_Func(func)
-	{
-		m_StartTimePoint = std::chrono::high_resolution_clock::now();
-	}
-
-	~Timer()
-	{
-		if (!m_Stopped)
-			Stop();
-	}
-
-	void Stop()
-	{
-		auto endTimePoint = std::chrono::high_resolution_clock::now();
-
-		float duration = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTimePoint - m_StartTimePoint).count()) * 0.000001f;
-		m_Stopped = true;
-		m_Func({ m_Name, duration });
-	}
-private:
-	const char* m_Name;
-	std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
-	bool m_Stopped = false;
-	Fn m_Func;
-};
-
-#define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) { m_ProfilerResults.push_back(profileResult); })
-
 Sandbox2D::Sandbox2D()
 {
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
