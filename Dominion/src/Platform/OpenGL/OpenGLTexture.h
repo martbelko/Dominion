@@ -13,10 +13,13 @@ namespace Dominion {
 	{
 	public:
 		OpenGLTexture2D(const std::string_view& path);
+		OpenGLTexture2D(uint32_t width, uint32_t height);
 		virtual ~OpenGLTexture2D();
 
 		virtual uint32_t GetWidth() const override;
 		virtual uint32_t GetHeight() const override;
+
+		virtual void SetData(const void* data, uint32_t size) override;
 
 		virtual void Bind() const override;
 		virtual void Bind(uint32_t slot) const override;
