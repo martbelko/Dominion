@@ -2,42 +2,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <chrono>
-
-
-template<typename Fn>
-class Timer
-{
-public:
-	Timer(const char* name, Fn&& func)
-		: m_Name(name), m_Func(func)
-	{
-		m_StartTimePoint = std::chrono::high_resolution_clock::now();
-	}
-
-	~Timer()
-	{
-		if (!m_Stopped)
-			Stop();
-	}
-
-	void Stop()
-	{
-		auto endTimePoint = std::chrono::high_resolution_clock::now();
-
-		float duration = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(endTimePoint - m_StartTimePoint).count()) * 0.000001f;
-		m_Stopped = true;
-		m_Func({ m_Name, duration });
-	}
-private:
-	const char* m_Name;
-	std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
-	bool m_Stopped = false;
-	Fn m_Func;
-};
-
-#define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) { m_ProfilerResults.push_back(profileResult); })
-
 Sandbox2D::Sandbox2D()
 {
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
@@ -52,24 +16,24 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 {
-	PROFILE_SCOPE("Sandbox2D::OnUpdate");
+	DM_PROFILE_FUNCTION();
 
 	// Update
 	{
-		PROFILE_SCOPE("Camera update");
+		DM_PROFILE_SCOPE("Camera update");
 		m_Camera.OnUpdate(timestep);
 		m_Camera.Refresh();
 	}
 
 	// Render
 	{
-		PROFILE_SCOPE("Render prep");
+		DM_PROFILE_SCOPE("Render prep");
 		Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		Dominion::RenderCommand::Clear();
 	}
 
 	{
-		PROFILE_SCOPE("Render draw");
+		DM_PROFILE_SCOPE("Render draw");
 		Dominion::Renderer2D::BeginScene(m_Camera);
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
@@ -97,12 +61,13 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 
 void Sandbox2D::OnEvent(Dominion::Event& e)
 {
-	PROFILE_SCOPE("Sandbox2D::OnEvent");
+	DM_PROFILE_FUNCTION();
 	m_Camera.OnEvent(e);
 }
 
 void Sandbox2D::OnImGuiRender()
 {
+	DM_PROFILE_FUNCTION();
 	/*static bool show = true;
 	ImGui::ShowDemoWindow(&show);*/
 	ImGui::Begin("Camera Control");
@@ -115,15 +80,4 @@ void Sandbox2D::OnImGuiRender()
 		pos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	ImGui::End();
-
-	ImGui::Begin("Profiler");
-
-	for (auto& result : m_ProfilerResults)
-	{
-		ImGui::Text("%.3fms %s", result.time, result.Name);
-	}
-
-	ImGui::End();
-
-	m_ProfilerResults.clear();
 }

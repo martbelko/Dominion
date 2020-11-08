@@ -14,12 +14,4 @@ private:
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
 
 	Dominion::OrthographicCamera m_Camera;
-
-	struct ProfileResult
-	{
-		const char* Name;
-		float time;
-	};
-
-	std::vector<ProfileResult> m_ProfilerResults;
 };
