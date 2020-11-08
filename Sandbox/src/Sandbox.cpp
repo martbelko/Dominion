@@ -27,9 +27,9 @@ public:
 			}
 		));
 
-		m_Shader = Dominion::Shader::Create("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
+		m_ShaderLibrary.Load("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
 
-		m_TextureShader = Dominion::Shader::Create("Texture", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
+		m_ShaderLibrary.Load("Texture", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
 
 		m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 		m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
@@ -60,7 +60,7 @@ public:
 			{
 				glm::vec3 pos(xPos, yPos, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				Dominion::Renderer::Submit(m_Shader, m_Pipeline, transform);
+				Dominion::Renderer::Submit(m_ShaderLibrary.Get("Test"), m_Pipeline, transform);
 				xPos += 0.11f;
 			}
 			yPos += 0.11f;
@@ -68,10 +68,12 @@ public:
 		}
 
 		m_Texture2D->Bind();
-		m_TextureShader->SetInt("u_Texture", 0);
-		Dominion::Renderer::Submit(m_TextureShader, m_Pipeline);
+
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+		textureShader->SetInt("u_Texture", 0);
+		Dominion::Renderer::Submit(textureShader, m_Pipeline);
 		m_TestTexture->Bind();
-		Dominion::Renderer::Submit(m_TextureShader, m_Pipeline);
+		Dominion::Renderer::Submit(textureShader, m_Pipeline);
 
 		Dominion::Renderer::EndScene();
 	}
@@ -97,9 +99,8 @@ public:
 		ImGui::End();
 	}
 private:
+	Dominion::ShaderLibrary m_ShaderLibrary;
 	Dominion::Ref<Dominion::Pipeline> m_Pipeline;
-	Dominion::Ref<Dominion::Shader> m_Shader;
-	Dominion::Ref<Dominion::Shader> m_TextureShader;
 
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;

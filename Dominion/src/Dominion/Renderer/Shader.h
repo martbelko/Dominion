@@ -7,6 +7,7 @@
 
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 namespace Dominion {
 
@@ -32,6 +33,19 @@ namespace Dominion {
 		static Ref<Shader> Create(const std::string_view& name, const std::string_view& vertexFilepath, const std::string_view& pixelFilepath);
 	protected:
 		const std::string m_Name;
+	};
+
+	class ShaderLibrary
+	{
+	public:
+		void Add(const Ref<Shader>& shader);
+		Ref<Shader> Load(const std::string_view& name, const std::string_view& vertexFilepath, const std::string_view& pixelFilepath);
+
+		Ref<Shader> Get(const std::string& name);
+
+		bool Exists(const std::string& name);
+	private:
+		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 	};
 
 }

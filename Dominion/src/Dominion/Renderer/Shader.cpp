@@ -18,4 +18,29 @@ namespace Dominion {
 		return nullptr;
 	}
 
+	void ShaderLibrary::Add(const Ref<Shader>& shader)
+	{
+		const std::string& name = shader->GetName();
+		DM_CORE_ASSERT(!Exists(name), "Shader already exists!");
+		m_Shaders[name] = shader;
+	}
+
+	Ref<Shader> ShaderLibrary::Load(const std::string_view& name, const std::string_view& vertexFilepath, const std::string_view& pixelFilepath)
+	{
+		Ref<Shader> shader = Shader::Create(name, vertexFilepath, pixelFilepath);
+		Add(shader);
+		return shader;
+	}
+
+	Ref<Shader> ShaderLibrary::Get(const std::string& name)
+	{
+		DM_CORE_ASSERT(Exists(name), "Shader does not exists!");
+		return m_Shaders[name];
+	}
+
+	bool ShaderLibrary::Exists(const std::string& name)
+	{
+		return m_Shaders.find(name) != m_Shaders.end();
+	}
+
 }
