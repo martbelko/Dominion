@@ -11,7 +11,6 @@ int main(int argc, char** argv)
 	#endif
 
 	Dominion::Log::Init();
-	Dominion::Log::Shutdown();
 	DM_CORE_INFO("Initialized engine core logger");
 	DM_INFO("Initialized client logger");
 
@@ -19,6 +18,8 @@ int main(int argc, char** argv)
 	app->Run();
 
 	delete app;
+
+	Dominion::Log::Shutdown();
 
 	return 0;
 }
