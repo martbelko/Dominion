@@ -32,6 +32,7 @@ public:
 		m_TextureShader = Dominion::Shader::Create("Texture", "assets/Shaders/TextureVS.glsl", "assets/Shaders/TexturePS.glsl");
 
 		m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
+		m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
 
 		/* Setup camera */
 		float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
@@ -69,6 +70,8 @@ public:
 		m_Texture2D->Bind();
 		m_TextureShader->SetInt("u_Texture", 0);
 		Dominion::Renderer::Submit(m_TextureShader, m_Pipeline);
+		m_TestTexture->Bind();
+		Dominion::Renderer::Submit(m_TextureShader, m_Pipeline);
 
 		Dominion::Renderer::EndScene();
 	}
@@ -99,6 +102,7 @@ private:
 	Dominion::Ref<Dominion::Shader> m_TextureShader;
 
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
+	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
 
 	Dominion::OrthographicCamera m_Camera;
 };
