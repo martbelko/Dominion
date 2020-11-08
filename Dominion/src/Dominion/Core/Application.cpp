@@ -47,10 +47,11 @@ namespace Dominion {
 
 	Application::~Application()
 	{
-		#if DM_INCLUDE_IMGUI == 1
-			m_LayerStack.PopOverlay(m_ImGuiLayer);
-			delete m_ImGuiLayer;
-		#endif
+	#if DM_INCLUDE_IMGUI == 1
+		m_LayerStack.PopOverlay(m_ImGuiLayer);
+		delete m_ImGuiLayer;
+	#endif
+		Renderer::Shutdown();
 		delete m_Window;
 	}
 
