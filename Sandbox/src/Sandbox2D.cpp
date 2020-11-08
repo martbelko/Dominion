@@ -40,8 +40,8 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		xPos = 0.0f;
 	}
 
-	/*Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
-	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture);*/
+	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
+	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture);
 
 	Dominion::Renderer2D::EndScene();
 }
