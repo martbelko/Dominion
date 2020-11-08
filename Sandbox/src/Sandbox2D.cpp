@@ -4,8 +4,6 @@
 
 Sandbox2D::Sandbox2D()
 {
-	m_ShaderLibrary.Load("Test", "assets/Shaders/TestVS.glsl", "assets/Shaders/TestPS.glsl");
-
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
 
