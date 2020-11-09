@@ -36,8 +36,8 @@ namespace Dominion {
 			uint32_t DrawCalls;
 			uint32_t QuadCount;
 
-			uint32_t GetTotalVertexCount() { return QuadCount * 4; }
-			uint32_t GetTotalIndexCount() { return QuadCount * 6; }
+			uint32_t GetTotalVertexCount() const { return QuadCount * 4; }
+			uint32_t GetTotalIndexCount() const { return QuadCount * 6; }
 		};
 
 		static const Statistics& GetStats();
