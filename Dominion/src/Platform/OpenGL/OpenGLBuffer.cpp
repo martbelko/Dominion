@@ -5,7 +5,7 @@
 
 namespace Dominion {
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, size_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, uint32_t size)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -28,7 +28,7 @@ namespace Dominion {
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	}
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, unsigned int count)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, uint32_t count)
 		: m_Count(count)
 	{
 		DM_PROFILE_FUNCTION();

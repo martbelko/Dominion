@@ -6,7 +6,7 @@
 
 namespace Dominion {
 
-	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, size_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -18,7 +18,7 @@ namespace Dominion {
 		return nullptr;
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(const uint32_t* indices, unsigned int count)
+	Ref<IndexBuffer> IndexBuffer::Create(const uint32_t* indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{

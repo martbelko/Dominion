@@ -8,7 +8,7 @@ namespace Dominion {
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGLVertexBuffer(const float* vertices, size_t size);
+		OpenGLVertexBuffer(const float* vertices, uint32_t size);
 		virtual ~OpenGLVertexBuffer() override;
 
 		virtual void Bind() const override;
@@ -19,7 +19,7 @@ namespace Dominion {
 	class OpenGLIndexBuffer : public IndexBuffer
 	{
 	public:
-		OpenGLIndexBuffer(const uint32_t* indices, unsigned int count);
+		OpenGLIndexBuffer(const uint32_t* indices, uint32_t count);
 		virtual ~OpenGLIndexBuffer() override;
 
 		virtual void Bind() const override;
