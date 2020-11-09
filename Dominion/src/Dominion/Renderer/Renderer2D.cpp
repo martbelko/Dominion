@@ -21,13 +21,12 @@ namespace Dominion {
 		float TilingFactor;
 	};
 
-
 	struct Renderer2DData
 	{
-		const uint32_t MaxQuads = 10000;
-		const uint32_t MaxVertices = MaxQuads * 4;
-		const uint32_t MaxIndices = MaxQuads * 6;
-		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
+		static constexpr uint32_t MaxQuads = 80000;
+		static constexpr uint32_t MaxVertices = MaxQuads * 4;
+		static constexpr uint32_t MaxIndices = MaxQuads * 6;
+		static constexpr uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
 		Ref<VertexBuffer> QuadVertexBuffer;
 		Ref<Pipeline> QuadPipeline;
@@ -42,6 +41,8 @@ namespace Dominion {
 		uint32_t TextureSlotIndex = 1; // 0 = White Texture
 
 		glm::vec4 QuadVertexPositions[4];
+
+		Renderer2D::Statistics Stats;
 	};
 
 	static Renderer2DData s_Data;
@@ -83,18 +84,25 @@ namespace Dominion {
 			}
 		));
 
-		s_Data.TextureShader = Shader::Create("DefaultRenderer2DShader", "assets/Shaders/DefaultRenderer2DVS.glsl", "assets/Shaders/DefaultRenderer2DPS.glsl");
 
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 
+		int samplers[s_Data.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; ++i)
+			samplers[i] = i;
+
+		s_Data.TextureShader = Shader::Create("DefaultRenderer2DShader", "assets/Shaders/DefaultRenderer2DVS.glsl", "assets/Shaders/DefaultRenderer2DPS.glsl");
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.MaxTextureSlots * sizeof(int));
+
+		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
+
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
-
-		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 	}
 
 	void Renderer2D::Shutdown()
@@ -113,29 +121,31 @@ namespace Dominion {
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-		s_Data.TextureSlotIndex = 1;
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
 	{
 		DM_PROFILE_FUNCTION();
 
-		uint32_t dataSize = reinterpret_cast<uint8_t*>(s_Data.QuadVertexBufferPtr) - reinterpret_cast<uint8_t*>(s_Data.QuadVertexBufferBase);
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
 		Flush();
 	}
 
 	void Renderer2D::Flush()
 	{
+		if (s_Data.QuadIndexCount == 0)
+			return;
+
+		uint32_t dataSize = reinterpret_cast<uint8_t*>(s_Data.QuadVertexBufferPtr) - reinterpret_cast<uint8_t*>(s_Data.QuadVertexBufferBase);
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+
+		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
-		{
 			s_Data.TextureSlots[i]->Bind(i);
-		}
 
 		RenderCommand::DrawIndexed(s_Data.QuadPipeline, s_Data.QuadIndexCount);
+
+		++s_Data.Stats.DrawCalls;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -202,6 +212,9 @@ namespace Dominion {
 
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+			NextBatch();
+
 		for (int i = 0; i < 4; ++i)
 		{
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
@@ -213,6 +226,8 @@ namespace Dominion {
 		}
 
 		s_Data.QuadIndexCount += 6;
+
+		++s_Data.Stats.QuadCount;
 	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor)
@@ -221,6 +236,9 @@ namespace Dominion {
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+			NextBatch();
 
 		float textureIndex = 0.0f;
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; ++i)
@@ -234,6 +252,9 @@ namespace Dominion {
 
 		if (textureIndex == 0.0f)
 		{
+			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+				NextBatch();
+
 			textureIndex = static_cast<float>(s_Data.TextureSlotIndex);
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
@@ -251,13 +272,31 @@ namespace Dominion {
 
 		s_Data.QuadIndexCount += 6;
 
-		int samplers[s_Data.MaxTextureSlots];
-		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; ++i)
-		{
-			samplers[i] = i;
-		}
+		++s_Data.Stats.QuadCount;
+	}
 
-		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.MaxTextureSlots * sizeof(int));
+	const Renderer2D::Statistics& Renderer2D::GetStats()
+	{
+		return s_Data.Stats;
+	}
+
+	void Renderer2D::ResetStats()
+	{
+		memset(&s_Data.Stats, 0, sizeof(s_Data.Stats));
+	}
+
+	void Renderer2D::StartBatch()
+	{
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+	}
+
+	void Renderer2D::NextBatch()
+	{
+		Flush();
+		StartBatch();
 	}
 
 }
