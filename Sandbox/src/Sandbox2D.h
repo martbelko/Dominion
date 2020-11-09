@@ -14,4 +14,6 @@ private:
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
 
 	Dominion::OrthographicCamera m_Camera;
+
+	float m_Rotation = 0.0f;
 };

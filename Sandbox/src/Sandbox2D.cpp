@@ -19,6 +19,16 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 {
 	DM_PROFILE_FUNCTION();
 
+	static int sign = -1;
+	float t = timestep * sign * 50.0f;;
+	m_Rotation += timestep * sign * 50.0f;
+	m_Rotation = std::clamp(m_Rotation, -180.0f, 180.0f);
+	if (m_Rotation == -180.0f)
+		sign = 1;
+	else if (m_Rotation == 180.0f)
+		sign = -1;
+
+	DM_TRACE(m_Rotation);
 	// Update
 	m_Camera.OnUpdate(timestep);
 	m_Camera.Refresh();
@@ -43,7 +53,7 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 			{
 				glm::vec3 pos(xPos, yPos, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				Dominion::Renderer2D::DrawQuad({ xPos, yPos }, { 0.1f, 0.1f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+				Dominion::Renderer2D::DrawRotatedQuad({ xPos, yPos }, { 0.1f, 0.1f }, glm::radians(m_Rotation), { 0.8f, 0.2f, 0.3f, 1.0f });
 				xPos += 0.11f;
 			}
 			yPos += 0.11f;
@@ -51,7 +61,7 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		}
 
 		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
-		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture);
+		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, 5.0f);
 
 		Dominion::Renderer2D::EndScene();
 	}
