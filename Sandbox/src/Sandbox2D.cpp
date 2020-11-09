@@ -28,7 +28,6 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 	else if (m_Rotation == 180.0f)
 		sign = -1;
 
-	DM_TRACE(m_Rotation);
 	// Update
 	m_Camera.OnUpdate(timestep);
 	m_Camera.Refresh();
