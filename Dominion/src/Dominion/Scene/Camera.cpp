@@ -117,8 +117,16 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		m_ZoomLevel -= e.GetYOffset();
-		m_ZoomLevel = std::clamp(m_ZoomLevel, 1.0f, 20.0f);
+		if (m_ZoomLevel <= 1.0f)
+		{
+			m_ZoomLevel -= 0.1f * e.GetYOffset();
+		}
+		else
+		{
+			m_ZoomLevel -= e.GetYOffset();
+		}
+
+		m_ZoomLevel = std::clamp(m_ZoomLevel, 0.1f, 20.0f);
 		SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}
