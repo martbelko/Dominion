@@ -16,4 +16,5 @@ private:
 	Dominion::OrthographicCamera m_Camera;
 
 	float m_Rotation = 0.0f;
+	float m_RotationSpeed = 40.0f;
 };

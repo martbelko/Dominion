@@ -20,8 +20,7 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 	DM_PROFILE_FUNCTION();
 
 	static int sign = -1;
-	float t = timestep * sign * 50.0f;;
-	m_Rotation += timestep * sign * 50.0f;
+	m_Rotation += timestep * sign * m_RotationSpeed;
 	m_Rotation = std::clamp(m_Rotation, -180.0f, 180.0f);
 	if (m_Rotation == -180.0f)
 		sign = 1;
@@ -46,9 +45,9 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
 		float xPos = 0.0f, yPos = 0.0f;
-		for (int y = 0; y < 20; ++y)
+		for (int y = 0; y < 200; ++y)
 		{
-			for (int x = 0; x < 20; ++x)
+			for (int x = 0; x < 200; ++x)
 			{
 				glm::vec3 pos(xPos, yPos, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
@@ -85,6 +84,8 @@ void Sandbox2D::OnImGuiRender()
 
 	if (ImGui::Button("Reset Position"))
 		pos = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
 
 	ImGui::End();
 }
