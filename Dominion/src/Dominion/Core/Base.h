@@ -13,7 +13,7 @@
 	#define DM_INCLUDE_IMGUI 1
 	#define DM_ENABLE_CORE_LOGGER 1
 	#define DM_ENABLE_CLIENT_LOGGER 1
-	#define DM_PROFILE 1
+	#define DM_PROFILE 0
 #elif defined(DM_RELEASE)
 	#define DM_DEBUGBREAK()
 	#define DM_INCLUDE_IMGUI 1
