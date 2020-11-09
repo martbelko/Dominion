@@ -23,7 +23,7 @@ namespace Dominion {
 
 	struct Renderer2DData
 	{
-		static constexpr uint32_t MaxQuads = 80000;
+		static constexpr uint32_t MaxQuads = 20000;
 		static constexpr uint32_t MaxVertices = MaxQuads * 4;
 		static constexpr uint32_t MaxIndices = MaxQuads * 6;
 		static constexpr uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
