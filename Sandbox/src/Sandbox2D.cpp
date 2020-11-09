@@ -88,4 +88,14 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
 
 	ImGui::End();
+
+	const auto& stats = Dominion::Renderer2D::GetStats();
+	ImGui::Begin("Renderer2D Stats");
+	ImGui::Text("Draw calls: %d", stats.DrawCalls);
+	ImGui::Text("Quads: %d", stats.QuadCount);
+	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+	ImGui::End();
+
+	Dominion::Renderer2D::ResetStats();
 }
