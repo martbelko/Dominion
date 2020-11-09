@@ -105,4 +105,9 @@ namespace Dominion {
 		glBindTextureUnit(slot, m_RendererID);
 	}
 
+	bool OpenGLTexture2D::operator==(const Texture2D& other) const
+	{
+		return m_RendererID == reinterpret_cast<const OpenGLTexture2D&>(other).m_RendererID;
+	}
+
 }
