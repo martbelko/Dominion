@@ -42,20 +42,17 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		DM_PROFILE_SCOPE("Render Draw");
 		Dominion::Renderer2D::BeginScene(m_Camera);
 
-		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-
-		float xPos = 0.0f, yPos = 0.0f;
-		for (int y = 0; y < 200; ++y)
+		float cap = m_Count / 2.0f;
+		for (float y = -cap; y < cap; y += 0.5f)
 		{
-			for (int x = 0; x < 200; ++x)
+			for (float x = -cap; x < cap; x += 0.5f)
 			{
-				glm::vec3 pos(xPos, yPos, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				Dominion::Renderer2D::DrawRotatedQuad({ xPos, yPos }, { 0.1f, 0.1f }, glm::radians(m_Rotation), { 0.8f, 0.2f, 0.3f, 1.0f });
-				xPos += 0.11f;
+				glm::vec4 color = { (x + cap) / static_cast<float>(m_Count),
+					0.3f,
+					(y + cap) / static_cast<float>(m_Count),
+					1.0f };
+				Dominion::Renderer2D::DrawRotatedQuad({ x, y }, { 0.45f, 0.45f }, glm::radians(m_Rotation), color);
 			}
-			yPos += 0.11f;
-			xPos = 0.0f;
 		}
 
 		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
@@ -86,6 +83,7 @@ void Sandbox2D::OnImGuiRender()
 		pos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
+	ImGui::SliderInt("Number of Quads", &m_Count, 0, 100);
 
 	ImGui::End();
 
