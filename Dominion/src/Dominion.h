@@ -14,6 +14,7 @@
 #include "Dominion/Renderer/Shader.h"
 #include "Dominion/Renderer/Pipeline.h"
 #include "Dominion/Renderer/Texture.h"
+#include "Dominion/Renderer/Framebuffer.h"
 #include "Dominion/Renderer/Renderer.h"
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Debug/Instrumentor.h"
