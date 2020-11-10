@@ -10,8 +10,6 @@ public:
 	void OnEvent(Dominion::Event& e) override;
 	void OnImGuiRender() override;
 private:
-	Dominion::Ref<Dominion::Framebuffer> m_Framebuffer;
-
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
 
