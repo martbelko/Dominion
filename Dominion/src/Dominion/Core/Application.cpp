@@ -23,14 +23,18 @@ namespace Dominion {
 
 	Application* Application::s_Application = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string_view& name)
 	{
 		DM_PROFILE_FUNCTION();
 
 		if (s_Application == nullptr)
 		{
 			s_Application = this;
-			m_Window = Window::Create(DM_BIND_EVENT_FN(Application::OnEvent));
+			WindowProps wndProps;
+			wndProps.Title = name;
+			wndProps.Width = 1280;
+			wndProps.Height = 720;
+			m_Window = Window::Create(DM_BIND_EVENT_FN(Application::OnEvent), wndProps);
 
 			Renderer::Init();
 
