@@ -9,7 +9,7 @@ namespace Dominion {
 	{
 	public:
 		OpenGLFramebuffer(const FramebufferDesc& desc);
-		virtual ~OpenGLFramebuffer();
+		virtual ~OpenGLFramebuffer() override;
 
 		void Invalidate();
 
