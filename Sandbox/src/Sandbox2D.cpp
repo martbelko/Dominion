@@ -3,7 +3,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Sandbox2D::Sandbox2D()
-	: Dominion::Layer("Sandbox2D")
+	: Dominion::Layer("Sandbox2D") {}
+
+void Sandbox2D::OnAttach()
 {
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
