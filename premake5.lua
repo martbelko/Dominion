@@ -3,7 +3,7 @@ include "./vendor/premake/premake_customization/solution_items.lua"
 workspace "Dominion"
 	architecture "x86_64"
 
-	startproject "Hazel-Editor"
+	startproject "Dominion-Editor"
 
 	solution_items
 	{
