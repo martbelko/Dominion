@@ -8,9 +8,10 @@ namespace Dominion {
 	{
 	public:
 		EditorLayer();
-		void OnUpdate(const Timestep& timestep) override;
-		void OnEvent(Event& e) override;
-		void OnImGuiRender() override;
+		virtual void OnAttach() override;
+		virtual void OnUpdate(const Timestep& timestep) override;
+		virtual void OnEvent(Event& e) override;
+		virtual void OnImGuiRender() override;
 	private:
 		Ref<Framebuffer> m_Framebuffer;
 
