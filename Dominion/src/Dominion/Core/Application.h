@@ -33,6 +33,8 @@ namespace Dominion {
 
 		Window& GetWindow() const;
 
+		void Close();
+
 		static Application& Get();
 	private:
 		bool OnWindowCreated(WindowCreatedEvent& e);

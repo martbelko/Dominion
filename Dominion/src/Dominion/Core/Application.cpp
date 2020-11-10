@@ -133,6 +133,11 @@ namespace Dominion {
 		return *m_Window;
 	}
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 	bool Application::OnWindowCreated(WindowCreatedEvent& event)
 	{
 		return false;
