@@ -24,6 +24,8 @@ namespace Dominion {
 		virtual void Bind() const override;
 		virtual void Bind(uint32_t slot) const override;
 
+		virtual uint32_t GetRendererID() const override;
+
 		virtual bool operator==(const Texture2D& other) const override;
 	private:
 		uint32_t m_RendererID;
