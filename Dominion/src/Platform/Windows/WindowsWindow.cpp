@@ -21,7 +21,7 @@ namespace Dominion {
 	}
 
 	WindowsWindow::WindowsWindow(const EventCallbackFn& callback, const WindowProps& props)
-		: m_Title(props.title), m_Width(props.width), m_Height(props.height), m_EventCallbackFn(callback)
+		: m_Title(props.Title), m_Width(props.Width), m_Height(props.Height), m_EventCallbackFn(callback)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -35,7 +35,7 @@ namespace Dominion {
 
 		{
 			DM_PROFILE_SCOPE("glfwCreateWindow");
-			m_Window = glfwCreateWindow((int)(props.width), (int)(props.height), m_Title.c_str(), nullptr, nullptr);
+			m_Window = glfwCreateWindow((int)(m_Width), (int)(m_Height), m_Title.c_str(), nullptr, nullptr);
 		}
 
 		m_Context = new OpenGLContext(m_Window);

@@ -10,14 +10,10 @@
 
 namespace Dominion {
 
-	class WindowProps
+	struct WindowProps
 	{
-	public:
-		WindowProps(unsigned int width = 1280, unsigned int height = 720, std::string_view title = "Dominion Engine")
-			: width(width), height(height), title(title) {}
-	public:
-		unsigned int width, height;
-		std::string title;
+		std::string Title = "Dominion App";
+		unsigned int Width = 1280, Height = 720;
 	};
 
 	class Window
