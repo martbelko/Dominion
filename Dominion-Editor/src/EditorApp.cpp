@@ -9,6 +9,7 @@ namespace Dominion {
 	{
 	public:
 		EditorApp()
+			: Application("Dominion Editor")
 		{
 			PushLayer(new EditorLayer());
 		}
