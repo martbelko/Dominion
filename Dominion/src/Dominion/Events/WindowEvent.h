@@ -63,8 +63,8 @@ namespace Dominion {
 		WindowResizedEvent(void* window, unsigned int width, unsigned int height)
 			: WindowEvent(window), m_Width(width), m_Height(height) {}
 
-		unsigned int GetWidth() const { return m_Width; }
-		unsigned int GetHeight() const { return m_Height; }
+		uint32_t GetWidth() const { return m_Width; }
+		uint32_t GetHeight() const { return m_Height; }
 
 		virtual std::string ToString() const
 		{
@@ -75,7 +75,7 @@ namespace Dominion {
 
 		EVENT_TYPE(EventType::WindowResized);
 	private:
-		unsigned int m_Width, m_Height;
+		uint32_t m_Width, m_Height;
 	};
 
 	class WindowMovedEvent : public WindowEvent
