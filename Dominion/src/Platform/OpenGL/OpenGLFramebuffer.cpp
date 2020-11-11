@@ -13,9 +13,7 @@ namespace Dominion {
 
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
-		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(1, &m_ColorAttachmentID);
-		glDeleteTextures(1, &m_DepthStencilAttachmentID);
+		Delete();
 	}
 
 	void OpenGLFramebuffer::Invalidate()
@@ -45,11 +43,20 @@ namespace Dominion {
 	void OpenGLFramebuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glViewport(0, 0, m_Desc.Width, m_Desc.Height);
 	}
 
 	void OpenGLFramebuffer::Unbind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
+	{
+		m_Desc.Width = width;
+		m_Desc.Height = height;
+		Delete();
+		Invalidate();
 	}
 
 	uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID() const
@@ -60,6 +67,13 @@ namespace Dominion {
 	const FramebufferDesc& OpenGLFramebuffer::GetDesc() const
 	{
 		return m_Desc;
+	}
+
+	void OpenGLFramebuffer::Delete()
+	{
+		glDeleteFramebuffers(1, &m_RendererID);
+		glDeleteTextures(1, &m_ColorAttachmentID);
+		glDeleteTextures(1, &m_DepthStencilAttachmentID);
 	}
 
 }
