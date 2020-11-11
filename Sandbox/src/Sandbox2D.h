@@ -6,9 +6,10 @@ class Sandbox2D : public Dominion::Layer
 {
 public:
 	Sandbox2D();
-	void OnUpdate(const Dominion::Timestep& timestep) override;
-	void OnEvent(Dominion::Event& e) override;
-	void OnImGuiRender() override;
+	virtual void OnAttach() override;
+	virtual void OnUpdate(const Dominion::Timestep& timestep) override;
+	virtual void OnEvent(Dominion::Event& e) override;
+	virtual void OnImGuiRender() override;
 private:
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
