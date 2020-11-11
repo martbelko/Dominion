@@ -27,8 +27,8 @@ namespace Dominion {
 		int GetX() const { return m_PosX; }
 		int GetY() const { return m_PosY; }
 
-		unsigned int GetWidth() const { return m_Width; }
-		unsigned int GetHeight() const { return m_Height; }
+		uint32_t GetWidth() const { return m_Width; }
+		uint32_t GetHeight() const { return m_Height; }
 
 		virtual std::string ToString() const override
 		{
@@ -40,7 +40,7 @@ namespace Dominion {
 		EVENT_TYPE(EventType::WindowCreated);
 	private:
 		int m_PosX, m_PosY;
-		unsigned int m_Width, m_Height;
+		uint32_t m_Width, m_Height;
 	};
 
 	class WindowClosedEvent : public WindowEvent
