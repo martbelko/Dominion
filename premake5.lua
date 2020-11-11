@@ -61,6 +61,7 @@ workspace "Dominion"
 	IncludeDir["Glad"] = "%{wks.location}/Dominion/vendor/Glad/include"
 	IncludeDir["glm"] = "%{wks.location}/Dominion/vendor/glm"
 	IncludeDir["ImGui"] = "%{wks.location}/Dominion/vendor/ImGui"
+	IncludeDir["entt"] = "%{wks.location}/Dominion/vendor/entt/include"
 
 	group "Dependencies"
 		include "vendor/premake"

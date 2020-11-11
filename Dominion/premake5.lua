@@ -26,6 +26,7 @@ project "Dominion"
         "%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.entt}"
     }
 
     links
