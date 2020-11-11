@@ -115,7 +115,7 @@ namespace Dominion {
 
 	void ImGuiLayer::BlockEvents(bool block)
 	{
-		m_BlockEvents = true;
+		m_BlockEvents = block;
 	}
 
 }
