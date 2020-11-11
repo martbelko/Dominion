@@ -132,6 +132,11 @@ namespace Dominion {
 		overlay->OnAttach();
 	}
 
+	ImGuiLayer* Application::GetImGuiLayer()
+	{
+		return m_ImGuiLayer;
+	}
+
 	Window& Application::GetWindow() const
 	{
 		return *m_Window;
