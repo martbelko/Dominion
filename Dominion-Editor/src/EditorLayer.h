@@ -21,6 +21,7 @@ namespace Dominion {
 		OrthographicCamera m_Camera;
 
 		glm::vec2 m_ViewportSize;
+		bool m_ViewportFocused, m_ViewportHovered;
 
 		float m_Rotation = 0.0f;
 		float m_RotationSpeed = 40.0f;

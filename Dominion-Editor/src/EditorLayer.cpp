@@ -39,8 +39,11 @@ namespace Dominion {
 			sign = -1;
 
 		// Update
-		m_Camera.OnUpdate(timestep);
-		m_Camera.Refresh();
+		if (m_ViewportFocused)
+		{
+			m_Camera.OnUpdate(timestep);
+			m_Camera.Refresh();
+		}
 
 		// Render
 		{
@@ -167,6 +170,10 @@ namespace Dominion {
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 				if (ImGui::Begin("Viewport"))
 				{
+					m_ViewportFocused = ImGui::IsWindowFocused();
+					m_ViewportHovered = ImGui::IsWindowHovered();
+					Application::Get().GetImGuiLayer()->BlockEvents(!(m_ViewportFocused && m_ViewportHovered));
+
 					ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 					if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
 					{
