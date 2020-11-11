@@ -23,6 +23,12 @@ namespace Dominion {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	void OrthographicCamera::Resize(float width, float height)
+	{
+		m_AspectRatio = width / height;
+		SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+	}
+
 	void OrthographicCamera::OnUpdate(const Timestep& timestep)
 	{
 		DM_PROFILE_FUNCTION();
@@ -108,8 +114,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		m_AspectRatio = static_cast<float>(e.GetWidth()) / static_cast<float>(e.GetHeight());
-		SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		Resize(static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()));
 		return false;
 	}
 

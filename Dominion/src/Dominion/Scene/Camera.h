@@ -41,6 +41,8 @@ namespace Dominion {
 
 		void SetProjection(float left, float right, float bottom, float top);
 
+		void Resize(float width, float height);
+
 		virtual void OnUpdate(const Timestep& timestep) override;
 		virtual void OnEvent(Event& e) override;
 
