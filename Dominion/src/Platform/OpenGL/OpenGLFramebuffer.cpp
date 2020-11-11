@@ -53,10 +53,20 @@ namespace Dominion {
 
 	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
 	{
+		size_t size = static_cast<size_t>(std::max(m_Desc.Width, width)) * std::max(m_Desc.Height, height) * 4;
+		int8_t* pixels = new int8_t[size];
+		memset(pixels, 1, size);
+		glBindTexture(GL_TEXTURE_2D, m_ColorAttachmentID);
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
 		m_Desc.Width = width;
 		m_Desc.Height = height;
-		Delete();
-		Invalidate();
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Desc.Width, m_Desc.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		glBindTexture(GL_TEXTURE_2D, m_DepthStencilAttachmentID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Desc.Width, m_Desc.Height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+
+		delete[] pixels;
 	}
 
 	uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID() const
