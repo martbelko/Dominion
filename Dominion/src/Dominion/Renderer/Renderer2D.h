@@ -3,6 +3,7 @@
 #include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/OrthographicCamera.h"
 #include "Dominion/Renderer/Texture.h"
+#include "Dominion/Renderer/Camera.h"
 
 #include <glm/glm.hpp>
 
@@ -14,6 +15,7 @@ namespace Dominion {
 		static void Init();
 		static void Shutdown();
 
+		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
 		static void Flush();
