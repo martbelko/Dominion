@@ -84,7 +84,7 @@ namespace Dominion {
 			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : view)
 			{
-				auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
 				Renderer2D::DrawQuad(transform.Transform, sprite.Color);
 			}
 
