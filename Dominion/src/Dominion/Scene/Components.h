@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Dominion/Renderer/Camera.h"
+
 #include <glm/glm.hpp>
 
 #include <string>
@@ -37,6 +39,18 @@ namespace Dominion {
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct CameraComponent
+	{
+		Camera Cam;
+		bool Primary = false;
+		bool FixedAspectRation = false;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const glm::mat4& projection)
+			: Cam(projection) {}
 	};
 
 }
