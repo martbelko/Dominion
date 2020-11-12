@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dominion/Core/Base.h"
 #include "Dominion/Scene/Scene.h"
 
 #include <entt.hpp>
