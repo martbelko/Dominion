@@ -24,9 +24,6 @@ namespace Dominion {
 		Entity CreateEntity();
 		Entity CreateEntity(const std::string& name);
 
-		// TEMP
-		entt::registry& Reg() { return m_Registry; }
-
 		void OnUpdate(Timestep timestep);
 		void OnViewportResize(uint32_t width, uint32_t height);
 	private:
