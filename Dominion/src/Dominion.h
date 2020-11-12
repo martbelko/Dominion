@@ -21,6 +21,7 @@
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"
+#include "Dominion/Scene/ScriptableEntity.h"
 #include "Dominion/Scene/Components.h"
 #include "Dominion/Debug/Instrumentor.h"
 
