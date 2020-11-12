@@ -14,15 +14,7 @@ namespace Dominion {
 
 	Scene::Scene()
 	{
-		entt::entity entity = m_Registry.create();
 
-		m_Registry.emplace<TransformComponent>(entity);
-
-		auto view = m_Registry.view<TransformComponent>();
-		for (auto entity : view)
-		{
-			TransformComponent& t = view.get<TransformComponent>(entity);
-		}
 	}
 
 	Scene::~Scene()
