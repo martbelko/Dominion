@@ -3,7 +3,7 @@
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Timestep.h"
 
-#include "Components.h"
+#include "Dominion/Scene/Components.h"
 
 #pragma warning (disable: 4267 26439 26495)
 #include <entt.hpp>
