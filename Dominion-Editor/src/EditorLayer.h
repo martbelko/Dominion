@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Panels/SceneHierarchyPanel.h"
+
 #include <Dominion.h>
 
 namespace Dominion {
@@ -29,6 +31,9 @@ namespace Dominion {
 
 		glm::vec2 m_ViewportSize;
 		bool m_ViewportFocused, m_ViewportHovered;
+
+		// Panels
+		SceneHierarhyPanel m_Panel;
 	};
 
 }

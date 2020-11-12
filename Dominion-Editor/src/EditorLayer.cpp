@@ -68,6 +68,8 @@ namespace Dominion {
 		};
 
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+		m_Panel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnUpdate(const Timestep& ts)
@@ -161,7 +163,9 @@ namespace Dominion {
 					ImGui::EndMenuBar();
 				}
 
-				if (ImGui::Begin("Test"))
+				m_Panel.OnImGuiRender();
+
+				if (ImGui::Begin("Settings"))
 				{
 					if (m_SquareEntity)
 					{
