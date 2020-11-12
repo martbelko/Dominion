@@ -149,6 +149,15 @@ namespace Dominion {
 						m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCam;
 						m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCam;
 					}
+
+					{
+						auto& cam = m_SecondCamera.GetComponent<CameraComponent>().Cam;
+						float orthoSize = cam.GetOrthohraphicSize();
+						if (ImGui::DragFloat("Second Camera Size", &orthoSize))
+						{
+							cam.SetOrthographicSize(orthoSize);
+						}
+					}
 				}
 
 				ImGui::End();
