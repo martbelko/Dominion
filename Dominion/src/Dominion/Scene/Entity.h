@@ -43,6 +43,10 @@ namespace Dominion {
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }
+		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+
+		bool operator== (const Entity& other) const;
+		bool operator!= (const Entity& other) const;
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;

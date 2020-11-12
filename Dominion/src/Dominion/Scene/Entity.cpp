@@ -9,4 +9,14 @@ namespace Dominion {
 
 	}
 
+	bool Entity::operator==(const Entity& other) const
+	{
+		return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+	}
+
+	bool Entity::operator!=(const Entity& other) const
+	{
+		return !(*this == other);
+	}
+
 }
