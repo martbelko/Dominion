@@ -25,7 +25,7 @@ namespace Dominion {
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(const Camera& camera)
+	void Renderer::BeginScene(const OrthographicCamera& camera)
 	{
 		m_ProjectionViewMatrix = camera.GetViewProjectionMatrix();
 	}

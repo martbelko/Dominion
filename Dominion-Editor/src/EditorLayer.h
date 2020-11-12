@@ -20,7 +20,7 @@ namespace Dominion {
 
 		Ref<Scene> m_ActiveScene;
 
-		OrthographicCamera m_Camera;
+		OrthographicCameraController m_Camera;
 
 		Entity m_SquareEntity;
 

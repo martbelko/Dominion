@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
-#include "Dominion/Scene/Camera.h"
+#include "Dominion/Renderer/OrthographicCamera.h"
 #include "Dominion/Renderer/Texture.h"
 
 #include <glm/glm.hpp>

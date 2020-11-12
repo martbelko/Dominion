@@ -16,6 +16,8 @@
 #include "Dominion/Renderer/Texture.h"
 #include "Dominion/Renderer/Framebuffer.h"
 #include "Dominion/Renderer/Renderer.h"
+#include "Dominion/Renderer/OrthographicCamera.h"
+#include "Dominion/Renderer/OrthographicCameraController.h"
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"

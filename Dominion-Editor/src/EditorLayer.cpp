@@ -19,7 +19,7 @@ namespace Dominion {
 		float wHeight = static_cast<float>(Application::Get().GetWindow().GetHeight());
 		float wWidth = static_cast<float>(Application::Get().GetWindow().GetWidth());
 		float ratio = wWidth / wHeight;
-		m_Camera = OrthographicCamera(ratio, 1.0f);
+		m_Camera = OrthographicCameraController(ratio, 1.0f);
 
 		FramebufferDesc desc;
 		desc.Width = Application::Get().GetWindow().GetWidth();
@@ -39,17 +39,14 @@ namespace Dominion {
 
 		// Update
 		if (m_ViewportFocused)
-		{
 			m_Camera.OnUpdate(ts);
-			m_Camera.Refresh();
-		}
 
 		// Render
 		m_Framebuffer->Bind();
 		RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		RenderCommand::Clear();
 
-		Renderer2D::BeginScene(m_Camera);
+		Renderer2D::BeginScene(m_Camera.GetCamera());
 
 		// Update scene
 		m_ActiveScene->OnUpdate(ts);
@@ -120,16 +117,8 @@ namespace Dominion {
 					ImGui::EndMenuBar();
 				}
 
-				if (ImGui::Begin("Camera Control"))
+				if (ImGui::Begin("Test"))
 				{
-					glm::vec3& pos = m_Camera.GetPosition();
-					ImGui::DragFloat("X", &pos.x, 0.01f, -5.0f, 5.0f);
-					ImGui::DragFloat("Y", &pos.y, 0.01f, -5.0f, 5.0f);
-					ImGui::DragFloat("Z", &pos.z, 0.01f, -5.0f, 5.0f);
-
-					if (ImGui::Button("Reset Position"))
-						pos = glm::vec3(0.0f, 0.0f, 0.0f);
-
 					if (m_SquareEntity)
 					{
 						ImGui::Separator();
@@ -166,7 +155,7 @@ namespace Dominion {
 					{
 						m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 						m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-						m_Camera.Resize(m_ViewportSize.x, m_ViewportSize.y);
+						m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 					}
 
 					ImGui::Image((void*)m_Framebuffer->GetColorAttachmentRendererID(), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));

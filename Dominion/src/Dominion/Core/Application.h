@@ -7,13 +7,6 @@
 #include "Dominion/Core/LayerStack.h"
 #include "Dominion/ImGui/ImGuiLayer.h"
 
-#include "Dominion/Renderer/Shader.h"
-#include "Dominion/Renderer/Buffer.h"
-#include "Dominion/Renderer/InputLayout.h"
-#include "Dominion/Renderer/Pipeline.h"
-
-#include "Dominion/Scene/Camera.h"
-
 #include <string>
 
 namespace Dominion {

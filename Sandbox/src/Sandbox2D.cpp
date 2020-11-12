@@ -14,7 +14,7 @@ void Sandbox2D::OnAttach()
 	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
 	float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
 	float ratio = wWidth / wHeight;
-	m_Camera = Dominion::OrthographicCamera(ratio, 1.0f);
+	m_Camera = Dominion::OrthographicCameraController(ratio, 1.0f);
 
 	Dominion::FramebufferDesc desc;
 	desc.Width = Dominion::Application::Get().GetWindow().GetWidth();
@@ -35,7 +35,6 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 
 	// Update
 	m_Camera.OnUpdate(timestep);
-	m_Camera.Refresh();
 
 	// Render
 	{
@@ -46,7 +45,7 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 
 	{
 		DM_PROFILE_SCOPE("Render Draw");
-		Dominion::Renderer2D::BeginScene(m_Camera);
+		Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
 		float cap = m_Count / 2.0f;
 		for (float y = -cap; y < cap; y += 0.5f)
@@ -79,13 +78,6 @@ void Sandbox2D::OnImGuiRender()
 	DM_PROFILE_FUNCTION();
 
 	ImGui::Begin("Camera Control");
-	glm::vec3& pos = m_Camera.GetPosition();
-	ImGui::DragFloat("X", &pos.x, 0.01f, -5.0f, 5.0f);
-	ImGui::DragFloat("Y", &pos.y, 0.01f, -5.0f, 5.0f);
-	ImGui::DragFloat("Z", &pos.z, 0.01f, -5.0f, 5.0f);
-
-	if (ImGui::Button("Reset Position"))
-		pos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
 	ImGui::SliderInt("Number of Quads", &m_Count, 0, 100);
