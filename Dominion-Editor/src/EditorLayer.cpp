@@ -1,6 +1,7 @@
 #include "EditorLayer.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Dominion {
 
@@ -24,59 +25,38 @@ namespace Dominion {
 		desc.Width = Application::Get().GetWindow().GetWidth();
 		desc.Height = Application::Get().GetWindow().GetHeight();
 		m_Framebuffer = Framebuffer::Create(desc);
+
+		m_ActiveScene = CreateRef<Scene>();
+
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+		//m_SquareEntity.AddComponent<TransformComponent>();
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 
-	void EditorLayer::OnUpdate(const Timestep& timestep)
+	void EditorLayer::OnUpdate(const Timestep& ts)
 	{
 		DM_PROFILE_FUNCTION();
-
-		static int sign = -1;
-		m_Rotation += timestep * sign * m_RotationSpeed;
-		m_Rotation = std::clamp(m_Rotation, -180.0f, 180.0f);
-		if (m_Rotation == -180.0f)
-			sign = 1;
-		else if (m_Rotation == 180.0f)
-			sign = -1;
 
 		// Update
 		if (m_ViewportFocused)
 		{
-			m_Camera.OnUpdate(timestep);
+			m_Camera.OnUpdate(ts);
 			m_Camera.Refresh();
 		}
 
 		// Render
-		{
-			DM_PROFILE_SCOPE("Render Prep");
-			m_Framebuffer->Bind();
-			RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			RenderCommand::Clear();
-		}
+		m_Framebuffer->Bind();
+		RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		RenderCommand::Clear();
 
-		{
-			DM_PROFILE_SCOPE("Render Draw");
-			Renderer2D::BeginScene(m_Camera);
+		Renderer2D::BeginScene(m_Camera);
 
-			float cap = m_Count / 2.0f;
-			for (float y = -cap; y < cap; y += 0.5f)
-			{
-				for (float x = -cap; x < cap; x += 0.5f)
-				{
-					glm::vec4 color = { (x + cap) / static_cast<float>(m_Count),
-						0.3f,
-						(y + cap) / static_cast<float>(m_Count),
-						1.0f };
-					Renderer2D::DrawRotatedQuad({ x, y }, { 0.45f, 0.45f }, glm::radians(m_Rotation), color);
-				}
-			}
+		// Update scene
+		m_ActiveScene->OnUpdate(ts);
 
-			Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
-			Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, 5.0f);
+		Renderer2D::EndScene();
 
-			Renderer2D::EndScene();
-
-			m_Framebuffer->Unbind();
-		}
+		m_Framebuffer->Unbind();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
@@ -150,8 +130,15 @@ namespace Dominion {
 					if (ImGui::Button("Reset Position"))
 						pos = glm::vec3(0.0f, 0.0f, 0.0f);
 
-					ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
-					ImGui::SliderInt("Number of Quads", &m_Count, 0, 100);
+					if (m_SquareEntity)
+					{
+						ImGui::Separator();
+						std::string& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+						ImGui::Text("%s", tag.c_str());
+					}
+
+					glm::vec4& color = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+					ImGui::ColorEdit4("Square Color", glm::value_ptr(color));
 				}
 
 				ImGui::End();

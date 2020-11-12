@@ -18,15 +18,14 @@ namespace Dominion {
 		Ref<Texture2D> m_Texture2D;
 		Ref<Texture2D> m_TestTexture;
 
+		Ref<Scene> m_ActiveScene;
+
 		OrthographicCamera m_Camera;
+
+		Entity m_SquareEntity;
 
 		glm::vec2 m_ViewportSize;
 		bool m_ViewportFocused, m_ViewportHovered;
-
-		float m_Rotation = 0.0f;
-		float m_RotationSpeed = 40.0f;
-
-		int m_Count = 10;
 	};
 
 }
