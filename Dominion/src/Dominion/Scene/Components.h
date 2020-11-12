@@ -9,6 +9,8 @@
 
 namespace Dominion {
 
+	class ScriptableEntity;
+
 	struct TagComponent
 	{
 		std::string Tag;
@@ -50,6 +52,28 @@ namespace Dominion {
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		std::function<void()> InstantiateFunction;
+		std::function<void()> DestroyInstanceFunction;
+
+		std::function<void()> OnCreateFunction;
+		std::function<void()> OnDestroyFunction;
+		std::function<void(Timestep)> OnUpdateFunction;
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateFunction = [&]() { Instance = new T(); };
+			DestroyInstanceFunction = [&]() { delete static_cast<T*>(Instance); };
+			OnCreateFunction = [&]() { static_cast<T*>(Instance)->OnCreate(); };
+			OnDestroyFunction = [&]() { static_cast<T*>(Instance)->OnDestroy(); };
+			OnUpdateFunction = [&](Timestep ts) { static_cast<T*>(Instance)->OnUpdate(ts); };
+		}
 	};
 
 }
