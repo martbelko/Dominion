@@ -37,6 +37,37 @@ namespace Dominion {
 
 		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
 		cc = m_SecondCamera.AddComponent<CameraComponent>();
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			void OnCreate()
+			{
+
+			}
+
+			void OnDestroy()
+			{
+
+			}
+
+			void OnUpdate(Timestep ts)
+			{
+				auto& trans = GetComponent<TransformComponent>().Transform;
+				float speed = 5.0f;
+
+				if (Input::IsKeyPressed(Key::A))
+					trans[3][0] -= speed * ts;
+				else if (Input::IsKeyPressed(Key::D))
+					trans[3][0] += speed * ts;
+				if (Input::IsKeyPressed(Key::W))
+					trans[3][1] += speed * ts;
+				else if (Input::IsKeyPressed(Key::S))
+					trans[3][1] -= speed * ts;
+			}
+		};
+
+		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 	void EditorLayer::OnUpdate(const Timestep& ts)
