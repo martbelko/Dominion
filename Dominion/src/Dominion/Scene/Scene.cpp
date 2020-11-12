@@ -44,11 +44,35 @@ namespace Dominion {
 
 	void Scene::OnUpdate(Timestep timestep)
 	{
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		// Render 2D
+		Camera* mainCamera = nullptr;
+		glm::mat4* camearaTransform = nullptr;
 		{
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(transform, sprite.Color);
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
+			{
+				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				if (camera.Primary)
+				{
+					mainCamera = &camera.Cam;
+					camearaTransform = &transform.Transform;
+					break;
+				}
+			}
+		}
+
+		if (mainCamera)
+		{
+			Renderer2D::BeginScene(*mainCamera, *camearaTransform);
+
+			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+			for (auto entity : view)
+			{
+				auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawQuad(transform.Transform, sprite.Color);
+			}
+
+			Renderer2D::EndScene();
 		}
 	}
 
