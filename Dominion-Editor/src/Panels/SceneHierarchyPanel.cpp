@@ -1,5 +1,7 @@
 #include "SceneHierarchyPanel.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Dominion {
 
 	SceneHierarhyPanel::SceneHierarhyPanel(Ref<Scene>& context)
@@ -15,13 +17,24 @@ namespace Dominion {
 
 	void SceneHierarhyPanel::OnImGuiRender()
 	{
-		if (ImGui::Begin("Scene Hierarchy"))
+		ImGui::Begin("Scene Hierarchy");
+		m_Context->m_Registry.each([&](auto entityID)
+			{
+				Entity entity = Entity(entityID, m_Context.get());
+				DrawEntityNode(entity);
+			});
+
+		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 		{
-			m_Context->m_Registry.each([&](auto entityID)
-				{
-					Entity entity = Entity(entityID, m_Context.get());
-					DrawEntityNode(entity);
-				});
+			m_SelectionContext = {};
+		}
+
+		ImGui::End();
+
+		if (ImGui::Begin("Properties"))
+		{
+			if (m_SelectionContext)
+				DrawComponents(m_SelectionContext);
 		}
 
 		ImGui::End();
@@ -45,6 +58,35 @@ namespace Dominion {
 			if (opened)
 				ImGui::TreePop();
 			ImGui::TreePop();
+		}
+	}
+
+	void SceneHierarhyPanel::DrawComponents(Entity entity)
+	{
+		if (entity.HasComponent<TagComponent>())
+		{
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
+
+			static char name[256];
+			DM_CORE_ASSERT(sizeof(name) >= tag.size(), "Buffer Overflow");
+			memset(name, 0, sizeof(name));
+			strcpy(name, tag.c_str());
+			DM_TRACE(ImGui::IsItemActive());
+			if (ImGui::InputText("Tag", name, sizeof(name)))
+			{
+				tag = std::string(name);
+			}
+		}
+
+		if (entity.HasComponent<TransformComponent>())
+		{
+			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(TransformComponent).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			{
+				auto& transform = entity.GetComponent<TransformComponent>().Transform;
+				ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
+
+				ImGui::TreePop();
+			}
 		}
 	}
 
