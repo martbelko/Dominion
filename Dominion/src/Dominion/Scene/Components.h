@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Dominion/Renderer/Camera.h"
+#include "Dominion/Scene/SceneCamera.h"
 
 #include <glm/glm.hpp>
 
@@ -43,14 +43,12 @@ namespace Dominion {
 
 	struct CameraComponent
 	{
-		Camera Cam;
+		SceneCamera Cam;
 		bool Primary = false;
 		bool FixedAspectRation = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Cam(projection) {}
 	};
 
 }
