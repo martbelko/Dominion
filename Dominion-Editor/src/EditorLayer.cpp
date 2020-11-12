@@ -29,13 +29,30 @@ namespace Dominion {
 		m_ActiveScene = CreateRef<Scene>();
 
 		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
-		//m_SquareEntity.AddComponent<TransformComponent>();
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+		auto& cc = m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-ratio, ratio, -1.0f, 1.0f));
+		cc.Primary = true;
+
+		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
+		cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f));
 	}
 
 	void EditorLayer::OnUpdate(const Timestep& ts)
 	{
 		DM_PROFILE_FUNCTION();
+
+		// Resize
+		if (const FramebufferDesc& desc = m_Framebuffer->GetDesc();
+			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
+			(desc.Width != m_ViewportSize.x || desc.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y);
+		}
 
 		// Update
 		if (m_ViewportFocused)
@@ -46,12 +63,8 @@ namespace Dominion {
 		RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		RenderCommand::Clear();
 
-		Renderer2D::BeginScene(m_Camera.GetCamera());
-
 		// Update scene
 		m_ActiveScene->OnUpdate(ts);
-
-		Renderer2D::EndScene();
 
 		m_Framebuffer->Unbind();
 	}
@@ -128,6 +141,14 @@ namespace Dominion {
 
 					glm::vec4& color = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
 					ImGui::ColorEdit4("Square Color", glm::value_ptr(color));
+
+					ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+
+					if (ImGui::Checkbox("Primary Camera", &m_PrimaryCam))
+					{
+						m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCam;
+						m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCam;
+					}
 				}
 
 				ImGui::End();
@@ -154,8 +175,6 @@ namespace Dominion {
 					if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
 					{
 						m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-						m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-						m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 					}
 
 					ImGui::Image((void*)m_Framebuffer->GetColorAttachmentRendererID(), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));

@@ -19,10 +19,13 @@ namespace Dominion {
 		Ref<Texture2D> m_TestTexture;
 
 		Ref<Scene> m_ActiveScene;
+		Entity m_SquareEntity;
+		Entity m_CameraEntity;
+		Entity m_SecondCamera;
 
 		OrthographicCameraController m_Camera;
 
-		Entity m_SquareEntity;
+		bool m_PrimaryCam = true;
 
 		glm::vec2 m_ViewportSize;
 		bool m_ViewportFocused, m_ViewportHovered;
