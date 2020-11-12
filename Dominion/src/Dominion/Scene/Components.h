@@ -58,21 +58,14 @@ namespace Dominion {
 	{
 		ScriptableEntity* Instance = nullptr;
 
-		std::function<void()> InstantiateFunction;
-		std::function<void()> DestroyInstanceFunction;
-
-		std::function<void()> OnCreateFunction;
-		std::function<void()> OnDestroyFunction;
-		std::function<void(Timestep)> OnUpdateFunction;
+		ScriptableEntity*(*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
 
 		template<typename T>
 		void Bind()
 		{
-			InstantiateFunction = [&]() { Instance = new T(); };
-			DestroyInstanceFunction = [&]() { delete static_cast<T*>(Instance); };
-			OnCreateFunction = [&]() { static_cast<T*>(Instance)->OnCreate(); };
-			OnDestroyFunction = [&]() { static_cast<T*>(Instance)->OnDestroy(); };
-			OnUpdateFunction = [&](Timestep ts) { static_cast<T*>(Instance)->OnUpdate(ts); };
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc; };
 		}
 	};
 
