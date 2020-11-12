@@ -193,17 +193,6 @@ namespace Dominion {
 
 				ImGui::End();
 
-				if (ImGui::Begin("Renderer2D Stats"))
-				{
-					const auto& stats = Renderer2D::GetStats();
-					ImGui::Text("Draw calls: %d", stats.DrawCalls);
-					ImGui::Text("Quads: %d", stats.QuadCount);
-					ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-					ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-				}
-
-				ImGui::End();
-
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 				if (ImGui::Begin("Viewport"))
 				{
