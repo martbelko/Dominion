@@ -17,6 +17,9 @@
 #include "Dominion/Renderer/Framebuffer.h"
 #include "Dominion/Renderer/Renderer.h"
 #include "Dominion/Core/Timestep.h"
+#include "Dominion/Scene/Scene.h"
+#include "Dominion/Scene/Entity.h"
+#include "Dominion/Scene/Components.h"
 #include "Dominion/Debug/Instrumentor.h"
 
 #if defined(new)
