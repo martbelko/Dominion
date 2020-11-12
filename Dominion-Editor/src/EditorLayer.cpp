@@ -32,11 +32,11 @@ namespace Dominion {
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-		auto& cc = m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-ratio, ratio, -1.0f, 1.0f));
+		auto& cc = m_CameraEntity.AddComponent<CameraComponent>();
 		cc.Primary = true;
 
 		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
-		cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f));
+		cc = m_SecondCamera.AddComponent<CameraComponent>();
 	}
 
 	void EditorLayer::OnUpdate(const Timestep& ts)
@@ -51,7 +51,7 @@ namespace Dominion {
 			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 
-			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
 
 		// Update
