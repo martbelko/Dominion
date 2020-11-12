@@ -4,6 +4,7 @@
 #include "Dominion/Scene/Components.h"
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Dominion/Scene/ScriptableEntity.h"
 
 #include <glm/glm.hpp>
 
@@ -36,14 +37,29 @@ namespace Dominion {
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity = { m_Registry.create(), this };
+		Entity entity = Entity(m_Registry.create(), this);
 		entity.AddComponent<TagComponent>(name);
 		entity.AddComponent<TransformComponent>();
 		return entity;
 	}
 
-	void Scene::OnUpdate(Timestep timestep)
+	void Scene::OnUpdate(Timestep ts)
 	{
+		// Update scripts
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					if (!nsc.Instance)
+					{
+						nsc.InstantiateFunction();
+						nsc.Instance->m_Entity = Entity(entity, this);
+						nsc.OnCreateFunction();
+					}
+
+					nsc.OnUpdateFunction(ts);
+				});
+		}
+
 		// Render 2D
 		Camera* mainCamera = nullptr;
 		glm::mat4* camearaTransform = nullptr;
