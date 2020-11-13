@@ -56,17 +56,17 @@ namespace Dominion {
 
 			void OnUpdate(Timestep ts)
 			{
-				auto& trans = GetComponent<TransformComponent>().Transform;
+				glm::vec3& position = GetComponent<TransformComponent>().Position;
 				float speed = 5.0f;
 
 				if (Input::IsKeyPressed(Key::A))
-					trans[3][0] -= speed * ts;
+					position.x -= speed * ts;
 				else if (Input::IsKeyPressed(Key::D))
-					trans[3][0] += speed * ts;
+					position.x += speed * ts;
 				if (Input::IsKeyPressed(Key::W))
-					trans[3][1] += speed * ts;
+					position.y += speed * ts;
 				else if (Input::IsKeyPressed(Key::S))
-					trans[3][1] -= speed * ts;
+					position.y -= speed * ts;
 			}
 		};
 
