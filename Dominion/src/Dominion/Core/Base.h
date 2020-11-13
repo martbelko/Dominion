@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Dominion/Core/PlatformDetection.h"
+
 #include <memory>
 
 #if defined(DM_DEBUG)
@@ -28,20 +30,15 @@
 	#define DM_PROFILE 0
 #endif
 
+#define DM_EXPAND_MACRO(x) x
+#define DM_STRINGIFY_MACRO(x) #x
+
 #if defined(DM_DEBUG)
 	#define _CRTDBG_MAP_ALLOC
 	#include <stdlib.h>
 	#include <crtdbg.h>
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 	#define new DEBUG_NEW
-#endif
-
-#if defined(DM_ENABLE_ASSERTS)
-	#define DM_ASSERT(x, ...) { if(!(x)) { DM_ERROR("Assertion Failed: {0}", __VA_ARGS__); DM_DEBUGBREAK(); } }
-	#define DM_CORE_ASSERT(x, ...) { if(!(x)) { DM_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); DM_DEBUGBREAK(); } }
-#else
-	#define DM_ASSERT(x, ...)
-	#define DM_CORE_ASSERT(x, ...)
 #endif
 
 #define BIT(x) (1 << x)
@@ -67,3 +64,6 @@ namespace Dominion {
 	}
 
 }
+
+#include "Dominion/Core/Log.h"
+#include "Dominion/Core/Assert.h"
