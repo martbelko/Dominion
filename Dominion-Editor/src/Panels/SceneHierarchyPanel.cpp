@@ -123,6 +123,7 @@ namespace Dominion {
 	void SceneHierarhyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
+		m_SelectionContext = {};
 	}
 
 	void SceneHierarhyPanel::OnImGuiRender()

@@ -15,6 +15,12 @@ namespace Dominion {
 		virtual void OnEvent(Event& e) override;
 		virtual void OnImGuiRender() override;
 	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+	private:
 		Ref<Framebuffer> m_Framebuffer;
 
 		Ref<Texture2D> m_Texture2D;

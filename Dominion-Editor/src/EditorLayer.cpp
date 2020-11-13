@@ -1,7 +1,11 @@
 #include "EditorLayer.h"
 
+#include "Dominion/Utils/PlatformUtils.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <string>
 
 namespace Dominion {
 
@@ -108,8 +112,9 @@ namespace Dominion {
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-		DM_PROFILE_FUNCTION();
 		m_Camera.OnEvent(e);
+
+		e.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -164,16 +169,19 @@ namespace Dominion {
 				{
 					if (ImGui::BeginMenu("File"))
 					{
-						if (ImGui::MenuItem("Serialize"))
+						if (ImGui::MenuItem("New", "Ctrl+N"))
 						{
-							SceneSerializer serializer(m_ActiveScene);
-							serializer.Serialize("assets/Scenes/Example.Dominion");
+							NewScene();
 						}
 
-						if (ImGui::MenuItem("Deserialize"))
+						if (ImGui::MenuItem("Open...", "Ctrl+O"))
 						{
-							SceneSerializer serializer(m_ActiveScene);
-							serializer.Deserialize("assets/Scenes/Example.Dominion");
+							OpenScene();
+						}
+
+						if (ImGui::MenuItem("Save As...", "Ctrl+S"))
+						{
+							SaveSceneAs();
 						}
 
 						if (ImGui::MenuItem("Exit"))
@@ -210,6 +218,70 @@ namespace Dominion {
 		}
 
 		Renderer2D::ResetStats();
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		if (e.GetRepeatCount() > 0)
+			return false;
+
+		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+		switch (e.GetKeyCode())
+		{
+			case Key::N:
+			{
+				if (control)
+					NewScene();
+
+				break;
+			}
+			case Key::O:
+			{
+				if (control)
+					OpenScene();
+
+				break;
+			}
+			case Key::S:
+			{
+				if (control && shift)
+					SaveSceneAs();
+
+				break;
+			}
+		}
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_Panel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filepath = FileDialogs::OpenFile("Dominion Scene (*.dominion)\0*.dominion\0");
+		if (!filepath.empty())
+		{
+			m_ActiveScene = m_ActiveScene = CreateRef<Scene>();
+			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_Panel.SetContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(filepath);
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filepath = FileDialogs::SaveFile("Dominion Scene (*.dominion)\0*.dominion\0");
+		if (!filepath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(filepath);
+		}
 	}
 
 }
