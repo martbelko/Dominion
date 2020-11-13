@@ -2,6 +2,7 @@
 
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Log.h"
+#include "Dominion/Utils/PlatformUtils.h"
 #include "Dominion/Core/Application.h"
 #include "Dominion/Events/Event.h"
 #include "Dominion/Events/KeyEvent.h"
