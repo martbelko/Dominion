@@ -1,43 +1,45 @@
 project "Dominion"
-    kind "StaticLib"
-    language "C++"
-    cppdialect "C++17"
-    staticruntime "on"
+	kind "StaticLib"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
-    pchheader "dmpch.h"
-    pchsource "src/dmpch.cpp"
+	pchheader "dmpch.h"
+	pchsource "src/dmpch.cpp"
 
-    files
-    {
-        "src/**.h",
-        "src/**.cpp",
+	files
+	{
+		"src/**.h",
+		"src/**.cpp",
 		"vendor/stb_image/**.h",
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl"
-    }
+	}
 
-    includedirs
-    {
-        "src",
-        "vendor/spdlog/include",
+	includedirs
+	{
+		"src",
+		"vendor/spdlog/include",
 		"vendor/stb_image",
-        "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.entt}"
-    }
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
+	}
 
-    links
-    {
-        "GLFW",
-        "opengl32.lib",
-        "Glad",
-		"ImGui"
-    }
+	links
+	{
+		"GLFW",
+		"opengl32.lib",
+		"Glad",
+		"ImGui",
+		"yaml-cpp"
+	}
 
-    defines
-    {
-        "GLFW_INCLUDE_NONE"
-    }
+	defines
+	{
+		"GLFW_INCLUDE_NONE"
+	}

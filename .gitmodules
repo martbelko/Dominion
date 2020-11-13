@@ -10,3 +10,6 @@
 [submodule "Dominion/vendor/ImGui"]
 	path = Dominion/vendor/ImGui
 	url = https://github.com/martbelko/imgui/
+[submodule "Dominion/vendor/yaml-cpp"]
+	path = Dominion/vendor/yaml-cpp
+	url = https://github.com/martbelko/yaml-cpp
