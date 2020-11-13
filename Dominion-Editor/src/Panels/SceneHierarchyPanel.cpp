@@ -83,8 +83,15 @@ namespace Dominion {
 			});
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-		{
 			m_SelectionContext = {};
+
+		// Right-click on a blank space
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+				m_Context->CreateEntity("Empty Entity");
+
+			ImGui::EndPopup();
 		}
 
 		ImGui::End();
@@ -92,7 +99,28 @@ namespace Dominion {
 		if (ImGui::Begin("Properties"))
 		{
 			if (m_SelectionContext)
+			{
 				DrawComponents(m_SelectionContext);
+
+				if (ImGui::Button("Add Component"))
+					ImGui::OpenPopup("AddComponent");
+
+				if (ImGui::BeginPopup("AddComponent"))
+				{
+					if (ImGui::MenuItem("Camera"))
+					{
+						m_SelectionContext.AddComponent<CameraComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+					else if (ImGui::MenuItem("Sprite Renderer"))
+					{
+						m_SelectionContext.AddComponent<SpriteRendererComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+
+					ImGui::EndPopup();
+				}
+			}
 		}
 
 		ImGui::End();
@@ -106,8 +134,15 @@ namespace Dominion {
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uint64_t>(static_cast<uint32_t>(entity))), flags, tag.c_str());
 		if (ImGui::IsItemClicked())
-		{
 			m_SelectionContext = entity;
+
+		bool markedForTermination = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Remove Entity"))
+				markedForTermination = true;
+
+			ImGui::EndPopup();
 		}
 
 		if (opened)
@@ -117,6 +152,14 @@ namespace Dominion {
 			if (opened)
 				ImGui::TreePop();
 			ImGui::TreePop();
+		}
+
+		if (markedForTermination)
+		{
+			if (m_SelectionContext == entity)
+				m_SelectionContext = {};
+
+			m_Context->DestroyEntity(entity);
 		}
 	}
 
@@ -136,9 +179,11 @@ namespace Dominion {
 			}
 		}
 
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+
 		if (entity.HasComponent<TransformComponent>())
 		{
-			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(TransformComponent).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(TransformComponent).hash_code()), treeNodeFlags, "Transform"))
 			{
 				TransformComponent& tc = entity.GetComponent<TransformComponent>();
 				DrawVec3Control("Position", tc.Position);
@@ -153,13 +198,30 @@ namespace Dominion {
 
 		if (entity.HasComponent<CameraComponent>())
 		{
-			CameraComponent& camComponent = entity.GetComponent<CameraComponent>();
-			SceneCamera& cam = camComponent.Cam;
+			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(CameraComponent).hash_code()), treeNodeFlags, "Camera");
 
-			ImGui::Checkbox("Primary", &camComponent.Primary);
-
-			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(CameraComponent).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			ImGui::SameLine();
+			if (ImGui::Button("+"))
 			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+
+			bool markedForTermination = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+					markedForTermination = true;
+
+				ImGui::EndPopup();
+			}
+
+			if (open)
+			{
+				CameraComponent& camComponent = entity.GetComponent<CameraComponent>();
+				SceneCamera& cam = camComponent.Cam;
+
+				ImGui::Checkbox("Primary", &camComponent.Primary);
+
 				const char* projectionTypeString[] = { "Perspective", "Orthographic" };
 				const char* currentProjectionTypeString = projectionTypeString[static_cast<int>(cam.GetProjectionType())];
 				if (ImGui::BeginCombo("Projection Type", currentProjectionTypeString))
@@ -213,17 +275,39 @@ namespace Dominion {
 
 				ImGui::TreePop();
 			}
+
+			if (markedForTermination)
+				entity.RemoveComponent<CameraComponent>();
 		}
 
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
-			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(SpriteRendererComponent).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(SpriteRendererComponent).hash_code()), treeNodeFlags, "Sprite Renderer");
+			ImGui::SameLine();
+			if (ImGui::Button("+"))
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+
+			bool markedForTermination = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+					markedForTermination = true;
+
+				ImGui::EndPopup();
+			}
+
+			if (open)
 			{
 				SpriteRendererComponent& sc = entity.GetComponent<SpriteRendererComponent>();
 				ImGui::ColorEdit4("Color", glm::value_ptr(sc.Color));
 
 				ImGui::TreePop();
 			}
+
+			if (markedForTermination)
+				entity.RemoveComponent<SpriteRendererComponent>();
 		}
 	}
 
