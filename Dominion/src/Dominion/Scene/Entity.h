@@ -48,10 +48,12 @@ namespace Dominion {
 		bool operator== (const Entity& other) const;
 		bool operator!= (const Entity& other) const;
 	private:
-		void DestroyEntity();
+		void Destroy();
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
+
+		friend class Scene;
 	};
 
 }
