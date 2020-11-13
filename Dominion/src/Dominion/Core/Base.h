@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Dominion/Core/PlatformDetection.h"
+
 #include <memory>
 
 #if defined(DM_DEBUG)
