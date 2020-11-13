@@ -23,6 +23,7 @@
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Scene/ScriptableEntity.h"
 #include "Dominion/Scene/Components.h"
+#include "Dominion/Scene/SceneSerializer.h"
 #include "Dominion/Debug/Instrumentor.h"
 
 #if defined(new)

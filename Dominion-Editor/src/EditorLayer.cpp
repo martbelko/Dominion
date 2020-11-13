@@ -27,7 +27,7 @@ namespace Dominion {
 		m_Framebuffer = Framebuffer::Create(desc);
 
 		m_ActiveScene = CreateRef<Scene>();
-
+#if 0
 		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
@@ -71,6 +71,7 @@ namespace Dominion {
 		};
 
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
 
 		m_Panel.SetContext(m_ActiveScene);
 	}
@@ -163,6 +164,18 @@ namespace Dominion {
 				{
 					if (ImGui::BeginMenu("File"))
 					{
+						if (ImGui::MenuItem("Serialize"))
+						{
+							SceneSerializer serializer(m_ActiveScene);
+							serializer.Serialize("assets/Scenes/Example.Dominion");
+						}
+
+						if (ImGui::MenuItem("Deserialize"))
+						{
+							SceneSerializer serializer(m_ActiveScene);
+							serializer.Deserialize("assets/Scenes/Example.Dominion");
+						}
+
 						if (ImGui::MenuItem("Exit"))
 							Application::Get().Close();
 						ImGui::EndMenu();
