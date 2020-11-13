@@ -23,6 +23,8 @@ namespace YAML {
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
+
+			return node;
 		}
 
 		static bool decode(const Node& node, glm::vec3& rhs)
@@ -33,6 +35,8 @@ namespace YAML {
 			rhs.x = node[0].as<float>();
 			rhs.y = node[1].as<float>();
 			rhs.z = node[2].as<float>();
+
+			return true;
 		}
 	};
 
@@ -46,6 +50,8 @@ namespace YAML {
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
 			node.push_back(rhs.w);
+
+			return node;
 		}
 
 		static bool decode(const Node& node, glm::vec4& rhs)
@@ -57,6 +63,8 @@ namespace YAML {
 			rhs.y = node[1].as<float>();
 			rhs.z = node[2].as<float>();
 			rhs.w = node[3].as<float>();
+
+			return true;
 		}
 	};
 
