@@ -28,14 +28,17 @@ namespace Dominion {
 
 		m_ActiveScene = CreateRef<Scene>();
 
-		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+		m_RedSquare = m_ActiveScene->CreateEntity("Red Square");
+		m_RedSquare.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 		auto& cc = m_CameraEntity.AddComponent<CameraComponent>();
 		cc.Primary = true;
 
-		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
+		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
 		cc = m_SecondCamera.AddComponent<CameraComponent>();
 
 		class CameraController : public ScriptableEntity
@@ -164,38 +167,6 @@ namespace Dominion {
 				}
 
 				m_Panel.OnImGuiRender();
-
-				if (ImGui::Begin("Settings"))
-				{
-					if (m_SquareEntity)
-					{
-						ImGui::Separator();
-						std::string& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-						ImGui::Text("%s", tag.c_str());
-					}
-
-					glm::vec4& color = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-					ImGui::ColorEdit4("Square Color", glm::value_ptr(color));
-
-					ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-					if (ImGui::Checkbox("Primary Camera", &m_PrimaryCam))
-					{
-						m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCam;
-						m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCam;
-					}
-
-					{
-						auto& cam = m_SecondCamera.GetComponent<CameraComponent>().Cam;
-						float orthoSize = cam.GetOrthohraphicSize();
-						if (ImGui::DragFloat("Second Camera Size", &orthoSize))
-						{
-							cam.SetOrthographicSize(orthoSize);
-						}
-					}
-				}
-
-				ImGui::End();
 
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 				if (ImGui::Begin("Viewport"))
