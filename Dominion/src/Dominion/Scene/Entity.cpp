@@ -9,6 +9,11 @@ namespace Dominion {
 
 	}
 
+	void Entity::DestroyEntity()
+	{
+		m_Scene->m_Registry.destroy(m_EntityHandle);
+	}
+
 	bool Entity::operator==(const Entity& other) const
 	{
 		return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;

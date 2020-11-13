@@ -35,6 +35,11 @@ namespace Dominion {
 		return entity;
 	}
 
+	void Scene::DestroyEntity(Entity entity)
+	{
+		entity.Destroy();
+	}
+
 	void Scene::OnUpdate(Timestep ts)
 	{
 		// Update scripts
