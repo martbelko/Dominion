@@ -13,7 +13,7 @@ namespace Dominion {
 	struct WindowProps
 	{
 		std::string Title = "Dominion App";
-		unsigned int Width = 1280, Height = 720;
+		unsigned int Width = 1600, Height = 900;
 	};
 
 	class Window
