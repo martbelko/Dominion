@@ -24,6 +24,17 @@ namespace Dominion {
 			return component;
 		}
 
+		template<typename T, typename... Args>
+		T& GetOrAddComponent(Args&&... args)
+		{
+			if (HasComponent<T>())
+				return GetComponent<T>();
+
+			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
+		}
+
 		template<typename T>
 		void RemoveComponent()
 		{
