@@ -198,13 +198,16 @@ namespace Dominion {
 
 		if (entity.HasComponent<CameraComponent>())
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
 			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(CameraComponent).hash_code()), treeNodeFlags, "Camera");
 
-			ImGui::SameLine();
-			if (ImGui::Button("+"))
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25);
+			if (ImGui::Button("+", ImVec2(20, 20)))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
+
+			ImGui::PopStyleVar();
 
 			bool markedForTermination = false;
 			if (ImGui::BeginPopup("ComponentSettings"))
@@ -282,12 +285,15 @@ namespace Dominion {
 
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
 			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(SpriteRendererComponent).hash_code()), treeNodeFlags, "Sprite Renderer");
-			ImGui::SameLine();
-			if (ImGui::Button("+"))
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25);
+			if (ImGui::Button("+", ImVec2(20, 20)))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
+
+			ImGui::PopStyleVar();
 
 			bool markedForTermination = false;
 			if (ImGui::BeginPopup("ComponentSettings"))
