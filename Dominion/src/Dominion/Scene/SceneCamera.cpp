@@ -16,7 +16,7 @@ namespace Dominion {
 		RecalculateProjection();
 	}
 
-	void SceneCamera::SetPerpsective(float verticalFOV, float nearClip, float farClip)
+	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
 	{
 		m_ProjectionType = ProjectionType::Perspective;
 		m_PerspectiveFOV = verticalFOV;

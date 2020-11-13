@@ -303,7 +303,7 @@ namespace Dominion {
 						cam.SetOrthographicFarClip(orthoFar);
 				}
 
-				ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRation);
+				ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
 			});
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)

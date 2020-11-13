@@ -100,7 +100,7 @@ namespace Dominion {
 		for (auto entity : view)
 		{
 			CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
-			if (!cameraComponent.FixedAspectRation)
+			if (!cameraComponent.FixedAspectRatio)
 			{
 				SceneCamera& cam = cameraComponent.Cam;
 				cam.SetViewportSize(width, height);
