@@ -11,10 +11,11 @@
 
 namespace Dominion {
 
-	std::string FileDialogs::OpenFile(const char* filter)
+	std::string FileDialogs::OpenFile(const char* filter, const char* defaultTitle)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
+		strcpy(szFile, defaultTitle);
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = glfwGetWin32Window(static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow()));
@@ -31,10 +32,11 @@ namespace Dominion {
 		return std::string();
 	}
 
-	std::string FileDialogs::SaveFile(const char* filter)
+	std::string FileDialogs::SaveFile(const char* filter, const char* defaultTitle)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
+		strcpy(szFile, defaultTitle);
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = glfwGetWin32Window(static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow()));
