@@ -290,7 +290,7 @@ namespace Dominion {
 				}
 				else
 				{
-					float orthoSize = cam.GetOrthohraphicSize();
+					float orthoSize = cam.GetOrthographicSize();
 					if (ImGui::DragFloat("Size", &orthoSize))
 						cam.SetOrthographicSize(orthoSize);
 

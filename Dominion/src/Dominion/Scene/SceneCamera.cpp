@@ -80,7 +80,7 @@ namespace Dominion {
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetOrthohraphicSize() const
+	float SceneCamera::GetOrthographicSize() const
 	{
 		return m_OrthographicSize;
 	}

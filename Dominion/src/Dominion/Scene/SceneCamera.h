@@ -33,7 +33,7 @@ namespace Dominion {
 		void SetPerspectiveFarClip(float farClip);
 
 		// Orthographic
-		float GetOrthohraphicSize() const;
+		float GetOrthographicSize() const;
 		void SetOrthographicSize(float size);
 
 		float GetOrthographicNearClip() const;
