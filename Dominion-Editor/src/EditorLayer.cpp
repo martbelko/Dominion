@@ -255,7 +255,7 @@ namespace Dominion {
 
 	void EditorLayer::NewScene()
 	{
-		m_ActiveScene = m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		m_Panel.SetContext(m_ActiveScene);
 	}
@@ -265,7 +265,7 @@ namespace Dominion {
 		std::string filepath = FileDialogs::OpenFile("Dominion Scene (*.dominion)\0*.dominion\0");
 		if (!filepath.empty())
 		{
-			m_ActiveScene = m_ActiveScene = CreateRef<Scene>();
+			m_ActiveScene = CreateRef<Scene>();
 			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_Panel.SetContext(m_ActiveScene);
 
