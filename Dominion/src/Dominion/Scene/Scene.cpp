@@ -12,14 +12,18 @@
 
 namespace Dominion {
 
-	Scene::Scene()
+	Scene::Scene(const std::string& sceneName)
+		: m_SceneName(sceneName)
+	{
+	}
+
+	Scene::Scene(const std::string& sceneName /*= "Unknown Scene Name"*/)
 	{
 
 	}
 
 	Scene::~Scene()
 	{
-
 	}
 
 	Entity Scene::CreateEntity()
@@ -106,6 +110,16 @@ namespace Dominion {
 				cam.SetViewportSize(width, height);
 			}
 		}
+	}
+
+	const std::string& Scene::GetName() const
+	{
+		return m_SceneName;
+	}
+
+	void Scene::SetName(const std::string& sceneName)
+	{
+		m_SceneName = sceneName;
 	}
 
 	template<typename T>
