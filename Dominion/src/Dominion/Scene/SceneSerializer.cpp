@@ -165,7 +165,7 @@ namespace Dominion {
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Scene
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Scene" << YAML::Value << m_Scene->GetName();
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		m_Scene->m_Registry.each([&](entt::entity entityID)
 		{
@@ -199,6 +199,8 @@ namespace Dominion {
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		DM_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+
+		m_Scene->SetName(sceneName);
 
 		YAML::Node entities = data["Entities"];
 		if (entities)
