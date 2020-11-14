@@ -44,17 +44,17 @@ namespace Dominion {
 		// Update scripts
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			{
+				// TODO: Move to Scene::OnScenePlay
+				if (!nsc.Instance)
 				{
-					// TODO: Move to Scene::OnScenePlay
-					if (!nsc.Instance)
-					{
-						nsc.Instance = nsc.InstantiateScript();
-						nsc.Instance->m_Entity = Entity(entity, this);
-						nsc.Instance->OnCreate();
-					}
+					nsc.Instance = nsc.InstantiateScript();
+					nsc.Instance->m_Entity = Entity(entity, this);
+					nsc.Instance->OnCreate();
+				}
 
-					nsc.Instance->OnUpdate(ts);
-				});
+				nsc.Instance->OnUpdate(ts);
+			});
 		}
 
 		// Render 2D
@@ -94,7 +94,7 @@ namespace Dominion {
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
-		// Resize non-fixed aspect ration cameras
+		// Resize non-fixed aspect ratio cameras
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
