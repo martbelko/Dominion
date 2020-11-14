@@ -17,11 +17,6 @@ namespace Dominion {
 	{
 	}
 
-	Scene::Scene(const std::string& sceneName /*= "Unknown Scene Name"*/)
-	{
-
-	}
-
 	Scene::~Scene()
 	{
 	}
