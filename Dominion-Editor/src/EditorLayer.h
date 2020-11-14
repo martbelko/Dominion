@@ -4,6 +4,8 @@
 
 #include <Dominion.h>
 
+#include <vector>
+
 namespace Dominion {
 
 	class EditorLayer : public Layer
@@ -41,6 +43,9 @@ namespace Dominion {
 
 		// Panels
 		SceneHierarhyPanel m_Panel;
+
+		// Scenes
+		std::vector<Ref<Scene>> m_Scenes;
 	};
 
 }
