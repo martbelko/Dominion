@@ -121,101 +121,96 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		static bool dockingEnabled = true;
-		if (dockingEnabled)
+		static bool dockSpaceOpen = true;
+		static bool opt_fullscreen = true;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (opt_fullscreen)
 		{
-			static bool dockSpaceOpen = true;
-			static bool opt_fullscreen = true;
-			static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->GetWorkPos());
+			ImGui::SetNextWindowSize(viewport->GetWorkSize());
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
 
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		if (ImGui::Begin("DockSpace Demo", &dockSpaceOpen, window_flags))
+		{
 			if (opt_fullscreen)
+				ImGui::PopStyleVar(2);
+
+			ImGuiIO& io = ImGui::GetIO();
+			ImGuiStyle& style = ImGui::GetStyle();
+
+			float defaultWindowSizeX = style.WindowMinSize.x;
+			style.WindowMinSize.x = 370.0f;
+			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 			{
-				ImGuiViewport* viewport = ImGui::GetMainViewport();
-				ImGui::SetNextWindowPos(viewport->GetWorkPos());
-				ImGui::SetNextWindowSize(viewport->GetWorkSize());
-				ImGui::SetNextWindowViewport(viewport->ID);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-				window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+				ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 			}
-			else
+			style.WindowMinSize.x = defaultWindowSizeX;
+
+			if (ImGui::BeginMenuBar())
 			{
-				dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-			}
-
-			if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-				window_flags |= ImGuiWindowFlags_NoBackground;
-
-			if (ImGui::Begin("DockSpace Demo", &dockSpaceOpen, window_flags))
-			{
-				if (opt_fullscreen)
-					ImGui::PopStyleVar(2);
-
-				ImGuiIO& io = ImGui::GetIO();
-				ImGuiStyle& style = ImGui::GetStyle();
-
-				float defaultWindowSizeX = style.WindowMinSize.x;
-				style.WindowMinSize.x = 370.0f;
-				if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+				if (ImGui::BeginMenu("File"))
 				{
-					ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-				}
-				style.WindowMinSize.x = defaultWindowSizeX;
-
-				if (ImGui::BeginMenuBar())
-				{
-					if (ImGui::BeginMenu("File"))
+					if (ImGui::MenuItem("New", "Ctrl+N"))
 					{
-						if (ImGui::MenuItem("New", "Ctrl+N"))
-						{
-							NewScene();
-						}
-
-						if (ImGui::MenuItem("Open...", "Ctrl+O"))
-						{
-							OpenScene();
-						}
-
-						if (ImGui::MenuItem("Save As...", "Ctrl+S"))
-						{
-							SaveSceneAs();
-						}
-
-						if (ImGui::MenuItem("Exit"))
-							Application::Get().Close();
-						ImGui::EndMenu();
+						NewScene();
 					}
 
-					ImGui::EndMenuBar();
-				}
-
-				m_Panel.OnImGuiRender();
-
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-				if (ImGui::Begin("Viewport"))
-				{
-					m_ViewportFocused = ImGui::IsWindowFocused();
-					m_ViewportHovered = ImGui::IsWindowHovered();
-					Application::Get().GetImGuiLayer()->BlockEvents(!(m_ViewportFocused && m_ViewportHovered));
-
-					ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-					if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
+					if (ImGui::MenuItem("Open...", "Ctrl+O"))
 					{
-						m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+						OpenScene();
 					}
 
-					ImGui::Image(reinterpret_cast<void*>(m_Framebuffer->GetColorAttachmentRendererID()), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
+					if (ImGui::MenuItem("Save As...", "Ctrl+S"))
+					{
+						SaveSceneAs();
+					}
+
+					if (ImGui::MenuItem("Exit"))
+						Application::Get().Close();
+					ImGui::EndMenu();
 				}
 
-				ImGui::End();
-				ImGui::PopStyleVar();
+				ImGui::EndMenuBar();
+			}
+
+			m_Panel.OnImGuiRender();
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::Begin("Viewport"))
+			{
+				m_ViewportFocused = ImGui::IsWindowFocused();
+				m_ViewportHovered = ImGui::IsWindowHovered();
+				Application::Get().GetImGuiLayer()->BlockEvents(!(m_ViewportFocused && m_ViewportHovered));
+
+				ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+				if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
+				{
+					m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+				}
+
+				ImGui::Image(reinterpret_cast<void*>(m_Framebuffer->GetColorAttachmentRendererID()), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 			}
 
 			ImGui::End();
+			ImGui::PopStyleVar();
+
 		}
+
+		ImGui::End();
+		ImGui::PopStyleVar();
 
 		Renderer2D::ResetStats();
 	}
