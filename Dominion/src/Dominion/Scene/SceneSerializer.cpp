@@ -4,6 +4,7 @@
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Scene/Components.h"
 #include "Dominion/Scene/SceneCamera.h"
+#include "Dominion/Renderer/Texture.h"
 
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
@@ -154,6 +155,7 @@ namespace Dominion {
 
 			SpriteRendererComponent& sc = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << sc.Color;
+			out << YAML::Key << "Texture" << YAML::Value << (sc.Texture ? sc.Texture->GetPath() : ".");
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -257,6 +259,11 @@ namespace Dominion {
 				{
 					SpriteRendererComponent& sc = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					sc.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+					std::string texPath = spriteRendererComponent["Texture"].as<std::string>();
+					if (texPath == ".")
+						sc.Texture = nullptr;
+					else
+						sc.Texture = Texture2D::Create(texPath);
 				}
 			}
 		}
