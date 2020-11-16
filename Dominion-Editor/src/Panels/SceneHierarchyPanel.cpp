@@ -4,6 +4,8 @@
 
 namespace Dominion {
 
+	Ref<Texture2D> SceneHierarhyPanel::s_DefaultTexture;
+
 	// TODO: Move to UI Utils
 	static void DrawVec3Control(const char* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
 	{
@@ -114,9 +116,11 @@ namespace Dominion {
 		}
 	}
 
-	SceneHierarhyPanel::SceneHierarhyPanel(Ref<Scene>& context)
+	SceneHierarhyPanel::SceneHierarhyPanel(const Ref<Scene>& context)
 		: m_Context(context)
 	{
+		if (!s_DefaultTexture)
+			s_DefaultTexture = Texture2D::Create("assets/Textures/TestTexture.jpg");
 	}
 
 	void SceneHierarhyPanel::SetContext(const Ref<Scene>& context)
@@ -316,6 +320,30 @@ namespace Dominion {
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+			if (component.Texture)
+			{
+				ImGui::Image(reinterpret_cast<void*>(component.Texture->GetRendererID()), ImVec2(64, 64));
+				if (ImGui::IsItemClicked(0)) // If we click on the image
+				{
+					std::string texturePath = FileDialogs::OpenFile("All (*.*)\0*\0");
+					if (!texturePath.empty())
+						component.Texture = Texture2D::Create(texturePath);
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Remove texture"))
+					component.Texture = nullptr;
+			}
+			else
+			{
+				ImGui::Image(reinterpret_cast<void*>(s_DefaultTexture->GetRendererID()), ImVec2(64, 64));
+				if (ImGui::IsItemClicked(0)) // If we click on the image
+				{
+					std::string texturePath = FileDialogs::OpenFile("All (*.*)\0*\0");
+					if (!texturePath.empty())
+						component.Texture = Texture2D::Create(texturePath);
+				}
+			}
 		});
 	}
 

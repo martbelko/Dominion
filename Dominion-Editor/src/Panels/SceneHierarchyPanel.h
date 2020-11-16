@@ -9,8 +9,7 @@ namespace Dominion {
 	class SceneHierarhyPanel
 	{
 	public:
-		SceneHierarhyPanel() = default;
-		SceneHierarhyPanel(Ref<Scene>& context);
+		SceneHierarhyPanel(const Ref<Scene>& context = nullptr);
 
 		void SetContext(const Ref<Scene>& context);
 
@@ -21,6 +20,8 @@ namespace Dominion {
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+	private:
+		static Ref<Texture2D> s_DefaultTexture;
 	};
 
 }
