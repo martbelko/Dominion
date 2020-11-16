@@ -6,6 +6,7 @@
 namespace Dominion {
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string_view& path)
+		: m_Path(path)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -52,7 +53,7 @@ namespace Dominion {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: m_Width(width), m_Height(height), m_InternalFormat(GL_RGBA8), m_DataFormat(GL_RGBA)
+		: m_Width(width), m_Height(height), m_InternalFormat(GL_RGBA8), m_DataFormat(GL_RGBA), m_Path("")
 	{
 		DM_PROFILE_FUNCTION();
 
