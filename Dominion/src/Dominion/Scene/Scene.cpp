@@ -59,7 +59,7 @@ namespace Dominion {
 
 		// Render 2D
 		Camera* mainCamera = nullptr;
-		glm::mat4 camearaTransform;
+		TransformComponent* mainCameraTc = nullptr;
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
@@ -68,7 +68,7 @@ namespace Dominion {
 				if (camera.Primary)
 				{
 					mainCamera = &camera.Cam;
-					camearaTransform = transform.GetTransform();
+					mainCameraTc = &transform;
 					break;
 				}
 			}
@@ -76,13 +76,16 @@ namespace Dominion {
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(*mainCamera, camearaTransform);
+			Renderer2D::BeginScene(*mainCamera, mainCameraTc->GetTransform());
 
 			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : view)
 			{
 				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				if (sprite.Texture != nullptr)
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture);
+				else
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 
 			Renderer2D::EndScene();
