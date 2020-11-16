@@ -18,6 +18,7 @@ namespace Dominion {
 
 		virtual uint32_t GetWidth() const override;
 		virtual uint32_t GetHeight() const override;
+		virtual const std::string& GetPath() const override { return m_Path; }
 
 		virtual void SetData(const void* data, uint32_t size) override;
 
@@ -31,9 +32,7 @@ namespace Dominion {
 		uint32_t m_RendererID;
 		uint32_t m_Width, m_Height;
 		GLenum m_InternalFormat, m_DataFormat;
-#ifdef DM_DEBUG
-		std::string path;
-#endif
+		std::string m_Path;
 	};
 
 }
