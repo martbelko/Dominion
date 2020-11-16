@@ -10,6 +10,8 @@
 
 namespace Dominion {
 
+	// Forward declarations
+	class Texture2D;
 	class ScriptableEntity;
 
 	struct TagComponent
@@ -46,6 +48,7 @@ namespace Dominion {
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Ref<Texture2D> Texture = nullptr;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
