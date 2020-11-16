@@ -6,7 +6,7 @@
 
 namespace Dominion {
 
-	Dominion::Ref<Dominion::Texture2D> Texture2D::Create(const std::string_view& filepath)
+	Ref<Texture2D> Texture2D::Create(const std::string_view& filepath)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -18,7 +18,7 @@ namespace Dominion {
 		return nullptr;
 	}
 
-	Dominion::Ref<Dominion::Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
+	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
 	{
 		switch (Renderer::GetAPI())
 		{
