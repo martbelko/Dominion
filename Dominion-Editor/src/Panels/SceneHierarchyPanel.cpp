@@ -120,7 +120,7 @@ namespace Dominion {
 		: m_Context(context)
 	{
 		if (!s_DefaultTexture)
-			s_DefaultTexture = Texture2D::Create("assets/Textures/TestTexture.jpg");
+			s_DefaultTexture = Texture2D::Create("assets/Textures/NoTexture.png");
 	}
 
 	void SceneHierarhyPanel::SetContext(const Ref<Scene>& context)
