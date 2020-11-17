@@ -83,7 +83,7 @@ namespace Dominion {
 			{
 				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
 				if (sprite.Texture != nullptr)
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture);
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
 				else
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
