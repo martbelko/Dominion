@@ -74,13 +74,13 @@ namespace Dominion {
 
 		delete[] quadIndices;
 
-		s_Data.QuadPipeline = Dominion::Pipeline::Create(s_Data.QuadVertexBuffer, quadIB, Dominion::InputLayout::Create(
+		s_Data.QuadPipeline = Pipeline::Create(s_Data.QuadVertexBuffer, quadIB, InputLayout::Create(
 			{
-				{ "Position", Dominion::DataType::Float3 },
-				{ "Color", Dominion::DataType::Float4 },
-				{ "TexCoord", Dominion::DataType::Float2 },
-				{ "TexIndex", Dominion::DataType::Float },
-				{ "TilingFactor", Dominion::DataType::Float }
+				{ "Position", DataType::Float3 },
+				{ "Color", DataType::Float4 },
+				{ "TexCoord", DataType::Float2 },
+				{ "TexIndex", DataType::Float },
+				{ "TilingFactor", DataType::Float }
 			}
 		));
 
