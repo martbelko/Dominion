@@ -156,6 +156,7 @@ namespace Dominion {
 			SpriteRendererComponent& sc = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << sc.Color;
 			out << YAML::Key << "Texture" << YAML::Value << (sc.Texture ? sc.Texture->GetPath() : ".");
+			out << YAML::Key << "TilingFactor" << YAML::Value << sc.TilingFactor;
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -264,6 +265,7 @@ namespace Dominion {
 						sc.Texture = nullptr;
 					else
 						sc.Texture = Texture2D::Create(texPath);
+					sc.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 				}
 			}
 		}
