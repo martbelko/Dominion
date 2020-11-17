@@ -9,6 +9,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0, 1, 0, 1]
+      Texture: assets/Textures/TestTexture.jpg
   - Entity: 12837192831273
     TagComponent:
       Tag: Red Square
@@ -18,6 +19,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
+      Texture: assets/Textures/TestTexture.jpg
   - Entity: 12837192831273
     TagComponent:
       Tag: Camera A
@@ -45,3 +47,4 @@ Entities:
       Scale: [0.699999988, 1.79999995, 1]
     SpriteRendererComponent:
       Color: [0, 0, 1, 1]
+      Texture: assets/Textures/TestTexture.jpg
