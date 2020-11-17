@@ -333,6 +333,8 @@ namespace Dominion {
 				ImGui::SameLine();
 				if (ImGui::Button("Remove texture"))
 					component.Texture = nullptr;
+
+				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, -50.0f, 50.0f, "%.2f");
 			}
 			else
 			{
