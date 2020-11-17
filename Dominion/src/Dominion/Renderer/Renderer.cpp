@@ -1,6 +1,8 @@
 #include "dmpch.h"
 #include "Renderer.h"
 
+#include "Dominion/Renderer/SimpleRenderer2D.h"
+
 namespace Dominion {
 
 	glm::mat4 Renderer::m_ProjectionViewMatrix = glm::mat4(1.0f);
@@ -11,6 +13,7 @@ namespace Dominion {
 
 		RenderCommand::Init();
 		Renderer2D::Init();
+		SimpleRenderer2D::Init();
 	}
 
 	void Renderer::Shutdown()
