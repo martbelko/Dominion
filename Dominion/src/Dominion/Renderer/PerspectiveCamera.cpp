@@ -33,10 +33,6 @@ namespace Dominion {
 		m_Up = glm::normalize(glm::cross(right, m_Front));
 
 		m_ViewProjectionMatrix = m_ProjectionMatrix * glm::lookAt(m_Position, m_Position + m_Front, m_Up);
-		/*glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position);
-
-		m_ViewMatrix = glm::inverse(transform);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;*/
 	}
 
 }
