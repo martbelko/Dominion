@@ -16,9 +16,6 @@ namespace Dominion {
 
 	void EditorLayer::OnAttach()
 	{
-		m_Texture2D = Texture2D::Create("assets/Textures/TestTexture.jpg");
-		m_TestTexture = Texture2D::Create("assets/Textures/unnamed.png");
-
 		/* Setup camera */
 		float wHeight = static_cast<float>(Application::Get().GetWindow().GetHeight());
 		float wWidth = static_cast<float>(Application::Get().GetWindow().GetWidth());
