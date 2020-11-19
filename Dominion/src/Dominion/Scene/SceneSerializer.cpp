@@ -1,6 +1,7 @@
 #include "dmpch.h"
 #include "SceneSerializer.h"
 
+#include "Dominion/Core/Filesystem.h"
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Scene/Components.h"
 #include "Dominion/Scene/SceneCamera.h"
@@ -155,7 +156,7 @@ namespace Dominion {
 
 			SpriteRendererComponent& sc = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << sc.Color;
-			out << YAML::Key << "Texture" << YAML::Value << (sc.Texture ? sc.Texture->GetPath() : ".");
+			out << YAML::Key << "Texture" << YAML::Value << (sc.Texture ? Filesystem::GetRelativePathFromFullPath(sc.Texture->GetPath()).data() : ".");
 			out << YAML::Key << "TilingFactor" << YAML::Value << sc.TilingFactor;
 
 			out << YAML::EndMap; // SpriteRendererComponent
