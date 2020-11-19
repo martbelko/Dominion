@@ -11,10 +11,14 @@ public:
 	virtual void OnEvent(Dominion::Event& e) override;
 	virtual void OnImGuiRender() override;
 private:
+	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
+private:
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
 
 	Dominion::PerspectiveCameraController m_Camera;
+
+	bool m_ShowCursor = false;
 
 	float m_Rotation = 0.0f;
 	float m_RotationSpeed = 40.0f;

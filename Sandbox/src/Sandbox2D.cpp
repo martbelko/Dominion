@@ -7,8 +7,12 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
+	/* Load resources */
 	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
+
+	/* Disable cursor */
+	Dominion::Application::Get().GetWindow().ShowCursor(m_ShowCursor);
 
 	/* Setup camera */
 	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
@@ -16,10 +20,7 @@ void Sandbox2D::OnAttach()
 	float ratio = wWidth / wHeight;
 
 	m_Camera = Dominion::PerspectiveCameraController(ratio, false);
-
 	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
-
-	Dominion::Application::Get().GetWindow().ShowCursor(false);
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
@@ -36,6 +37,7 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 
 	// Update
 	m_Camera.OnUpdate(timestep);
+	Dominion::Application::Get().GetWindow().ShowCursor(m_ShowCursor);
 
 	// Render
 	{
@@ -72,6 +74,7 @@ void Sandbox2D::OnEvent(Dominion::Event& e)
 {
 	DM_PROFILE_FUNCTION();
 	m_Camera.OnEvent(e);
+	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Sandbox2D::OnKeyPressed));
 }
 
 void Sandbox2D::OnImGuiRender()
@@ -95,4 +98,12 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::End();
 
 	Dominion::Renderer2D::ResetStats();
+}
+
+bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)
+{
+	if (e.GetKeyCode() == Dominion::Key::Escape)
+		m_ShowCursor = !m_ShowCursor;
+
+	return false;
 }
