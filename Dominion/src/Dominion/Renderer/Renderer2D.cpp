@@ -115,6 +115,18 @@ namespace Dominion {
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 
+	void Renderer2D::BeginScene()
+	{
+		DM_PROFILE_FUNCTION();
+
+		s_Data.QuadPipeline->Bind();
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", glm::mat4(1.0f));
+
+		StartBatch();
+	}
+
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		DM_PROFILE_FUNCTION();

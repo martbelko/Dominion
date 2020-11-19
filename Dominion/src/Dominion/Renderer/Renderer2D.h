@@ -18,6 +18,7 @@ namespace Dominion {
 		static void Init();
 		static void Shutdown();
 
+		static void BeginScene();
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const OrthographicCamera& camera);
 		static void BeginScene(const PerspectiveCamera& camera);
