@@ -14,7 +14,7 @@ private:
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
 
-	Dominion::OrthographicCameraController m_Camera;
+	Dominion::PerspectiveCameraController m_Camera;
 
 	float m_Rotation = 0.0f;
 	float m_RotationSpeed = 40.0f;
