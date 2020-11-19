@@ -15,10 +15,6 @@ void Sandbox2D::OnAttach()
 	float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
 	float ratio = wWidth / wHeight;
 	m_Camera = Dominion::OrthographicCameraController(ratio, 1.0f);
-
-	Dominion::FramebufferDesc desc;
-	desc.Width = Dominion::Application::Get().GetWindow().GetWidth();
-	desc.Height = Dominion::Application::Get().GetWindow().GetHeight();
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
