@@ -26,6 +26,7 @@ namespace Dominion {
 		void SetEventCallback(const EventCallbackFn& callback) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
+		virtual void ShowCursor(bool show) override { glfwSetInputMode(m_Window, GLFW_CURSOR, (show ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED)); }
 
 		virtual void Close() override;
 	private:
