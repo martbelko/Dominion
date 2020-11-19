@@ -18,6 +18,8 @@ void Sandbox2D::OnAttach()
 	m_Camera = Dominion::PerspectiveCameraController(ratio, false);
 
 	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+
+	Dominion::Application::Get().GetWindow().ShowCursor(false);
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
