@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
-#include "Dominion/Renderer/OrthographicCamera.h"
 #include "Dominion/Renderer/Texture.h"
-#include "Dominion/Renderer/Camera.h"
 
 #include <glm/glm.hpp>
 
 namespace Dominion {
+
+	// Forward declarations
+	class OrthographicCamera;
+	class Camera;
 
 	class Renderer2D
 	{
