@@ -8,6 +8,7 @@
 #include "Dominion/Renderer/Texture.h"
 #include "Dominion/Renderer/Camera.h"
 #include "Dominion/Renderer/OrthographicCamera.h"
+#include "Dominion/Renderer/PerspectiveCamera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -129,6 +130,18 @@ namespace Dominion {
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
+	{
+		DM_PROFILE_FUNCTION();
+
+		s_Data.QuadPipeline->Bind();
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+		StartBatch();
+	}
+
+	void Renderer2D::BeginScene(const PerspectiveCamera& camera)
 	{
 		DM_PROFILE_FUNCTION();
 

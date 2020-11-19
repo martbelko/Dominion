@@ -33,6 +33,11 @@ namespace Dominion {
 		m_ProjectionViewMatrix = camera.GetViewProjectionMatrix();
 	}
 
+	void Renderer::BeginScene(const PerspectiveCamera& camera)
+	{
+		m_ProjectionViewMatrix = camera.GetViewProjectionMatrix();
+	}
+
 	void Renderer::EndScene()
 	{
 	}

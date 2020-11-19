@@ -8,6 +8,7 @@
 namespace Dominion {
 
 	// Forward declarations
+	class PerspectiveCamera;
 	class OrthographicCamera;
 	class Camera;
 
@@ -19,6 +20,7 @@ namespace Dominion {
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const OrthographicCamera& camera);
+		static void BeginScene(const PerspectiveCamera& camera);
 		static void EndScene();
 		static void Flush();
 
