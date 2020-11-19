@@ -17,6 +17,7 @@ int main(int argc, char** argv)
 #endif
 
 	DM_PROFILE_BEGIN_SESSION("Startup", "DominionProfile-Startup.json");
+	Dominion::Filesystem::Init();
 	Dominion::Log::Init();
 	DM_CORE_INFO("Initialized engine core logger");
 	DM_INFO("Initialized client logger");
