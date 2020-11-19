@@ -6,6 +6,8 @@
 #include "Dominion/Renderer/Pipeline.h"
 #include "Dominion/Renderer/Shader.h"
 #include "Dominion/Renderer/Texture.h"
+#include "Dominion/Renderer/Camera.h"
+#include "Dominion/Renderer/OrthographicCamera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
