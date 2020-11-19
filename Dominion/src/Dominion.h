@@ -20,6 +20,8 @@
 #include "Dominion/Renderer/Renderer.h"
 #include "Dominion/Renderer/OrthographicCamera.h"
 #include "Dominion/Renderer/OrthographicCameraController.h"
+#include "Dominion/Renderer/PerspectiveCamera.h"
+#include "Dominion/Renderer/PerspectiveCameraController.h"
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"
