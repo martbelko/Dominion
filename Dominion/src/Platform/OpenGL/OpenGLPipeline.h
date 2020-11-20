@@ -18,8 +18,6 @@ namespace Dominion {
 
 		virtual void Bind() const override;
 
-		virtual Ref<IndexBuffer> GetIndexBuffer() const;
-
 		virtual Ref<VertexBuffer> GetVertexBuffer() const override { return m_VertexBuffer; }
 		virtual Ref<IndexBuffer> GetIndexBuffer() const override;
 		virtual Ref<InputLayout> GetInputLayout() const override { return m_InputLayout; }
