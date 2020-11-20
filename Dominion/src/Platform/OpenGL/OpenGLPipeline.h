@@ -5,6 +5,11 @@
 
 namespace Dominion {
 
+	// Forward declarations
+	class VertexBuffer;
+	class IndexBuffer;
+	class InputLayout;
+
 	class OpenGLPipeline : public Pipeline
 	{
 	public:
