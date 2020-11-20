@@ -60,6 +60,8 @@ namespace Dominion {
 	{
 	public:
 		static Ref<InputLayout> Create(const std::initializer_list<InputLayoutElement>& elements);
+
+		virtual uint32_t GetStride() const = 0;
 	};
 
 }
