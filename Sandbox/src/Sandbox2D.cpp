@@ -13,7 +13,7 @@ void Sandbox2D::OnAttach()
 	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
 
 	/* Disable cursor */
-	Dominion::Application::Get().GetWindow().ShowCursor(m_ShowCursor);
+	Dominion::Application::Get().GetWindow().ShowCursor(false);
 
 	/* Setup camera */
 	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
