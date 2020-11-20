@@ -14,7 +14,9 @@ namespace Dominion {
 	public:
 		static Ref<Pipeline> Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout);
 
+		virtual Ref<VertexBuffer> GetVertexBuffer() const = 0;
 		virtual Ref<IndexBuffer> GetIndexBuffer() const = 0;
+		virtual Ref<InputLayout> GetInputLayout() const = 0;
 	};
 
 }
