@@ -49,7 +49,13 @@ namespace Dominion {
 		shader->SetMat4("u_Transform", transform);
 		pipeline->Bind();
 
-		RenderCommand::DrawIndexed(pipeline);
+		if (pipeline->GetIndexBuffer())
+			RenderCommand::DrawIndexed(pipeline);
+		else
+		{
+			uint32_t count = pipeline->GetVertexBuffer()->GetSize() / pipeline->GetInputLayout()->GetStride();
+			RenderCommand::Draw(pipeline, count);
+		}
 	}
 
 }
