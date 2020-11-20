@@ -19,4 +19,16 @@ namespace Dominion {
 		return nullptr;
 	}
 
+	Ref<Pipeline> Pipeline::Create(Ref<VertexBuffer>& vertexBuffer, Ref<InputLayout>& inputLayout)
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None: DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLPipeline>(vertexBuffer, inputLayout);
+		}
+
+		DM_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
 }
