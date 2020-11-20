@@ -128,7 +128,7 @@ void Sandbox2D::OnImGuiRender()
 {
 	DM_PROFILE_FUNCTION();
 
-	ImGui::Begin("Camera Control");
+	/*ImGui::Begin("Camera Control");
 
 	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
 	ImGui::SliderInt("Number of Quads", &m_Count, 0, 100);
@@ -142,9 +142,7 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-	ImGui::End();
-
-	Dominion::Renderer2D::ResetStats();
+	ImGui::End();*/
 }
 
 bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)
