@@ -63,4 +63,9 @@ namespace Dominion {
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 
+	void OpenGLRendererAPI::Draw(const Ref<Pipeline> pipeline, uint32_t count)
+	{
+		glDrawArrays(GL_TRIANGLES, 0, count);
+	}
+
 }
