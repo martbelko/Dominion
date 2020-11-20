@@ -35,6 +35,11 @@ namespace Dominion {
 		{
 			s_RendererAPI->DrawIndexed(pipeline, count);
 		}
+
+		static void Draw(const Ref<Pipeline> pipeline, uint32_t count)
+		{
+			s_RendererAPI->Draw(pipeline, count);
+		}
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};
