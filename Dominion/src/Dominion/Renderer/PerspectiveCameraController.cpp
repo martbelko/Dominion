@@ -99,15 +99,15 @@ namespace Dominion {
 		m_Camera.m_Yaw += xoffset;
 		m_Camera.m_Pitch -= yoffset;
 
-		if (m_Camera.m_Pitch > 89.0f)
-			m_Camera.m_Pitch = 89.0f;
-		if (m_Camera.m_Pitch < -89.0f)
-			m_Camera.m_Pitch = -89.0f;
+		if (m_Camera.m_Pitch > glm::radians(89.0f))
+			m_Camera.m_Pitch = glm::radians(89.0f);
+		if (m_Camera.m_Pitch < glm::radians(-89.0f))
+			m_Camera.m_Pitch = glm::radians(-89.0f);
 
 		glm::vec3 direction;
-		direction.x = glm::cos(glm::radians(m_Camera.m_Yaw)) * glm::cos(glm::radians(m_Camera.m_Pitch));
-		direction.y = glm::sin(glm::radians(m_Camera.m_Pitch));
-		direction.z = glm::sin(glm::radians(m_Camera.m_Yaw)) * glm::cos(glm::radians(m_Camera.m_Pitch));
+		direction.x = glm::cos(m_Camera.m_Yaw) * glm::cos(m_Camera.m_Pitch);
+		direction.y = glm::sin(m_Camera.m_Pitch);
+		direction.z = glm::sin(m_Camera.m_Yaw) * glm::cos(m_Camera.m_Pitch);
 		m_Camera.m_Front = glm::normalize(direction);
 
 		m_Camera.RecalculateViewMatrix();
