@@ -6,6 +6,7 @@
 namespace Dominion {
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+		: m_Size(size)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -15,6 +16,7 @@ namespace Dominion {
 	}
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, uint32_t size)
+		: m_Size(size)
 	{
 		DM_PROFILE_FUNCTION();
 

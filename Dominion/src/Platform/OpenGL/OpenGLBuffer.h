@@ -15,8 +15,10 @@ namespace Dominion {
 		virtual void Bind() const override;
 
 		virtual void SetData(const void* data, uint32_t size) override;
+		virtual uint32_t GetSize() const override { return m_Size; };
 	private:
 		unsigned int m_RendererID;
+		uint32_t m_Size;
 	};
 
 	class OpenGLIndexBuffer : public IndexBuffer
