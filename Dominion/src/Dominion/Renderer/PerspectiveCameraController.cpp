@@ -120,7 +120,6 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		float zoomLevel = m_Camera.m_Position.z - e.GetYOffset() * 0.25f;
-		zoomLevel = std::max(zoomLevel, 0.25f);
 		m_Camera.m_Position.z = zoomLevel;
 		m_Camera.RecalculateViewMatrix();
 		return false;
