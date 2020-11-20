@@ -92,7 +92,7 @@ namespace Dominion {
 		m_LastX = e.GetX();
 		m_LastY = e.GetY();
 
-		float sensitivity = 0.1f;
+		float sensitivity = 0.001f;
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 
