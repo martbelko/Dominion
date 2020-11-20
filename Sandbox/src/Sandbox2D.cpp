@@ -83,8 +83,9 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		sign = -1;
 
 	// Update
+	//Dominion::Application::Get().GetWindow().ShowCursor(true);
 	m_Camera.OnUpdate(timestep);
-	Dominion::Application::Get().GetWindow().ShowCursor(m_ShowCursor);
+	Dominion::Renderer2D::ResetStats();
 
 	// Render
 	{
