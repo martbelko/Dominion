@@ -1,5 +1,6 @@
 #include "Sandbox2D.h"
 
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 Sandbox2D::Sandbox2D()
