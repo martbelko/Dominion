@@ -60,7 +60,6 @@ bool DoesIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const
 	float right = quadPos.x + quadSize.x / 2.0f;
 	float bottom = quadPos.y - quadSize.y / 2.0f;
 
-	// Check left triangle
 	glm::vec3 vertex0 = glm::vec3(left, bottom, quadPos.z);
 	glm::vec3 vertex1 = glm::vec3(right, top, quadPos.z);
 	glm::vec3 vertex2 = glm::vec3(left, top, quadPos.z);
