@@ -11,6 +11,7 @@ namespace Dominion {
 	{
 	public:
 		virtual void SetData(const void* data, uint32_t size) = 0;
+		virtual uint32_t GetSize() const = 0;
 
 		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(const float* vertices, uint32_t size);
