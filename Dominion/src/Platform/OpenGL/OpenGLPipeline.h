@@ -13,6 +13,7 @@ namespace Dominion {
 	class OpenGLPipeline : public Pipeline
 	{
 	public:
+		OpenGLPipeline(Ref<VertexBuffer>& vertexBuffer, Ref<InputLayout>& inputLayout);
 		OpenGLPipeline(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout);
 
 		virtual void Bind() const override;
