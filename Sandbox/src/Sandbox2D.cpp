@@ -22,6 +22,61 @@ void Sandbox2D::OnAttach()
 
 	m_Camera = Dominion::PerspectiveCameraController(ratio, false);
 	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+
+	/* Setup 3D Render stuff */
+	float vertices[] = {
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+	};
+
+	Dominion::Ref<Dominion::VertexBuffer> vb = Dominion::VertexBuffer::Create(vertices, sizeof(vertices));
+	Dominion::Ref<Dominion::InputLayout> il = Dominion::InputLayout::Create(
+		{
+			{ "Position", Dominion::DataType::Float3 }
+		});
+
+	m_3DPipeline = Dominion::Pipeline::Create(vb, il);
+
+	m_3DShader = Dominion::Shader::Create("3D Shader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
 }
 
 bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
@@ -93,8 +148,14 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		Dominion::RenderCommand::Clear();
 	}
 
+	Dominion::Renderer::BeginScene(m_Camera.GetCamera());
+
+	Dominion::Renderer::Submit(m_3DShader, m_3DPipeline);
+
+	Dominion::Renderer::EndScene();
+
 	{
-		DM_PROFILE_SCOPE("Render Draw");
+		/*DM_PROFILE_SCOPE("Render Draw");
 		Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
 		float cap = m_Count / 2.0f;
@@ -113,12 +174,12 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 				else
 					Dominion::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
 			}
-		}
+		}*/
 
 		/*Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
 		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);*/
 
-		Dominion::Renderer2D::EndScene();
+		//Dominion::Renderer2D::EndScene();
 	}
 }
 
