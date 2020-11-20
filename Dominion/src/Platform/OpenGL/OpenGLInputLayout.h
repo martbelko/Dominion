@@ -5,7 +5,6 @@
 
 namespace Dominion {
 
-
 	class OpenGLInputLayoutElelent
 	{
 	public:
