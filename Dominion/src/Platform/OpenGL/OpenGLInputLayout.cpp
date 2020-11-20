@@ -74,7 +74,7 @@ namespace Dominion {
 		: type(DataTypeToOpenGLType(element.type)), componentCount(GetComponentCount(element.type)), offset(reinterpret_cast<void*>(element.offset)) {}
 
 
-	OpenGLInputLayout::OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, unsigned int stride)
+	OpenGLInputLayout::OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, uint32_t stride)
 		: m_Stride(stride)
 	{
 		DM_PROFILE_FUNCTION();

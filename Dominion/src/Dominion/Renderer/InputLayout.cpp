@@ -11,7 +11,7 @@ namespace Dominion {
 	{
 		std::vector<InputLayoutElement> elements(elements_t);
 
-		unsigned int offset = 0;
+		uint32_t offset = 0;
 		for (auto& element : elements)
 		{
 			element.offset = offset;

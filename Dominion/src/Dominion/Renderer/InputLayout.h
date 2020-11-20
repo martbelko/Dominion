@@ -47,8 +47,8 @@ namespace Dominion {
 	{
 		std::string name;
 		DataType type;
-		unsigned int size;
-		unsigned int offset = 0;
+		uint32_t size;
+		uint32_t offset = 0;
 
 		InputLayoutElement(const char* name, DataType type)
 			: name(name), type(type), size(DataTypeSize(type)) {}

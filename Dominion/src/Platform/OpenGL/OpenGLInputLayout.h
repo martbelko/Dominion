@@ -19,7 +19,7 @@ namespace Dominion {
 	class OpenGLInputLayout : public InputLayout
 	{
 	public:
-		OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, unsigned int stride);
+		OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, uint32_t stride);
 		virtual ~OpenGLInputLayout() override;
 
 		virtual void Bind() const override;
