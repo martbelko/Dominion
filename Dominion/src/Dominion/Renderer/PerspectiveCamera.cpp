@@ -25,9 +25,9 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		glm::vec3 front;
-		front.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
-		front.y = sin(glm::radians(m_Pitch));
-		front.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		front.x = glm::cos(m_Yaw) * glm::cos(m_Pitch);
+		front.y = glm::sin(m_Pitch);
+		front.z = glm::sin(m_Yaw) * glm::cos(m_Pitch);
 		m_Front = glm::normalize(front);
 		glm::vec3 right = glm::normalize(glm::cross(m_Front, glm::vec3(0.0f, 1.0f, 0.0f)));
 		m_Up = glm::normalize(glm::cross(right, m_Front));
