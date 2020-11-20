@@ -11,17 +11,17 @@ namespace Dominion {
 	{
 		std::vector<InputLayoutElement> elements(elements_t);
 
-		uint32_t offset = 0;
+		uint32_t stride = 0;
 		for (auto& element : elements)
 		{
-			element.offset = offset;
-			offset += element.size;
+			element.offset = stride;
+			stride += element.size;
 		}
 
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLInputLayout>(elements, offset);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLInputLayout>(elements, stride);
 		}
 
 		DM_CORE_ASSERT(false, "Unknown RendererAPI!");
