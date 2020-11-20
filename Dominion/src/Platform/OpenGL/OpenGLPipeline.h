@@ -13,6 +13,7 @@ namespace Dominion {
 		virtual void Bind() const override;
 
 		virtual Ref<IndexBuffer> GetIndexBuffer() const;
+		virtual Ref<IndexBuffer> GetIndexBuffer() const override;
 	private:
 		Ref<VertexBuffer> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
