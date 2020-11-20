@@ -14,7 +14,8 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		m_VertexBuffer->Bind();
-		m_IndexBuffer->Bind();
+		if (m_IndexBuffer)
+			m_IndexBuffer->Bind();
 		m_InputLayout->Bind();
 	}
 
