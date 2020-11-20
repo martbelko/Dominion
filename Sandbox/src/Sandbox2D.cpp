@@ -107,7 +107,12 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 					0.3f,
 					(y + cap) / static_cast<float>(m_Count),
 					1.0f };
-				Dominion::Renderer2D::DrawRotatedQuad({ x, y, -0.01f }, { 0.45f, 0.45f }, glm::radians(m_Rotation), color);
+
+				bool intersect = DoesIntersect(m_Camera.GetCamera().GetPosition(), m_Camera.GetCamera().CreateRay(), { x, y, 0.0f }, { 0.45f, 0.45f });
+				if (intersect)
+					Dominion::Renderer2D::DrawQuad({ x, y, }, { 0.45f, 0.45f }, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+				else
+					Dominion::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
 			}
 		}
 
