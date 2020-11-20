@@ -20,6 +20,11 @@ namespace Dominion {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	glm::vec3 PerspectiveCamera::CreateRay()
+	{
+		return m_Front;
+	}
+
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
 		DM_PROFILE_FUNCTION();
