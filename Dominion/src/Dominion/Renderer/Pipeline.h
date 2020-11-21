@@ -12,8 +12,8 @@ namespace Dominion {
 	class Pipeline : public Bindable
 	{
 	public:
-		static Ref<Pipeline> Create(Ref<VertexBuffer>& vertexBuffer, Ref<InputLayout>& inputLayout);
-		static Ref<Pipeline> Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout);
+		static Ref<Pipeline> Create(const Ref<VertexBuffer>& vertexBuffer, const Ref<InputLayout>& inputLayout);
+		static Ref<Pipeline> Create(const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer, const Ref<InputLayout>& inputLayout);
 
 		virtual Ref<VertexBuffer> GetVertexBuffer() const = 0;
 		virtual Ref<IndexBuffer> GetIndexBuffer() const = 0;

@@ -7,7 +7,7 @@
 
 namespace Dominion {
 
-	Ref<Pipeline> Pipeline::Create(Ref<VertexBuffer>& vertexBuffer, Ref<IndexBuffer>& indexBuffer, Ref<InputLayout>& inputLayout)
+	Ref<Pipeline> Pipeline::Create(const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer, const Ref<InputLayout>& inputLayout)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -19,7 +19,7 @@ namespace Dominion {
 		return nullptr;
 	}
 
-	Ref<Pipeline> Pipeline::Create(Ref<VertexBuffer>& vertexBuffer, Ref<InputLayout>& inputLayout)
+	Ref<Pipeline> Pipeline::Create(const Ref<VertexBuffer>& vertexBuffer, const Ref<InputLayout>& inputLayout)
 	{
 		switch (Renderer::GetAPI())
 		{
