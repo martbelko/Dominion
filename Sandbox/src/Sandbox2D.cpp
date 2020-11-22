@@ -25,58 +25,61 @@ void Sandbox2D::OnAttach()
 
 	/* Setup 3D Render stuff */
 	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
 
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
 
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
 
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
 	};
 
-	Dominion::Ref<Dominion::VertexBuffer> vb = Dominion::VertexBuffer::Create(vertices, sizeof(vertices));
-	Dominion::Ref<Dominion::InputLayout> il = Dominion::InputLayout::Create(
-		{
-			{ "Position", Dominion::DataType::Float3 }
-		});
+	Ref<InputLayout> il = InputLayout::Create(
+	{
+		{ "Position", DataType::Float3 },
+		{ "Color", DataType::Float4 }
+	});
 
-	m_3DPipeline = Dominion::Pipeline::Create(vb, il);
+	Ref<Shader> shader = Shader::Create("CubeShader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
 
-	m_3DShader = Dominion::Shader::Create("3D Shader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
+	Ref<Mesh> mesh = Mesh::Create(vertices, sizeof(vertices), il);
+	Ref<Material> material = Material::Create(shader);
+	material->SetFloat4("u_Color", glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+	m_Model = Model::Create(mesh, material);
 }
 
 bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
@@ -150,7 +153,16 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 
 	Dominion::Renderer::BeginScene(m_Camera.GetCamera());
 
-	Dominion::Renderer::Submit(m_3DShader, m_3DPipeline);
+	static float t = timestep;
+	t += timestep * 50.0f;
+
+	glm::mat4 transform;
+	for (int i = 0; i < 20; ++i)
+	{
+		transform = glm::translate(glm::mat4(1.0f), glm::vec3(2 * i, i, glm::sin(glm::radians(t))));
+		RenderModel(m_Model, transform);
+	}
+	//Dominion::Renderer::Submit(m_3DShader, m_3DPipeline);
 
 	Dominion::Renderer::EndScene();
 
