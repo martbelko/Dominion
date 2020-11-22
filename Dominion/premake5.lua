@@ -27,7 +27,8 @@ project "Dominion"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.assimp}",
 	}
 
 	links
@@ -36,7 +37,8 @@ project "Dominion"
 		"opengl32.lib",
 		"Glad",
 		"ImGui",
-		"yaml-cpp"
+		"yaml-cpp",
+		"assimp"
 	}
 
 	defines
