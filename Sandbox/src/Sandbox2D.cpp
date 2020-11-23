@@ -68,18 +68,19 @@ void Sandbox2D::OnAttach()
 		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
 	};
 
-	Ref<InputLayout> il = InputLayout::Create(
+	Dominion::Ref<Dominion::InputLayout> il = Dominion::InputLayout::Create(
 	{
-		{ "Position", DataType::Float3 },
-		{ "Color", DataType::Float4 }
+		{ "Position", Dominion::DataType::Float3 },
+		{ "Color", Dominion::DataType::Float4 }
 	});
 
-	Ref<Shader> shader = Shader::Create("CubeShader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
+	Dominion::Ref<Dominion::Shader> shader = Dominion::Shader::Create("CubeShader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
 
-	Ref<Mesh> mesh = Mesh::Create(vertices, sizeof(vertices), il);
-	Ref<Material> material = Material::Create(shader);
-	material->SetFloat4("u_Color", glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-	m_Model = Model::Create(mesh, material);
+	Dominion::Ref<Dominion::Mesh> mesh = Dominion::Mesh::Create(vertices, sizeof(vertices), il);
+	Dominion::Ref<Dominion::Material> material = Dominion::Material::Create(shader);
+	material->SetUniform("u_Color", glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+	material->SetUniform("u_Vec", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_Model = Dominion::Model::Create(mesh, material);
 }
 
 bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
@@ -160,17 +161,17 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 	for (int i = 0; i < 20; ++i)
 	{
 		transform = glm::translate(glm::mat4(1.0f), glm::vec3(2 * i, i, glm::sin(glm::radians(t))));
-		RenderModel(m_Model, transform);
+		Dominion::Renderer::Submit(m_Model, transform);
 	}
 	//Dominion::Renderer::Submit(m_3DShader, m_3DPipeline);
 
 	Dominion::Renderer::EndScene();
 
 	{
-		/*DM_PROFILE_SCOPE("Render Draw");
+		DM_PROFILE_SCOPE("Render Draw");
 		Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
-		float cap = m_Count / 2.0f;
+		/*float cap = m_Count / 2.0f;
 		for (float y = -cap; y < cap; y += 0.5f)
 		{
 			for (float x = -cap; x < cap; x += 0.5f)
@@ -188,10 +189,10 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 			}
 		}*/
 
-		/*Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
-		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);*/
+		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
+		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);
 
-		//Dominion::Renderer2D::EndScene();
+		Dominion::Renderer2D::EndScene();
 	}
 }
 
