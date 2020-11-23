@@ -13,9 +13,7 @@ public:
 private:
 	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
 private:
-	/*Dominion::Ref<Dominion::Pipeline> m_3DPipeline;
-	Dominion::Ref<Dominion::Shader> m_3DShader;*/
-	Ref<Model> m_Model;
+	Dominion::Ref<Dominion::Model> m_Model;
 
 	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
 	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
