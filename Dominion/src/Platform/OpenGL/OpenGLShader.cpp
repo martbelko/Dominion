@@ -42,6 +42,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniform1i(location, value);
 	}
 
@@ -50,6 +54,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniform1iv(location, count, values);
 	}
 
@@ -58,6 +66,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniform1f(location, value);
 	}
 
@@ -66,6 +78,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniform2f(location, value.x, value.y);
 	}
 
@@ -74,6 +90,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniform3f(location, value.x, value.y, value.z);
 	}
 
@@ -82,6 +102,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
 
@@ -90,6 +114,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
@@ -98,6 +126,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
@@ -106,6 +138,10 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		GLint location = glGetUniformLocation(m_RendererID, name.data());
+	#if DM_ENABLE_CORE_LOGGER
+		if (location == -1)
+			DM_CORE_WARN("Uniform '{0}' was not found!", name);
+	#endif
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
