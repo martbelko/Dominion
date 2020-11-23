@@ -61,9 +61,6 @@ namespace Dominion {
 		{
 			DM_DEBUGBREAK();
 		}
-
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile("avb", aiProcess_Triangulate | aiProcess_FlipUVs);
 	}
 
 	Application::~Application()
