@@ -72,7 +72,7 @@ namespace Dominion {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 	}
 
-	unsigned int OpenGLIndexBuffer::GetCount() const
+	uint32_t OpenGLIndexBuffer::GetCount() const
 	{
 		return m_Count;
 	}

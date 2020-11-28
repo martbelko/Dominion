@@ -17,7 +17,7 @@ namespace Dominion {
 		std::string pixelSrc;
 		ReadFile(pixelFilepath, pixelSrc);
 
-		std::unordered_map<unsigned int, std::string> sources;
+		std::unordered_map<uint32_t, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = pixelSrc;
 		Compile(sources);
@@ -177,21 +177,21 @@ namespace Dominion {
 		return false;
 	}
 
-	void OpenGLShader::Compile(std::unordered_map<unsigned int, std::string> sources)
+	void OpenGLShader::Compile(std::unordered_map<uint32_t, std::string> sources)
 	{
 		DM_PROFILE_FUNCTION();
 
-		unsigned int program = glCreateProgram();
+		uint32_t program = glCreateProgram();
 		DM_CORE_ASSERT(sources.size() <= 2, "Engine only supports 2 shaders for now!");
 
-		std::array<unsigned int, 2> shaders;
-		unsigned int shaderIndex = 0;
+		std::array<uint32_t, 2> shaders;
+		uint32_t shaderIndex = 0;
 		for (auto& kv : sources)
 		{
-			unsigned int type = kv.first;
+			uint32_t type = kv.first;
 			const std::string& source = kv.second;
 
-			unsigned int shader = glCreateShader(type);
+			uint32_t shader = glCreateShader(type);
 
 			const char* sourceStr = source.c_str();
 			glShaderSource(shader, 1, &sourceStr, 0);
@@ -236,7 +236,7 @@ namespace Dominion {
 
 			glDeleteProgram(program);
 
-			for (unsigned int shader : shaders)
+			for (uint32_t shader : shaders)
 				glDeleteShader(shader);
 
 			DM_CORE_ERROR(info);
@@ -245,7 +245,7 @@ namespace Dominion {
 
 		DM_CORE_TRACE("Shader linked successfully");
 
-		for (unsigned int shader : shaders)
+		for (uint32_t shader : shaders)
 		{
 			glDetachShader(program, shader);
 			glDeleteShader(shader);

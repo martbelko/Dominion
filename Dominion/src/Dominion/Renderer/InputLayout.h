@@ -21,7 +21,7 @@ namespace Dominion {
 		Bool
 	};
 
-	static unsigned int DataTypeSize(DataType type)
+	static uint32_t DataTypeSize(DataType type)
 	{
 		switch (type)
 		{

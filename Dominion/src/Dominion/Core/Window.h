@@ -13,7 +13,7 @@ namespace Dominion {
 	struct WindowProps
 	{
 		std::string Title = "Dominion App";
-		unsigned int Width = 1600, Height = 900;
+		uint32_t Width = 1600, Height = 900;
 	};
 
 	class Window
@@ -28,8 +28,8 @@ namespace Dominion {
 
 		virtual int GetPosX() const = 0;
 		virtual int GetPosY() const = 0;
-		virtual unsigned int GetWidth() const = 0;
-		virtual unsigned int GetHeight() const = 0;
+		virtual uint32_t GetWidth() const = 0;
+		virtual uint32_t GetHeight() const = 0;
 
 		virtual void* GetNativeWindow() const = 0;
 

@@ -60,17 +60,17 @@ namespace Dominion {
 			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
 			WindowMovedEvent event(wnd, x, y);
 			wnd->m_EventCallbackFn(event);
-			wnd->m_PosX = static_cast<unsigned int>(x);
-			wnd->m_PosY = static_cast<unsigned int>(y);
+			wnd->m_PosX = static_cast<uint32_t>(x);
+			wnd->m_PosY = static_cast<uint32_t>(y);
 		});
 
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
 			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
-			WindowResizedEvent event(wnd, static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+			WindowResizedEvent event(wnd, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
 			wnd->m_EventCallbackFn(event);
-			wnd->m_Width = static_cast<unsigned int>(width);
-			wnd->m_Height = static_cast<unsigned int>(height);
+			wnd->m_Width = static_cast<uint32_t>(width);
+			wnd->m_Height = static_cast<uint32_t>(height);
 		});
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -99,7 +99,7 @@ namespace Dominion {
 			}
 		});
 
-		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, uint32_t keycode)
 		{
 			WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
 			KeyTypedEvent event(keycode);
@@ -168,12 +168,12 @@ namespace Dominion {
 		return m_PosY;
 	}
 
-	unsigned int WindowsWindow::GetWidth() const
+	uint32_t WindowsWindow::GetWidth() const
 	{
 		return m_Width;
 	}
 
-	unsigned int WindowsWindow::GetHeight() const
+	uint32_t WindowsWindow::GetHeight() const
 	{
 		return m_Height;
 	}

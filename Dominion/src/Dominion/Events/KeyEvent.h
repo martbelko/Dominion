@@ -11,10 +11,10 @@ namespace Dominion {
 	class KeyEvent : public Event
 	{
 	public:
-		KeyEvent(unsigned int keyCode)
+		KeyEvent(uint32_t keyCode)
 			: m_KeyCode(keyCode) {}
 
-		unsigned int GetKeyCode() const { return m_KeyCode; }
+		uint32_t GetKeyCode() const { return m_KeyCode; }
 	protected:
 		KeyCode m_KeyCode;
 	};
@@ -22,10 +22,10 @@ namespace Dominion {
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(unsigned int keyCode, unsigned int repeatCount)
+		KeyPressedEvent(uint32_t keyCode, uint32_t repeatCount)
 			: KeyEvent(keyCode), m_RepeatCount(repeatCount) {}
 
-		unsigned int GetRepeatCount() const { return m_RepeatCount; }
+		uint32_t GetRepeatCount() const { return m_RepeatCount; }
 
 		virtual std::string ToString() const override
 		{
@@ -36,13 +36,13 @@ namespace Dominion {
 
 		EVENT_TYPE(EventType::KeyPressed)
 	private:
-		unsigned int m_RepeatCount;
+		uint32_t m_RepeatCount;
 	};
 
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(unsigned int keyCode)
+		KeyReleasedEvent(uint32_t keyCode)
 			: KeyEvent(keyCode) {}
 
 		virtual std::string ToString() const override
@@ -58,7 +58,7 @@ namespace Dominion {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(unsigned int keyCode)
+		KeyTypedEvent(uint32_t keyCode)
 			: KeyEvent(keyCode) {}
 
 		virtual std::string ToString() const override

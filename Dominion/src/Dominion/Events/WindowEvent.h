@@ -21,7 +21,7 @@ namespace Dominion {
 	class WindowCreatedEvent : public WindowEvent
 	{
 	public:
-		WindowCreatedEvent(void* window, int x, int y, unsigned int width, unsigned int height)
+		WindowCreatedEvent(void* window, int x, int y, uint32_t width, uint32_t height)
 			: WindowEvent(window), m_PosX(x), m_PosY(y), m_Width(width), m_Height(height) {}
 
 		int GetX() const { return m_PosX; }
@@ -60,7 +60,7 @@ namespace Dominion {
 	class WindowResizedEvent : public WindowEvent
 	{
 	public:
-		WindowResizedEvent(void* window, unsigned int width, unsigned int height)
+		WindowResizedEvent(void* window, uint32_t width, uint32_t height)
 			: WindowEvent(window), m_Width(width), m_Height(height) {}
 
 		uint32_t GetWidth() const { return m_Width; }

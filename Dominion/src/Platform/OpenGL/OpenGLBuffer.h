@@ -17,7 +17,7 @@ namespace Dominion {
 		virtual void SetData(const void* data, uint32_t size) override;
 		virtual uint32_t GetSize() const override { return m_Size; };
 	private:
-		unsigned int m_RendererID;
+		uint32_t m_RendererID;
 		uint32_t m_Size;
 	};
 
@@ -29,10 +29,10 @@ namespace Dominion {
 
 		virtual void Bind() const override;
 
-		virtual unsigned int GetCount() const override;
+		virtual uint32_t GetCount() const override;
 	private:
-		unsigned int m_RendererID;
-		unsigned int m_Count;
+		uint32_t m_RendererID;
+		uint32_t m_Count;
 	};
 
 }

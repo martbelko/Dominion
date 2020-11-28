@@ -5,7 +5,7 @@
 
 namespace Dominion {
 
-	static unsigned int GetComponentCount(DataType type)
+	static uint32_t GetComponentCount(DataType type)
 	{
 		switch (type)
 		{
@@ -66,7 +66,7 @@ namespace Dominion {
 			glDeleteVertexArrays(1, &m_RendererID);
 		}
 	private:
-		unsigned int m_RendererID;
+		uint32_t m_RendererID;
 	};
 
 
@@ -98,7 +98,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		unsigned int index = 0;
+		uint32_t index = 0;
 		for (auto& element : m_Elements)
 		{
 			glEnableVertexAttribArray(index);

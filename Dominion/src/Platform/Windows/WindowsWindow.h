@@ -18,8 +18,8 @@ namespace Dominion {
 
 		int GetPosX() const override;
 		int GetPosY() const override;
-		unsigned int GetWidth() const override;
-		unsigned int GetHeight() const override;
+		uint32_t GetWidth() const override;
+		uint32_t GetHeight() const override;
 
 		virtual void* GetNativeWindow() const override;
 
@@ -35,7 +35,7 @@ namespace Dominion {
 
 		std::string m_Title;
 		int m_PosX, m_PosY;
-		unsigned int m_Width, m_Height;
+		uint32_t m_Width, m_Height;
 		bool m_VSync = true;
 
 		EventCallbackFn m_EventCallbackFn;

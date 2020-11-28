@@ -12,10 +12,10 @@ namespace Dominion {
 	class MouseButtonEvent : public Event
 	{
 	public:
-		MouseButtonEvent(unsigned int button)
+		MouseButtonEvent(uint32_t button)
 			: m_Button(button) {}
 
-		unsigned int GetButton() const { return m_Button; }
+		uint32_t GetButton() const { return m_Button; }
 	protected:
 		MouseCode m_Button;
 	};
@@ -23,7 +23,7 @@ namespace Dominion {
 	class MousePressedEvent : public MouseButtonEvent
 	{
 	public:
-		MousePressedEvent(unsigned int button)
+		MousePressedEvent(uint32_t button)
 			: MouseButtonEvent(button) {}
 
 		virtual std::string ToString() const override
@@ -39,7 +39,7 @@ namespace Dominion {
 	class MouseReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseReleasedEvent(unsigned int button)
+		MouseReleasedEvent(uint32_t button)
 			: MouseButtonEvent(button) {}
 
 		virtual std::string ToString() const override

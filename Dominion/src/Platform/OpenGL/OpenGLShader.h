@@ -30,9 +30,9 @@ namespace Dominion {
 		virtual void SetMat4(const std::string_view& name, const glm::mat4& value) override;
 	private:
 		bool ReadFile(const std::string_view& filepath, std::string& output);
-		void Compile(std::unordered_map<unsigned int, std::string> sources);
+		void Compile(std::unordered_map<uint32_t, std::string> sources);
 	private:
-		unsigned int m_RendererID;
+		uint32_t m_RendererID;
 	};
 
 }

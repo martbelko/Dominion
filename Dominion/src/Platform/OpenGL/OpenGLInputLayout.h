@@ -24,8 +24,8 @@ namespace Dominion {
 		virtual void Bind() const override;
 		virtual uint32_t GetStride() const override { return m_Stride; }
 	private:
-		unsigned int m_RendererID;
-		unsigned int m_Stride;
+		uint32_t m_RendererID;
+		uint32_t m_Stride;
 		std::vector<OpenGLInputLayoutElelent> m_Elements;
 	};
 
