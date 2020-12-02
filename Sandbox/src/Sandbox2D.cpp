@@ -118,25 +118,6 @@ void Sandbox2D::OnEvent(Dominion::Event& e)
 	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Sandbox2D::OnKeyPressed));
 }
 
-void Sandbox2D::OnImGuiRender()
-{
-	/*ImGui::Begin("Camera Control");
-
-	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
-	ImGui::SliderInt("Number of Quads", &m_Count, 0, 100);
-
-	ImGui::End();
-
-	const auto& stats = Dominion::Renderer2D::GetStats();
-	ImGui::Begin("Renderer2D Stats");
-	ImGui::Text("Draw calls: %d", stats.DrawCalls);
-	ImGui::Text("Quads: %d", stats.QuadCount);
-	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-	ImGui::End();*/
-}
-
 bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)
 {
 	if (e.GetKeyCode() == Dominion::Key::Escape)

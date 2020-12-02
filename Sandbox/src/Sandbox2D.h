@@ -9,7 +9,6 @@ public:
 	virtual void OnAttach() override;
 	virtual void OnUpdate(const Dominion::Timestep& timestep) override;
 	virtual void OnEvent(Dominion::Event& e) override;
-	virtual void OnImGuiRender() override;
 private:
 	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
 private:
