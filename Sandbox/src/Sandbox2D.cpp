@@ -3,86 +3,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Sandbox2D::Sandbox2D()
-	: Dominion::Layer("Sandbox2D") {}
-
-void Sandbox2D::OnAttach()
-{
-	/* Load resources */
-	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
-	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
-
-	/* Disable cursor */
-	Dominion::Application::Get().GetWindow().ShowCursor(false);
-
-	/* Setup camera */
-	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
-	float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
-	float ratio = wWidth / wHeight;
-
-	m_Camera = Dominion::PerspectiveCameraController(ratio, false);
-	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
-
-	/* Setup 3D Render stuff */
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-
-		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-
-		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-
-		 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f,
-
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-	};
-
-	Dominion::Ref<Dominion::InputLayout> il = Dominion::InputLayout::Create(
-	{
-		{ "Position", Dominion::DataType::Float3 },
-		{ "Color", Dominion::DataType::Float4 }
-	});
-
-	Dominion::Ref<Dominion::Shader> shader = Dominion::Shader::Create("CubeShader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
-
-	Dominion::Ref<Dominion::Mesh> mesh = Dominion::Mesh::Create(vertices, sizeof(vertices), il);
-	Dominion::Ref<Dominion::Material> material = Dominion::Material::Create(shader);
-	material->SetUniform("u_Color", glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-	material->SetUniform("u_Vec", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	m_Model = Dominion::Model::Create(mesh, material);
-}
-
 bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
 {
 	constexpr float epsilon = 0.0000001f;
@@ -128,10 +48,29 @@ bool DoesIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const
 		|| DoesIntersectTriangle(rayOrigin, rayVector, vertex0, vertex3, vertex1);
 }
 
+Sandbox2D::Sandbox2D()
+	: Dominion::Layer("Sandbox2D") {}
+
+void Sandbox2D::OnAttach()
+{
+	/* Load resources */
+	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
+	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
+
+	/* Disable cursor */
+	Dominion::Application::Get().GetWindow().ShowCursor(false);
+
+	/* Setup camera */
+	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
+	float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
+	float ratio = wWidth / wHeight;
+
+	m_Camera = Dominion::OrthographicCameraController(ratio, false);
+	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 0.5f));
+}
+
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 {
-	DM_PROFILE_FUNCTION();
-
 	static int sign = -1;
 	m_Rotation += timestep * sign * m_RotationSpeed;
 	m_Rotation = std::clamp(m_Rotation, -180.0f, 180.0f);
@@ -141,72 +80,46 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 		sign = -1;
 
 	// Update
-	//Dominion::Application::Get().GetWindow().ShowCursor(true);
 	m_Camera.OnUpdate(timestep);
 	Dominion::Renderer2D::ResetStats();
 
-	// Render
+	Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	Dominion::RenderCommand::Clear();
+
+	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
+
+	float cap = m_Count / 2.0f;
+	for (float y = -cap; y < cap; y += 0.5f)
 	{
-		DM_PROFILE_SCOPE("Render Prep");
-		Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		Dominion::RenderCommand::Clear();
-	}
-
-	Dominion::Renderer::BeginScene(m_Camera.GetCamera());
-
-	static float t = timestep;
-	t += timestep * 50.0f;
-
-	glm::mat4 transform;
-	for (int i = 0; i < 20; ++i)
-	{
-		transform = glm::translate(glm::mat4(1.0f), glm::vec3(2 * i, i, glm::sin(glm::radians(t))));
-		Dominion::Renderer::Submit(m_Model, transform);
-	}
-	//Dominion::Renderer::Submit(m_3DShader, m_3DPipeline);
-
-	Dominion::Renderer::EndScene();
-
-	{
-		DM_PROFILE_SCOPE("Render Draw");
-		Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
-
-		/*float cap = m_Count / 2.0f;
-		for (float y = -cap; y < cap; y += 0.5f)
+		for (float x = -cap; x < cap; x += 0.5f)
 		{
-			for (float x = -cap; x < cap; x += 0.5f)
-			{
-				glm::vec4 color = { (x + cap) / static_cast<float>(m_Count),
-					0.3f,
-					(y + cap) / static_cast<float>(m_Count),
-					1.0f };
+			glm::vec4 color = { (x + cap) / static_cast<float>(m_Count),
+				0.3f,
+				(y + cap) / static_cast<float>(m_Count),
+				1.0f };
 
-				bool intersect = DoesIntersect(m_Camera.GetCamera().GetPosition(), m_Camera.GetCamera().CreateRay(), { x, y, 0.0f }, { 0.45f, 0.45f });
-				if (intersect)
-					Dominion::Renderer2D::DrawQuad({ x, y, }, { 0.45f, 0.45f }, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-				else
-					Dominion::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-			}
-		}*/
-
-		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
-		Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);
-
-		Dominion::Renderer2D::EndScene();
+			bool intersect = DoesIntersect(m_Camera.GetCamera().GetPosition(), { 0.0f, 0.0f, -1.0f }, { x, y, 0.0f }, { 0.45f, 0.45f });
+			if (intersect)
+				Dominion::Renderer2D::DrawQuad({ x, y, }, { 0.45f, 0.45f }, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			else
+				Dominion::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
+		}
 	}
+
+	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
+	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);
+
+	Dominion::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnEvent(Dominion::Event& e)
 {
-	DM_PROFILE_FUNCTION();
 	m_Camera.OnEvent(e);
 	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Sandbox2D::OnKeyPressed));
 }
 
 void Sandbox2D::OnImGuiRender()
 {
-	DM_PROFILE_FUNCTION();
-
 	/*ImGui::Begin("Camera Control");
 
 	ImGui::SliderFloat("Rotation speed", &m_RotationSpeed, 0.0f, 500.0f);
