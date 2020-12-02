@@ -33,6 +33,7 @@
 #include "Dominion/Scene/SceneSerializer.h"
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"
+#include "Dominion/Utils/Timer.h"
 
 #if defined(new)
 	#undef new
