@@ -16,46 +16,59 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
+		glm::vec3& cameraPosition = m_Camera.GetPosition();
+		float& cameraRotation = m_Camera.GetRotation();
+
+		bool recalculate = false;
 		if (Input::IsKeyPressed(Key::A))
 		{
-			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			cameraPosition.x -= cos(cameraRotation) * m_CameraTranslationSpeed * ts;
+			cameraPosition.y -= sin(cameraRotation) * m_CameraTranslationSpeed * ts;
+			recalculate = true;
 		}
 		else if (Input::IsKeyPressed(Key::D))
 		{
-			m_CameraPosition.x += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y += sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			cameraPosition.x += cos(cameraRotation) * m_CameraTranslationSpeed* ts;
+			cameraPosition.y += sin(cameraRotation) * m_CameraTranslationSpeed* ts;
+			recalculate = true;
 		}
 
 		if (Input::IsKeyPressed(Key::W))
 		{
-			m_CameraPosition.x += -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			cameraPosition.x += -sin(cameraRotation) * m_CameraTranslationSpeed * ts;
+			cameraPosition.y += cos(cameraRotation) * m_CameraTranslationSpeed * ts;
+			recalculate = true;
 		}
 		else if (Input::IsKeyPressed(Key::S))
 		{
-			m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			cameraPosition.x -= -sin(cameraRotation) * m_CameraTranslationSpeed * ts;
+			cameraPosition.y -= cos(cameraRotation) * m_CameraTranslationSpeed * ts;
+			recalculate = true;
 		}
 
 		if (m_Rotation)
 		{
 			if (Input::IsKeyPressed(Key::Q))
-				m_CameraRotation += m_CameraRotationSpeed * ts;
+			{
+				cameraRotation += m_CameraRotationSpeed * ts;
+				recalculate = true;
+			}
 			if (Input::IsKeyPressed(Key::E))
-				m_CameraRotation -= m_CameraRotationSpeed * ts;
+			{
+				cameraRotation -= m_CameraRotationSpeed * ts;
+				recalculate = true;
+			}
 
-			if (m_CameraRotation > 180.0f)
-				m_CameraRotation -= 360.0f;
-			else if (m_CameraRotation <= -180.0f)
-				m_CameraRotation += 360.0f;
-
-			m_Camera.SetRotation(m_CameraRotation);
+			if (cameraRotation > 180.0f)
+				cameraRotation -= 360.0f;
+			else if (cameraRotation <= -180.0f)
+				cameraRotation += 360.0f;
 		}
 
-		m_Camera.SetPosition(m_CameraPosition);
-
 		m_CameraTranslationSpeed = m_ZoomLevel;
+
+		if (recalculate)
+			m_Camera.RecalculateViewMatrix();
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)
