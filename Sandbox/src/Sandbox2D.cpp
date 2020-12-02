@@ -67,6 +67,25 @@ void Sandbox2D::OnAttach()
 
 	m_Camera = Dominion::OrthographicCameraController(ratio, false);
 	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 0.5f));
+
+	Dominion::Timer timer;
+	timer.Start();
+	for (int i = 0; i < 100000; ++i)
+	{
+		Dominion::Random::RandomInt8(-128, 127);
+		Dominion::Random::RandomInt16(-2000, 2500);
+		Dominion::Random::RandomInt32(-65453125, 4552421);
+		Dominion::Random::RandomInt64(24515545151541, 54415154541651);
+		Dominion::Random::RandomUint8(0, 250);
+		Dominion::Random::RandomUint16(0, 151020);
+		Dominion::Random::RandomUint32(0, 1541561);
+		Dominion::Random::RandomUint64(645, 32552465);
+		Dominion::Random::RandomFloat(-50.0f, 50.0f);
+		Dominion::Random::RandomDouble(-50.0f, 50.0f);
+	}
+
+	float timeElapsed = timer.PeekNano();
+	DM_INFO("1 000 000 random numbers were generated in {0} nanoseconds", timeElapsed);
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
