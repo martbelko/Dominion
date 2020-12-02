@@ -14,9 +14,11 @@ namespace Dominion {
 		void SetProjection(float left, float right, float bottom, float top);
 
 		const glm::vec3& GetPosition() const;
+		glm::vec3& GetPosition() { return m_Position; }
 		void SetPosition(const glm::vec3& position);
 
 		float GetRotation() const;
+		float& GetRotation() { return m_Rotation; }
 		void SetRotation(float rotation);
 
 		const glm::mat4& GetProjectionMatrix() const;
@@ -30,7 +32,9 @@ namespace Dominion {
 		glm::mat4 m_ViewProjectionMatrix;
 
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		float m_Rotation = 0.0f;
+		float m_Rotation = 0.0f; // In radians
+
+		friend class OrthographicCameraController;
 	};
 
 }
