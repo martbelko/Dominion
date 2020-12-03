@@ -59,7 +59,10 @@ void Chess2DLayer::OnAttach()
 	float ratio = wWidth / wHeight;
 
 	m_Camera = Dominion::OrthographicCameraController(ratio, false);
-	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 0.5f));
+	m_Camera.GetCamera().SetPosition(glm::vec3(-0.5f, -0.5f, 0.5f));
+
+	/* Initialize Chessmen renderer */
+	ChessmanRenderer::Init();
 }
 
 void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
@@ -76,7 +79,12 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 
 	for (const Square& square : m_Checkerboard.GetSquares())
 	{
-		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x - 5, square.GetOffset().y - 5 }, { 1.0f, 1.0f }, square.GetColor());
+		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x - 4, square.GetOffset().y - 4 }, { 1.0f, 1.0f }, square.GetColor());
+	}
+
+	for (const Chessman* chessman : m_Checkerboard.GetChessmen())
+	{
+		ChessmanRenderer::RenderChessman(chessman);
 	}
 
 	Dominion::Renderer2D::EndScene();

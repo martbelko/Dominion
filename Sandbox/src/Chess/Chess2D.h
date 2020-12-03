@@ -2,7 +2,7 @@
 
 #include <Dominion.h>
 
-#include "Game.h"
+#include "Checkerboard.h"
 
 class Chess2DLayer : public Dominion::Layer
 {
