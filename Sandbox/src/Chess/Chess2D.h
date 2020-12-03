@@ -2,6 +2,8 @@
 
 #include <Dominion.h>
 
+#include "Game.h"
+
 class Chess2DLayer : public Dominion::Layer
 {
 public:
@@ -14,6 +16,5 @@ private:
 private:
 	Dominion::OrthographicCameraController m_Camera;
 
-	const glm::vec4 colorWhite = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
-	const glm::vec4 colorBlack = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+	Checkerboard m_Checkerboard;
 };

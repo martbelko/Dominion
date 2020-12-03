@@ -74,22 +74,9 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 
 	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
-	float cap = 10 / 2.0f;
-	int i = 0;
-	for (float y = -cap; y < cap; y += 0.5f)
+	for (const Square& square : m_Checkerboard.GetSquares())
 	{
-		for (float x = -cap; x < cap; x += 0.5f)
-		{
-			bool intersect = DoesIntersect(m_Camera.GetCamera().GetPosition(), { 0.0f, 0.0f, -1.0f }, { x, y, 0.0f }, { 0.45f, 0.45f });
-			if (intersect)
-				Dominion::Renderer2D::DrawQuad({ x, y, }, { 0.5f, 0.5f }, glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
-			else if (i % 2 == 0)
-				Dominion::Renderer2D::DrawQuad({ x, y }, { 0.5f, 0.5f }, colorWhite);
-			else
-				Dominion::Renderer2D::DrawQuad({ x, y }, { 0.5f, 0.5f }, colorBlack);
-
-			++i;
-		}
+		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x - 5, square.GetOffset().y - 5 }, { 1.0f, 1.0f }, square.GetColor());
 	}
 
 	Dominion::Renderer2D::EndScene();
