@@ -25,6 +25,9 @@ namespace Dominion {
 
 		float GetZoomLevel() const;
 		void SetZoomLevel(float level);
+
+		float GetWidth() const { return 2 * m_AspectRatio * m_ZoomLevel; }
+		float GetHeight() const { return 2 * m_ZoomLevel; }
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizedEvent& e);
