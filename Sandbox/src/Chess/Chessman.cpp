@@ -1,60 +1,108 @@
 #include "Chessman.h"
 
 #include "Square.h"
+#include "Checkerboard.h"
 
 std::array<std::array<Dominion::Ref<Dominion::Texture2D>, 2>, FT_King + 1> ChessmanRenderer::s_Textures;
 
 void ChessmanRenderer::Init()
 {
 	s_Textures[FT_Pawn] = { Dominion::Texture2D::Create("assets/Textures/PawnWhite.png"), Dominion::Texture2D::Create("assets/Textures/PawnBlack.png") };
-	s_Textures[FT_Rook] = { Dominion::Texture2D::Create("assets/Textures/unnamed.png"), Dominion::Texture2D::Create("assets/Textures/unnamed.png") };
-	s_Textures[FT_Knight] = { Dominion::Texture2D::Create("assets/Textures/KnightWhite.png"), Dominion::Texture2D::Create("assets/Textures/unnamed.png") };
-	s_Textures[FT_Bishop] = { Dominion::Texture2D::Create("assets/Textures/unnamed.png"), Dominion::Texture2D::Create("assets/Textures/unnamed.png") };
-	s_Textures[FT_Queen] = { Dominion::Texture2D::Create("assets/Textures/unnamed.png"), Dominion::Texture2D::Create("assets/Textures/unnamed.png") };
-	s_Textures[FT_King] = { Dominion::Texture2D::Create("assets/Textures/unnamed.png"), Dominion::Texture2D::Create("assets/Textures/unnamed.png") };
+	s_Textures[FT_Rook] = { Dominion::Texture2D::Create("assets/Textures/RookWhite.png"), Dominion::Texture2D::Create("assets/Textures/RookBlack.png") };
+	s_Textures[FT_Knight] = { Dominion::Texture2D::Create("assets/Textures/KnightWhite.png"), Dominion::Texture2D::Create("assets/Textures/KnightBlack.png") };
+	s_Textures[FT_Bishop] = { Dominion::Texture2D::Create("assets/Textures/BishopWhite.png"), Dominion::Texture2D::Create("assets/Textures/BishopBlack.png") };
+	s_Textures[FT_Queen] = { Dominion::Texture2D::Create("assets/Textures/QueenWhite.png"), Dominion::Texture2D::Create("assets/Textures/QueenBlack.png") };
+	s_Textures[FT_King] = { Dominion::Texture2D::Create("assets/Textures/KingWhite.png"), Dominion::Texture2D::Create("assets/Textures/KingBlack.png") };
 }
 
-std::vector<Square*> Pawn::GetAvailableMoves()
+std::vector<Square*> Pawn::GetAvailableMoves() const
+{
+	std::vector<Square*> result;
+	if (m_Team == TEAM_WHITE)
+	{
+		Square* square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, 1));
+		if (!square->GetStandingChessman())
+		{
+			result.emplace_back(square);
+			if (!WasMoved())
+			{
+				square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, 2));
+				if (!square->GetStandingChessman())
+				{
+					result.emplace_back(square);
+				}
+			}
+		}
+
+		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(1, 1));
+		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
+			result.emplace_back(square);
+		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(-1, 1));
+		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
+			result.emplace_back(square);
+
+	}
+	else
+	{
+		Square* square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, -1));
+		if (!square->GetStandingChessman())
+		{
+			result.emplace_back(square);
+			if (!WasMoved())
+			{
+				square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, -2));
+				if (!square->GetStandingChessman())
+				{
+					result.emplace_back(square);
+				}
+			}
+		}
+
+		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(1, -1));
+		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
+			result.emplace_back(square);
+		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(-1, -1));
+		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
+			result.emplace_back(square);
+	}
+
+	return result;
+}
+
+std::vector<Square*> Rook::GetAvailableMoves() const
 {
 	// TODO: Implement
 	return {};
 }
 
-std::vector<Square*> Rook::GetAvailableMoves()
+std::vector<Square*> Knight::GetAvailableMoves() const
 {
 	// TODO: Implement
 	return {};
 }
 
-std::vector<Square*> Knight::GetAvailableMoves()
+std::vector<Square*> Bishop::GetAvailableMoves() const
 {
 	// TODO: Implement
 	return {};
 }
 
-std::vector<Square*> Bishop::GetAvailableMoves()
+std::vector<Square*> Queen::GetAvailableMoves() const
 {
 	// TODO: Implement
 	return {};
 }
 
-std::vector<Square*> Queen::GetAvailableMoves()
-{
-	// TODO: Implement
-	return {};
-}
-
-std::vector<Square*> King::GetAvailableMoves()
+std::vector<Square*> King::GetAvailableMoves() const
 {
 	// TODO: Implement
 	return {};
 }
 
 /* ChessmanRenderer */
-void ChessmanRenderer::RenderChessman(const Chessman& chessman)
+void ChessmanRenderer::RenderChessman(const Chessman* chessman)
 {
-	glm::ivec2 o = chessman.GetSquare()->GetOffset();
-	ChessmanType t = chessman.GetType();
-	Dominion::Renderer2D::DrawQuad(chessman.GetSquare()->GetOffset() - glm::ivec2(4, 4), { 1.0f, 1.0f }, s_Textures[chessman.GetType()][chessman.GetTeam()],
-		chessman.GetTeam() == TEAM_WHITE ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	const Square* square = chessman->GetSquare();
+	ChessmanType t = chessman->GetType();
+	Dominion::Renderer2D::DrawQuad(chessman->GetSquare()->GetOffset(), { 1.0f, 1.0f }, s_Textures[chessman->GetType()][chessman->GetTeam()]);
 }

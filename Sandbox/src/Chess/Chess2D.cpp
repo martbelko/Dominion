@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 static bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
 {
@@ -59,10 +60,17 @@ void Chess2DLayer::OnAttach()
 	float ratio = wWidth / wHeight;
 
 	m_Camera = Dominion::OrthographicCameraController(ratio, false);
-	m_Camera.GetCamera().SetPosition(glm::vec3(-0.5f, -0.5f, 0.5f));
+	m_Camera.GetCamera().SetPosition(glm::vec3(3.5f, 3.5f, 0.5f));
+
+	m_Checkerboard = new Checkerboard(m_WhiteColor, m_BlackColor);
 
 	/* Initialize Chessmen renderer */
 	ChessmanRenderer::Init();
+}
+
+void Chess2DLayer::OnDetach()
+{
+	delete m_Checkerboard;
 }
 
 void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
@@ -77,15 +85,23 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 
 	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
-	for (const Square& square : m_Checkerboard.GetSquares())
+	for (const Square& square : m_Checkerboard->GetSquares())
 	{
-		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x - 4, square.GetOffset().y - 4 }, { 1.0f, 1.0f }, square.GetColor());
+		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f },
+			square.IsSelected() ? m_PossibleMoveColor : m_Checkerboard->GetSquareColor(square));
 	}
 
-	for (const Chessman* chessman : m_Checkerboard.GetChessmen())
+	if (m_HoveredSquare)
+		Dominion::Renderer2D::DrawQuad(m_HoveredSquare->GetOffset(), { 1.0f, 1.0f }, m_HoveredSquareColor);
+
+	if (m_SelectedChessman)
 	{
-		ChessmanRenderer::RenderChessman(chessman);
+		const Square* selectedSquare = m_SelectedChessman->GetSquare();
+		Dominion::Renderer2D::DrawQuad(selectedSquare->GetOffset(), { 1.0f, 1.0f }, m_SelectedSquareColor);
 	}
+
+	for (const Chessman* chessman : m_Checkerboard->GetChessmen())
+		ChessmanRenderer::RenderChessman(chessman);
 
 	Dominion::Renderer2D::EndScene();
 }
@@ -94,9 +110,57 @@ void Chess2DLayer::OnEvent(Dominion::Event& e)
 {
 	m_Camera.OnEvent(e);
 	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Chess2DLayer::OnKeyPressed));
+	e.Dispatch<Dominion::MousePressedEvent>(DM_BIND_EVENT_FN(Chess2DLayer::OnMousePressed));
+	e.Dispatch<Dominion::MouseMovedEvent>(DM_BIND_EVENT_FN(Chess2DLayer::OnMouseMoved));
 }
 
 bool Chess2DLayer::OnKeyPressed(Dominion::KeyPressedEvent& e)
 {
+	return false;
+}
+
+bool Chess2DLayer::OnMousePressed(Dominion::MousePressedEvent& e)
+{
+	if (e.GetButton() == Dominion::Mouse::Button0 && m_HoveredSquare)
+	{
+		for (Square* square : m_PossibleSquares)
+			square->Deselect();
+
+		if (m_HoveredSquare->GetStandingChessman() && m_HoveredSquare->GetStandingChessman() != m_SelectedChessman)
+		{
+			m_PossibleSquares = m_HoveredSquare->GetStandingChessman()->GetAvailableMoves();
+
+			for (Square* square : m_PossibleSquares)
+				square->Select();
+
+			m_SelectedChessman = m_HoveredSquare->GetStandingChessman();
+		}
+		else
+			m_SelectedChessman = nullptr;
+	}
+
+	return false;
+}
+
+bool Chess2DLayer::OnMouseMoved(Dominion::MouseMovedEvent& e)
+{
+	float windowWidthHalf = Dominion::Application::Get().GetWindow().GetWidth() / 2.0f;
+	float windowHeightHalf = Dominion::Application::Get().GetWindow().GetHeight() / 2.0f;
+	float mouseX = (e.GetX() - windowWidthHalf) / windowWidthHalf;
+	float mouseY = (e.GetY() - windowHeightHalf) / -windowHeightHalf;
+	mouseX *= m_Camera.GetWidth() / 2.0f;
+	mouseY *= m_Camera.GetHeight() / 2.0f;
+	const glm::vec3& cameraPos = m_Camera.GetCamera().GetPosition();
+
+	for (const Square& square : m_Checkerboard->GetSquares())
+	{
+		const glm::vec3 squarePos = glm::vec3(square.GetOffset().x, square.GetOffset().y, 0.0f);
+		if (DoesIntersect({ mouseX + cameraPos.x, mouseY + cameraPos.y, 1.0f }, { 0.0f, 0.0f, -1.0f }, squarePos, glm::vec2(1.0f, 1.0f)))
+		{
+			m_HoveredSquare = &square;
+			break;
+		}
+	}
+
 	return false;
 }

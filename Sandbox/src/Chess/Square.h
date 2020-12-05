@@ -10,14 +10,24 @@ class Square
 {
 public:
 	Square() = default;
-	Square(const glm::ivec2& offset, const glm::vec4& color)
-		: m_Offset(offset), m_Color(color) {}
-	Square(int xOffset, int yOffset, const glm::vec4& color)
-		: m_Offset({ xOffset, yOffset }), m_Color(color) {}
+	Square(const glm::ivec2& offset, Team teamColor , const Chessman* chessman = nullptr)
+		: m_Offset(offset), m_TeamColor(teamColor), m_Chessman(chessman) {}
+	Square(int xOffset, int yOffset, Team teamColor, const Chessman* chessman = nullptr)
+		: m_Offset({ xOffset, yOffset }), m_TeamColor(teamColor), m_Chessman(chessman) {}
 
 	const glm::ivec2& GetOffset() const { return m_Offset; }
-	const glm::vec4& GetColor() const { return m_Color; }
+
+	const Chessman* GetStandingChessman() const { return m_Chessman; }
+	void SetStandingChessman(const Chessman* chessman) { m_Chessman = chessman; }
+
+	bool IsSelected() const { return m_Selected; }
+	void Select() { m_Selected = true; }
+	void Deselect() { m_Selected = false; }
 private:
 	glm::ivec2 m_Offset;
-	glm::vec4 m_Color;
+	const Chessman* m_Chessman;
+	Team m_TeamColor;
+	bool m_Selected = false;
+
+	friend class Checkerboard;
 };
