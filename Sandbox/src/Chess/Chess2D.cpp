@@ -165,7 +165,7 @@ bool Chess2DLayer::OnMouseMoved(Dominion::MouseMovedEvent& e)
 
 	for (Square& square : m_Chessboard->GetSquares())
 	{
-		const glm::vec3 squarePos = glm::vec3(square.GetOffset().x, square.GetOffset().y, 0.0f);
+		const glm::vec3 squarePos = glm::vec3(square.GetOffset(), 0.0f);
 		if (DoesIntersect({ mouseX + cameraPos.x, mouseY + cameraPos.y, 1.0f }, { 0.0f, 0.0f, -1.0f }, squarePos, glm::vec2(1.0f, 1.0f)))
 		{
 			m_HoveredSquare = &square;
