@@ -80,3 +80,14 @@ Chessboard::~Chessboard()
 	for (Chessman* chessman : m_Chessmen)
 		delete chessman;
 }
+
+void Chessboard::MoveChessmanToSquare(Chessman* chessman, Square* square)
+{
+	chessman->GetSquare()->SetStandingChessman(nullptr);
+	chessman->SetSquare(square);
+	Chessman* currentChessman = square->GetStandingChessman();
+	if (currentChessman)
+		currentChessman->ThrowUp();
+
+	square->SetStandingChessman(chessman);
+}
