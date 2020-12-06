@@ -101,7 +101,10 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 	}
 
 	for (const Chessman* chessman : m_Chessboard->GetChessmen())
-		ChessmanRenderer::RenderChessman(chessman);
+	{
+		if (chessman->IsInGame())
+			ChessmanRenderer::RenderChessman(chessman);
+	}
 
 	Dominion::Renderer2D::EndScene();
 }
