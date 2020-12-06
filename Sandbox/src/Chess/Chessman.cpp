@@ -71,8 +71,38 @@ std::vector<Square*> Pawn::GetAvailableMoves() const
 
 std::vector<Square*> Rook::GetAvailableMoves() const
 {
-	// TODO: Implement
-	return {};
+	std::vector<Square*> result;
+	static constexpr std::array<glm::ivec2, 4> dirs{
+		glm::ivec2(1, 0),
+		glm::ivec2(0, 1),
+		glm::ivec2(-1, 0),
+		glm::ivec2(0, -1),
+	};
+
+	for (const glm::ivec2& dir : dirs)
+	{
+		glm::ivec2 offset = m_Square->GetOffset() + dir;
+		Square* square = m_Chessboard->IsOffsetValid(offset) ? &m_Chessboard->At(offset) : nullptr;
+		while (square)
+		{
+			const Chessman* chessman = square->GetStandingChessman();
+			if (chessman)
+			{
+				if (chessman->GetTeam() != m_Team)
+					result.push_back(square);
+				break;
+			}
+			else
+			{
+				result.push_back(square);
+			}
+
+			offset += dir;
+			square = m_Chessboard->IsOffsetValid(offset) ? &m_Chessboard->At(offset) : nullptr;
+		}
+	}
+
+	return result;
 }
 
 std::vector<Square*> Knight::GetAvailableMoves() const
