@@ -129,17 +129,25 @@ bool Chess2DLayer::OnMousePressed(Dominion::MousePressedEvent& e)
 		for (Square* square : m_PossibleSquares)
 			square->Deselect();
 
-		if (m_HoveredSquare->GetStandingChessman() && m_HoveredSquare->GetStandingChessman() != m_SelectedChessman)
+		if (m_SelectedChessman && std::find(m_PossibleSquares.begin(), m_PossibleSquares.end(), m_HoveredSquare) != m_PossibleSquares.end())
 		{
-			m_PossibleSquares = m_HoveredSquare->GetStandingChessman()->GetAvailableMoves();
-
-			for (Square* square : m_PossibleSquares)
-				square->Select();
-
-			m_SelectedChessman = m_HoveredSquare->GetStandingChessman();
+			m_Chessboard->MoveChessmanToSquare(m_SelectedChessman, m_HoveredSquare);
+			m_SelectedChessman = nullptr;
 		}
 		else
-			m_SelectedChessman = nullptr;
+		{
+			if (m_HoveredSquare->GetStandingChessman() && m_HoveredSquare->GetStandingChessman() != m_SelectedChessman)
+			{
+				m_PossibleSquares = m_HoveredSquare->GetStandingChessman()->GetAvailableMoves();
+
+				for (Square* square : m_PossibleSquares)
+					square->Select();
+
+				m_SelectedChessman = m_HoveredSquare->GetStandingChessman();
+			}
+			else
+				m_SelectedChessman = nullptr;
+		}
 	}
 
 	return false;
