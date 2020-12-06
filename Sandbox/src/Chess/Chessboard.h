@@ -25,6 +25,8 @@ public:
 
 	const std::array<Square, 8 * 8>& GetSquares() const { return m_Squares; }
 	const std::array<Chessman*, 8 * 2 * 2>& GetChessmen() const { return m_Chessmen; }
+	std::array<Square, 8 * 8>& GetSquares() { return m_Squares; }
+	std::array<Chessman*, 8 * 2 * 2>& GetChessmen() { return m_Chessmen; }
 private:
 	std::array<Square, 8 * 8> m_Squares;
 	std::array<Chessman*, 8 * 2 * 2> m_Chessmen;

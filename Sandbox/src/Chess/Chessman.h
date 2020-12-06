@@ -16,13 +16,14 @@ class Chessman
 {
 public:
 	Chessman() = default;
-	Chessman(const Square* square, Team team)
+	Chessman(Square* square, Team team)
 		: m_Square(square), m_Team(team) {}
 
 	virtual ~Chessman() = default;
 
 	const Square* GetSquare() const { return m_Square; }
-	void SetSquare(const Square* square) { m_Square = square; m_Moved = true; }
+	Square* GetSquare() { return m_Square; }
+	void SetSquare(Square* square) { m_Square = square; m_Moved = true; }
 
 	Team GetTeam() const { return m_Team; }
 
@@ -35,7 +36,7 @@ public:
 	virtual ChessmanType GetType() const { return FT_Pawn; }
 	virtual std::vector<Square*> GetAvailableMoves() const { return {}; }
 protected:
-	const Square* m_Square;
+	Square* m_Square;
 	Team m_Team;
 	bool m_InGame = true;
 	bool m_Moved = false;

@@ -21,8 +21,8 @@ private:
 
 	Chessboard* m_Chessboard;
 
-	const Square* m_HoveredSquare = nullptr;
-	const Chessman* m_SelectedChessman = nullptr;
+	Square* m_HoveredSquare = nullptr;
+	Chessman* m_SelectedChessman = nullptr;
 	std::vector<Square*> m_PossibleSquares = {};
 
 	static constexpr glm::vec4 m_WhiteColor = glm::vec4(0.949f, 0.8784f, 0.6588f, 1.0f);
