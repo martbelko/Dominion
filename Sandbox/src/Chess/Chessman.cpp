@@ -1,7 +1,7 @@
 #include "Chessman.h"
 
 #include "Square.h"
-#include "Checkerboard.h"
+#include "Chessboard.h"
 
 std::array<std::array<Dominion::Ref<Dominion::Texture2D>, 2>, FT_King + 1> ChessmanRenderer::s_Textures;
 
@@ -20,13 +20,13 @@ std::vector<Square*> Pawn::GetAvailableMoves() const
 	std::vector<Square*> result;
 	if (m_Team == TEAM_WHITE)
 	{
-		Square* square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, 1));
+		Square* square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(0, 1));
 		if (!square->GetStandingChessman())
 		{
 			result.emplace_back(square);
 			if (!WasMoved())
 			{
-				square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, 2));
+				square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(0, 2));
 				if (!square->GetStandingChessman())
 				{
 					result.emplace_back(square);
@@ -34,23 +34,23 @@ std::vector<Square*> Pawn::GetAvailableMoves() const
 			}
 		}
 
-		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(1, 1));
+		square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(1, 1));
 		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
 			result.emplace_back(square);
-		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(-1, 1));
+		square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(-1, 1));
 		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
 			result.emplace_back(square);
 
 	}
 	else
 	{
-		Square* square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, -1));
+		Square* square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(0, -1));
 		if (!square->GetStandingChessman())
 		{
 			result.emplace_back(square);
 			if (!WasMoved())
 			{
-				square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(0, -2));
+				square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(0, -2));
 				if (!square->GetStandingChessman())
 				{
 					result.emplace_back(square);
@@ -58,10 +58,10 @@ std::vector<Square*> Pawn::GetAvailableMoves() const
 			}
 		}
 
-		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(1, -1));
+		square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(1, -1));
 		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
 			result.emplace_back(square);
-		square = &m_Checkerboard->At(m_Square->GetOffset() + glm::ivec2(-1, -1));
+		square = &m_Chessboard->At(m_Square->GetOffset() + glm::ivec2(-1, -1));
 		if (square->GetStandingChessman() && square->GetStandingChessman()->GetTeam() != m_Team)
 			result.emplace_back(square);
 	}

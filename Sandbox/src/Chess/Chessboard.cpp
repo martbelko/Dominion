@@ -1,6 +1,6 @@
-#include "Checkerboard.h"
+#include "Chessboard.h"
 
-Checkerboard::Checkerboard(const glm::vec4& whiteColor, const glm::vec4& blackColor)
+Chessboard::Chessboard(const glm::vec4& whiteColor, const glm::vec4& blackColor)
 {
 	m_Colors[TEAM_WHITE] = whiteColor;
 	m_Colors[TEAM_BLACK] = blackColor;
@@ -75,7 +75,7 @@ Checkerboard::Checkerboard(const glm::vec4& whiteColor, const glm::vec4& blackCo
 	}
 }
 
-Checkerboard::~Checkerboard()
+Chessboard::~Chessboard()
 {
 	for (Chessman* chessman : m_Chessmen)
 		delete chessman;

@@ -10,7 +10,7 @@ enum ChessmanType { FT_Pawn = 0, FT_Rook, FT_Knight, FT_Bishop, FT_Queen, FT_Kin
 
 // Forward declarations
 class Square;
-class Checkerboard;
+class Chessboard;
 
 class Chessman
 {
@@ -44,79 +44,79 @@ protected:
 class Pawn : public Chessman
 {
 public:
-	Pawn(Square* square, Team team, Checkerboard* checkerboard)
-		: Chessman(square, team), m_Checkerboard(checkerboard) {}
+	Pawn(Square* square, Team team, Chessboard* chessboard)
+		: Chessman(square, team), m_Chessboard(chessboard) {}
 	virtual ~Pawn() = default;
 
 	virtual ChessmanType GetType() const override { return FT_Pawn; }
 	virtual std::vector<Square*> GetAvailableMoves() const override;
 private:
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 };
 
 class Rook : public Chessman
 {
 public:
-	Rook(Square* square, Team team, Checkerboard* checkerboard)
-		: Chessman(square, team), m_Checkerboard(checkerboard) {}
+	Rook(Square* square, Team team, Chessboard* chessboard)
+		: Chessman(square, team), m_Chessboard(chessboard) {}
 	virtual ~Rook() = default;
 
 	virtual ChessmanType GetType() const override { return FT_Rook; }
 	virtual std::vector<Square*> GetAvailableMoves() const override;
 private:
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 };
 
 class Knight : public Chessman
 {
 public:
-	Knight(Square* square, Team team, Checkerboard* checkerboard)
-		: Chessman(square, team), m_Checkerboard(checkerboard) {}
+	Knight(Square* square, Team team, Chessboard* chessboard)
+		: Chessman(square, team), m_Chessboard(chessboard) {}
 	virtual ~Knight() = default;
 
 	virtual ChessmanType GetType() const override { return FT_Knight; }
 	virtual std::vector<Square*> GetAvailableMoves() const override;
 private:
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 };
 
 class Bishop : public Chessman
 {
 public:
-	Bishop(Square* square, Team team, Checkerboard* checkerboard)
-		: Chessman(square, team), m_Checkerboard(checkerboard) {}
+	Bishop(Square* square, Team team, Chessboard* chessboard)
+		: Chessman(square, team), m_Chessboard(chessboard) {}
 	virtual ~Bishop() = default;
 
 	virtual ChessmanType GetType() const override { return FT_Bishop; }
 	virtual std::vector<Square*> GetAvailableMoves() const override;
 private:
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 };
 
 class Queen : public Chessman
 {
 public:
-	Queen(Square* square, Team team, Checkerboard* checkerboard)
-		: Chessman(square, team), m_Checkerboard(checkerboard) {}
+	Queen(Square* square, Team team, Chessboard* chessboard)
+		: Chessman(square, team), m_Chessboard(chessboard) {}
 	virtual ~Queen() = default;
 
 	virtual ChessmanType GetType() const override { return FT_Queen; }
 	virtual std::vector<Square*> GetAvailableMoves() const override;
 private:
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 };
 
 class King : public Chessman
 {
 public:
-	King(Square* square, Team team, Checkerboard* checkerboard)
-		: Chessman(square, team), m_Checkerboard(checkerboard) {}
+	King(Square* square, Team team, Chessboard* chessboard)
+		: Chessman(square, team), m_Chessboard(chessboard) {}
 	virtual ~King() = default;
 
 	virtual ChessmanType GetType() const override { return FT_King; }
 	virtual std::vector<Square*> GetAvailableMoves() const override;
 private:
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 };
 
 class ChessmanRenderer

@@ -2,7 +2,7 @@
 
 #include <Dominion.h>
 
-#include "Checkerboard.h"
+#include "Chessboard.h"
 
 class Chess2DLayer : public Dominion::Layer
 {
@@ -19,7 +19,7 @@ private:
 private:
 	Dominion::OrthographicCameraController m_Camera;
 
-	Checkerboard* m_Checkerboard;
+	Chessboard* m_Chessboard;
 
 	const Square* m_HoveredSquare = nullptr;
 	const Chessman* m_SelectedChessman = nullptr;

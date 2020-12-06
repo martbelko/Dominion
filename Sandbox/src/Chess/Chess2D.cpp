@@ -62,7 +62,7 @@ void Chess2DLayer::OnAttach()
 	m_Camera = Dominion::OrthographicCameraController(ratio, false);
 	m_Camera.GetCamera().SetPosition(glm::vec3(3.5f, 3.5f, 0.5f));
 
-	m_Checkerboard = new Checkerboard(m_WhiteColor, m_BlackColor);
+	m_Chessboard = new Chessboard(m_WhiteColor, m_BlackColor);
 
 	/* Initialize Chessmen renderer */
 	ChessmanRenderer::Init();
@@ -70,7 +70,7 @@ void Chess2DLayer::OnAttach()
 
 void Chess2DLayer::OnDetach()
 {
-	delete m_Checkerboard;
+	delete m_Chessboard;
 }
 
 void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
@@ -85,10 +85,10 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 
 	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
-	for (const Square& square : m_Checkerboard->GetSquares())
+	for (const Square& square : m_Chessboard->GetSquares())
 	{
 		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f },
-			square.IsSelected() ? m_PossibleMoveColor : m_Checkerboard->GetSquareColor(square));
+			square.IsSelected() ? m_PossibleMoveColor : m_Chessboard->GetSquareColor(square));
 	}
 
 	if (m_HoveredSquare)
@@ -100,7 +100,7 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 		Dominion::Renderer2D::DrawQuad(selectedSquare->GetOffset(), { 1.0f, 1.0f }, m_SelectedSquareColor);
 	}
 
-	for (const Chessman* chessman : m_Checkerboard->GetChessmen())
+	for (const Chessman* chessman : m_Chessboard->GetChessmen())
 		ChessmanRenderer::RenderChessman(chessman);
 
 	Dominion::Renderer2D::EndScene();
@@ -152,7 +152,7 @@ bool Chess2DLayer::OnMouseMoved(Dominion::MouseMovedEvent& e)
 	mouseY *= m_Camera.GetHeight() / 2.0f;
 	const glm::vec3& cameraPos = m_Camera.GetCamera().GetPosition();
 
-	for (const Square& square : m_Checkerboard->GetSquares())
+	for (const Square& square : m_Chessboard->GetSquares())
 	{
 		const glm::vec3 squarePos = glm::vec3(square.GetOffset().x, square.GetOffset().y, 0.0f);
 		if (DoesIntersect({ mouseX + cameraPos.x, mouseY + cameraPos.y, 1.0f }, { 0.0f, 0.0f, -1.0f }, squarePos, glm::vec2(1.0f, 1.0f)))

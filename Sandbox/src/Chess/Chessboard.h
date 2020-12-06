@@ -7,11 +7,11 @@
 
 #include <array>
 
-class Checkerboard
+class Chessboard
 {
 public:
-	Checkerboard(const glm::vec4& whiteColor = glm::vec4(0.92f, 0.74f, 0.2f, 1.0f), const glm::vec4& blackColor = glm::vec4(0.92f, 0.40f, 0.2f, 1.0f));
-	~Checkerboard();
+	Chessboard(const glm::vec4& whiteColor = glm::vec4(0.92f, 0.74f, 0.2f, 1.0f), const glm::vec4& blackColor = glm::vec4(0.92f, 0.40f, 0.2f, 1.0f));
+	~Chessboard();
 
 	const Square& At(const glm::ivec2& offset) const { return m_Squares[offset.y * 8 + offset.x]; }
 	Square& At(const glm::ivec2& offset) { return m_Squares[offset.y * 8 + offset.x]; }

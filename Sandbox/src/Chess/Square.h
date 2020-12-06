@@ -29,5 +29,5 @@ private:
 	Team m_TeamColor;
 	bool m_Selected = false;
 
-	friend class Checkerboard;
+	friend class Chessboard;
 };
