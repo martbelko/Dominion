@@ -23,6 +23,10 @@ public:
 	const glm::vec4& GetSquareColor(const Square* square) const { return m_Colors[square->m_TeamColor]; }
 	const glm::vec4& GetSquareColor(const Square& square) const { return GetSquareColor(&square); }
 
+	void MoveChessmanToSquare(Chessman* chessman, Square* square);
+
+	bool IsOffsetValid(const glm::ivec2& offset) { return offset.x >= 0 && offset.x < 8 && offset.y >= 0 && offset.y < 8; }
+
 	const std::array<Square, 8 * 8>& GetSquares() const { return m_Squares; }
 	const std::array<Chessman*, 8 * 2 * 2>& GetChessmen() const { return m_Chessmen; }
 	std::array<Square, 8 * 8>& GetSquares() { return m_Squares; }
