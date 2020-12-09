@@ -96,17 +96,17 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 		{
 			if (square.GetStandingChessman())
 			{
-				Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+				Dominion::Renderer2D::DrawQuad(square.GetOffset(), { 1.0f, 1.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 			}
 			else
 			{
-				Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f },
+				Dominion::Renderer2D::DrawQuad(square.GetOffset(), { 1.0f, 1.0f },
 					index++ % 2 == 0 ? glm::vec4(0.2f, 0.3f, 0.8f, 1.0f) : glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 			}
 		}
 		else
 		{
-			Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f }, m_Chessboard->GetSquareColor(square));
+			Dominion::Renderer2D::DrawQuad(square.GetOffset(), { 1.0f, 1.0f }, m_Chessboard->GetSquareColor(square));
 		}
 	}
 
