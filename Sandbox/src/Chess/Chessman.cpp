@@ -113,26 +113,136 @@ std::vector<Square*> Rook::GetAvailableMoves() const
 
 std::vector<Square*> Knight::GetAvailableMoves() const
 {
-	// TODO: Implement
-	return {};
+	std::vector<Square*> result;
+	static constexpr std::array<glm::ivec2, 8> offsets{
+		glm::ivec2(1, 2),
+		glm::ivec2(-1, 2),
+		glm::ivec2(1, -2),
+		glm::ivec2(-1, -2),
+		glm::ivec2(2, 1),
+		glm::ivec2(-2, 1),
+		glm::ivec2(2, -1),
+		glm::ivec2(-2, -1)
+	};
+
+	for (const glm::ivec2& offset : offsets)
+	{
+		glm::ivec2& position = m_Square->GetOffset() + offset;
+		Square* square = m_Chessboard->IsOffsetValid(position) ? &m_Chessboard->At(position) : nullptr;
+		if (square)
+		{
+			Chessman* chessman = square->GetStandingChessman();
+			if (!chessman || chessman->GetTeam() != m_Team)
+				result.push_back(square);
+		}
+	}
+
+	return result;
 }
 
 std::vector<Square*> Bishop::GetAvailableMoves() const
 {
-	// TODO: Implement
-	return {};
+	std::vector<Square*> result;
+	static constexpr std::array<glm::ivec2, 4> dirs{
+		glm::ivec2(1, 1),
+		glm::ivec2(-1, 1),
+		glm::ivec2(1, -1),
+		glm::ivec2(-1, -1)
+	};
+
+	for (const glm::ivec2& dir : dirs)
+	{
+		glm::ivec2 offset = m_Square->GetOffset() + dir;
+		Square* square = m_Chessboard->IsOffsetValid(offset) ? &m_Chessboard->At(offset) : nullptr;
+		while (square)
+		{
+			const Chessman* chessman = square->GetStandingChessman();
+			if (chessman)
+			{
+				if (chessman->GetTeam() != m_Team)
+					result.push_back(square);
+				break;
+			}
+			else
+			{
+				result.push_back(square);
+			}
+
+			offset += dir;
+			square = m_Chessboard->IsOffsetValid(offset) ? &m_Chessboard->At(offset) : nullptr;
+		}
+	}
+
+	return result;
 }
 
 std::vector<Square*> Queen::GetAvailableMoves() const
 {
-	// TODO: Implement
-	return {};
+	std::vector<Square*> result;
+	static constexpr std::array<glm::ivec2, 8> dirs{
+		glm::ivec2(1, 1),
+		glm::ivec2(-1, 1),
+		glm::ivec2(1, -1),
+		glm::ivec2(-1, -1),
+		glm::ivec2(1, 0),
+		glm::ivec2(0, 1),
+		glm::ivec2(-1, 0),
+		glm::ivec2(0, -1)
+	};
+
+	for (const glm::ivec2& dir : dirs)
+	{
+		glm::ivec2 offset = m_Square->GetOffset() + dir;
+		Square* square = m_Chessboard->IsOffsetValid(offset) ? &m_Chessboard->At(offset) : nullptr;
+		while (square)
+		{
+			const Chessman* chessman = square->GetStandingChessman();
+			if (chessman)
+			{
+				if (chessman->GetTeam() != m_Team)
+					result.push_back(square);
+				break;
+			}
+			else
+			{
+				result.push_back(square);
+			}
+
+			offset += dir;
+			square = m_Chessboard->IsOffsetValid(offset) ? &m_Chessboard->At(offset) : nullptr;
+		}
+	}
+
+	return result;
 }
 
 std::vector<Square*> King::GetAvailableMoves() const
 {
-	// TODO: Implement
-	return {};
+	std::vector<Square*> result;
+	static constexpr std::array<glm::ivec2, 8> offsets{
+		glm::ivec2(0, 1),
+		glm::ivec2(0, -1),
+		glm::ivec2(1, 0),
+		glm::ivec2(-1, 0),
+		glm::ivec2(1, 1),
+		glm::ivec2(-1, 1),
+		glm::ivec2(1, -1),
+		glm::ivec2(-1, -1)
+	};
+
+	for (const glm::ivec2& offset : offsets)
+	{
+		glm::ivec2& position = m_Square->GetOffset() + offset;
+		Square* square = m_Chessboard->IsOffsetValid(position) ? &m_Chessboard->At(position) : nullptr;
+		if (square)
+		{
+			Chessman* chessman = square->GetStandingChessman();
+			if (!chessman || chessman->GetTeam() != m_Team)
+				result.push_back(square);
+		}
+	}
+
+	return result;
 }
 
 /* ChessmanRenderer */
