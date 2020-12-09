@@ -67,3 +67,4 @@ namespace Dominion {
 
 #include "Dominion/Core/Log.h"
 #include "Dominion/Core/Assert.h"
+#include "Dominion/Core/BaseTypes.h"
