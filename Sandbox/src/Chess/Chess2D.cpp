@@ -110,9 +110,6 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 		}
 	}
 
-	if (m_HoveredSquare)
-		Dominion::Renderer2D::DrawQuad(m_HoveredSquare->GetOffset(), { 1.0f, 1.0f }, m_HoveredSquareFrame);
-
 	if (m_SelectedChessman)
 	{
 		const Square* selectedSquare = m_SelectedChessman->GetSquare();
@@ -124,6 +121,9 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 		if (chessman->IsInGame())
 			ChessmanRenderer::RenderChessman(chessman);
 	}
+
+	if (m_HoveredSquare)
+		Dominion::Renderer2D::DrawQuad(m_HoveredSquare->GetOffset(), { 1.0f, 1.0f }, m_HoveredSquareFrame);
 
 	Dominion::Renderer2D::EndScene();
 }
