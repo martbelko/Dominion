@@ -24,3 +24,6 @@ using U64F = uint_fast64_t;
 
 using F32 = float;
 using F64 = double;
+
+using Byte = I8;
+using UByte = U8;
