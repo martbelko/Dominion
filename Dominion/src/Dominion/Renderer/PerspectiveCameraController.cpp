@@ -8,7 +8,7 @@
 
 namespace Dominion {
 
-	PerspectiveCameraController::PerspectiveCameraController(float aspectRatio, bool rotation)
+	PerspectiveCameraController::PerspectiveCameraController(F32 aspectRatio, bool rotation)
 		: m_AspectRatio(aspectRatio), m_Camera(glm::radians(45.0f), aspectRatio, 0.01f, 1000.0f), m_Rotation(rotation)
 	{
 		auto [x, y] = Input::GetMousePosition();
@@ -77,7 +77,7 @@ namespace Dominion {
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 	}
 
-	void PerspectiveCameraController::OnResize(float width, float height)
+	void PerspectiveCameraController::OnResize(F32 width, F32 height)
 	{
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(glm::radians(45.0f), m_AspectRatio, 0.01f, 1000.0f);
@@ -87,12 +87,12 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		float xoffset = e.GetX() - m_LastX;
-		float yoffset = e.GetY() - m_LastY;
+		F32 xoffset = e.GetX() - m_LastX;
+		F32 yoffset = e.GetY() - m_LastY;
 		m_LastX = e.GetX();
 		m_LastY = e.GetY();
 
-		float sensitivity = 0.001f;
+		F32 sensitivity = 0.001f;
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 
@@ -119,7 +119,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		float zoomLevel = m_Camera.m_Position.z - e.GetYOffset() * 0.25f;
+		F32 zoomLevel = m_Camera.m_Position.z - e.GetYOffset() * 0.25f;
 		m_Camera.m_Position.z = zoomLevel;
 		m_Camera.RecalculateViewMatrix();
 		return false;
@@ -129,7 +129,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		OnResize(static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()));
+		OnResize(static_cast<F32>(e.GetWidth()), static_cast<F32>(e.GetHeight()));
 		return false;
 	}
 

@@ -14,7 +14,7 @@ namespace Dominion {
 		virtual uint32_t GetSize() const = 0;
 
 		static Ref<VertexBuffer> Create(uint32_t size);
-		static Ref<VertexBuffer> Create(const float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(const F32* vertices, uint32_t size);
 	};
 
 	class IndexBuffer : public Bindable

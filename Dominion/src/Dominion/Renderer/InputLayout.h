@@ -25,13 +25,13 @@ namespace Dominion {
 	{
 		switch (type)
 		{
-			case DataType::Float:  return sizeof(float);
-			case DataType::Float2: return 2 * sizeof(float);
-			case DataType::Float3: return 3 * sizeof(float);
-			case DataType::Float4: return 4 * sizeof(float);
-			case DataType::Mat2:   return 2 * 2 * sizeof(float);
-			case DataType::Mat3:   return 3 * 3 * sizeof(float);
-			case DataType::Mat4:   return 4 * 4 * sizeof(float);
+			case DataType::Float:  return sizeof(F32);
+			case DataType::Float2: return 2 * sizeof(F32);
+			case DataType::Float3: return 3 * sizeof(F32);
+			case DataType::Float4: return 4 * sizeof(F32);
+			case DataType::Mat2:   return 2 * 2 * sizeof(F32);
+			case DataType::Mat3:   return 3 * 3 * sizeof(F32);
+			case DataType::Mat4:   return 4 * 4 * sizeof(F32);
 			case DataType::Int:    return sizeof(int);
 			case DataType::Int2:   return 2 * sizeof(int);
 			case DataType::Int3:   return 3 * sizeof(int);

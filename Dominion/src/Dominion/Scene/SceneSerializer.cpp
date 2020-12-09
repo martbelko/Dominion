@@ -34,9 +34,9 @@ namespace YAML {
 			if (!node.IsSequence() || node.size() != 3)
 				return false;
 
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
+			rhs.x = node[0].as<F32>();
+			rhs.y = node[1].as<F32>();
+			rhs.z = node[2].as<F32>();
 
 			return true;
 		}
@@ -61,10 +61,10 @@ namespace YAML {
 			if (!node.IsSequence() || node.size() != 4)
 				return false;
 
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
+			rhs.x = node[0].as<F32>();
+			rhs.y = node[1].as<F32>();
+			rhs.z = node[2].as<F32>();
+			rhs.w = node[3].as<F32>();
 
 			return true;
 		}
@@ -244,13 +244,13 @@ namespace Dominion {
 
 					cam.SetProjectionType(static_cast<SceneCamera::ProjectionType>(cameraProps["ProjectionType"].as<int>()));
 
-					cam.SetPerspectiveFOV(cameraProps["PerspectiveFOV"].as<float>());
-					cam.SetPerspectiveNearClip(cameraProps["PerspectiveNearClip"].as<float>());
-					cam.SetPerspectiveFarClip(cameraProps["PerspectiveFarClip"].as<float>());
+					cam.SetPerspectiveFOV(cameraProps["PerspectiveFOV"].as<F32>());
+					cam.SetPerspectiveNearClip(cameraProps["PerspectiveNearClip"].as<F32>());
+					cam.SetPerspectiveFarClip(cameraProps["PerspectiveFarClip"].as<F32>());
 
-					cam.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
-					cam.SetOrthographicNearClip(cameraProps["OrthographicNearClip"].as<float>());
-					cam.SetOrthographicFarClip(cameraProps["OrthographicFarClip"].as<float>());
+					cam.SetOrthographicSize(cameraProps["OrthographicSize"].as<F32>());
+					cam.SetOrthographicNearClip(cameraProps["OrthographicNearClip"].as<F32>());
+					cam.SetOrthographicFarClip(cameraProps["OrthographicFarClip"].as<F32>());
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
@@ -266,7 +266,7 @@ namespace Dominion {
 						sc.Texture = nullptr;
 					else
 						sc.Texture = Texture2D::Create(texPath);
-					sc.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+					sc.TilingFactor = spriteRendererComponent["TilingFactor"].as<F32>();
 				}
 			}
 		}

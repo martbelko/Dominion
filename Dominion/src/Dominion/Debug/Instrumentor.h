@@ -14,7 +14,7 @@
 
 namespace Dominion {
 
-	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
+	using FloatingPointMicroseconds = std::chrono::duration<F64, std::micro>;
 
 	struct ProfileResult
 	{

@@ -17,31 +17,31 @@ namespace Dominion {
 	class PerspectiveCameraController
 	{
 	public:
-		PerspectiveCameraController(float aspectRatio = 1.0f, bool rotation = false);
+		PerspectiveCameraController(F32 aspectRatio = 1.0f, bool rotation = false);
 
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
-		void OnResize(float width, float height);
+		void OnResize(F32 width, F32 height);
 
 		PerspectiveCamera& GetCamera() { return m_Camera; }
 		const PerspectiveCamera& GetCamera() const { return m_Camera; }
 
-		float GetZoomLevel() const { return m_Camera.m_Position.z; }
-		void SetZoomLevel(float level) { m_Camera.m_Position.z = level; m_Camera.RecalculateViewMatrix(); }
+		F32 GetZoomLevel() const { return m_Camera.m_Position.z; }
+		void SetZoomLevel(F32 level) { m_Camera.m_Position.z = level; m_Camera.RecalculateViewMatrix(); }
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizedEvent& e);
 	private:
-		float m_AspectRatio;
+		F32 m_AspectRatio;
 		PerspectiveCamera m_Camera;
 
-		float m_LastX, m_LastY;
+		F32 m_LastX, m_LastY;
 
 		bool m_Rotation;
 
-		float m_CameraTranslationSpeed = 0.1f, m_CameraRotationSpeed = 180.0f;
+		F32 m_CameraTranslationSpeed = 0.1f, m_CameraRotationSpeed = 180.0f;
 	};
 
 }

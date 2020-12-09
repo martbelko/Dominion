@@ -6,13 +6,13 @@
 
 namespace Dominion {
 
-	PerspectiveCamera::PerspectiveCamera(float verticalFOV, float aspectRatio, float nearClip, float farClip)
+	PerspectiveCamera::PerspectiveCamera(F32 verticalFOV, F32 aspectRatio, F32 nearClip, F32 farClip)
 		: m_ProjectionMatrix(glm::perspective(verticalFOV, aspectRatio, nearClip, farClip)), m_ViewMatrix(1.0f), m_ViewProjectionMatrix(m_ProjectionMatrix * m_ViewMatrix)
 	{
 		DM_PROFILE_FUNCTION();
 	}
 
-	void PerspectiveCamera::SetProjection(float verticalFOV, float aspectRatio, float nearClip, float farClip)
+	void PerspectiveCamera::SetProjection(F32 verticalFOV, F32 aspectRatio, F32 nearClip, F32 farClip)
 	{
 		DM_PROFILE_FUNCTION();
 

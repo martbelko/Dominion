@@ -84,7 +84,7 @@ namespace Dominion {
 			DM_PROFILE_SCOPE("Run Loop");
 
 			auto end = std::chrono::system_clock::now();
-			Timestep ts = static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count());
+			Timestep ts = static_cast<F32>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count());
 			m_LastFrameTime = std::chrono::system_clock::now();
 
 			if (!m_Minimized)

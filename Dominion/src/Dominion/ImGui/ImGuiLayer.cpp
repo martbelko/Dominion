@@ -103,7 +103,9 @@ namespace Dominion {
 
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		F32 windowWidth = app.GetWindow().GetWidth();
+		F32 windowHeight = app.GetWindow().GetHeight();
+		io.DisplaySize = ImVec2(windowWidth, windowHeight);
 
 		// Rendering
 		ImGui::Render();

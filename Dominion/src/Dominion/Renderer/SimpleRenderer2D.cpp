@@ -25,7 +25,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		float vertices[] = {
+		F32 vertices[] = {
 			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
 			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
 			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
@@ -92,12 +92,12 @@ namespace Dominion {
 		DrawQuad(transform, color);
 	}
 
-	void SimpleRenderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor)
+	void SimpleRenderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, F32 tilingFactor)
 	{
 		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor);
 	}
 
-	void SimpleRenderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor)
+	void SimpleRenderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, F32 tilingFactor)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -107,12 +107,12 @@ namespace Dominion {
 		DrawQuad(transform, texture, tilingFactor);
 	}
 
-	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, F32 rotation, const glm::vec4& color)
 	{
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
 	}
 
-	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, F32 rotation, const glm::vec4& color)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
@@ -121,12 +121,12 @@ namespace Dominion {
 		DrawQuad(transform, color);
 	}
 
-	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor)
+	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, F32 rotation, const Ref<Texture2D>& texture, F32 tilingFactor)
 	{
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor);
 	}
 
-	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor)
+	void SimpleRenderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, F32 rotation, const Ref<Texture2D>& texture, F32 tilingFactor)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
@@ -147,7 +147,7 @@ namespace Dominion {
 		RenderCommand::DrawIndexed(s_Data.QuadPipeline);
 	}
 
-	void SimpleRenderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor)
+	void SimpleRenderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, F32 tilingFactor)
 	{
 		DM_PROFILE_FUNCTION();
 

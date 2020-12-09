@@ -21,7 +21,7 @@ namespace Dominion {
 		void UploadAllShaderUniforms() const;
 
 		void SetUniform(const std::string_view& name, int value) { m_IntHashmap[std::string(name)] = value; }
-		void SetUniform(const std::string_view& name, float value) {m_FloatHashmap[std::string(name)] = value; }
+		void SetUniform(const std::string_view& name, F32 value) {m_FloatHashmap[std::string(name)] = value; }
 		void SetUniform(const std::string_view& name, const glm::vec2& value) { m_Vec2Hashmap[std::string(name)] = value; }
 		void SetUniform(const std::string_view& name, const glm::vec3& value) { m_Vec3Hashmap[std::string(name)] = value; }
 		void SetUniform(const std::string_view& name, const glm::vec4& value) { m_Vec4Hashmap[std::string(name)] = value; }
@@ -33,7 +33,7 @@ namespace Dominion {
 	private:
 		Ref<Shader> m_Shader;
 		std::unordered_map<std::string, int> m_IntHashmap;
-		std::unordered_map<std::string, float> m_FloatHashmap;
+		std::unordered_map<std::string, F32> m_FloatHashmap;
 		std::unordered_map<std::string, glm::vec2> m_Vec2Hashmap;
 		std::unordered_map<std::string, glm::vec3> m_Vec3Hashmap;
 		std::unordered_map<std::string, glm::vec4> m_Vec4Hashmap;

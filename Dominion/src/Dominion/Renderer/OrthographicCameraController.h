@@ -13,32 +13,32 @@ namespace Dominion {
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(float aspectRatio = 1.0f, bool rotation = false);
+		OrthographicCameraController(F32 aspectRatio = 1.0f, bool rotation = false);
 
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
-		void OnResize(float width, float height);
+		void OnResize(F32 width, F32 height);
 
 		OrthographicCamera& GetCamera();
 		const OrthographicCamera& GetCamera() const;
 
-		float GetZoomLevel() const;
-		void SetZoomLevel(float level);
+		F32 GetZoomLevel() const;
+		void SetZoomLevel(F32 level);
 
-		float GetWidth() const { return 2 * m_AspectRatio * m_ZoomLevel; }
-		float GetHeight() const { return 2 * m_ZoomLevel; }
+		F32 GetWidth() const { return 2 * m_AspectRatio * m_ZoomLevel; }
+		F32 GetHeight() const { return 2 * m_ZoomLevel; }
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizedEvent& e);
 	private:
-		float m_AspectRatio;
-		float m_ZoomLevel = 1.0f;
+		F32 m_AspectRatio;
+		F32 m_ZoomLevel = 1.0f;
 		OrthographicCamera m_Camera;
 
 		bool m_Rotation;
 
-		float m_CameraTranslationSpeed = 5.0f, m_CameraRotationSpeed = 180.0f;
+		F32 m_CameraTranslationSpeed = 5.0f, m_CameraRotationSpeed = 180.0f;
 	};
 
 }

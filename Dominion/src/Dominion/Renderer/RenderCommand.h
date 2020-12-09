@@ -21,7 +21,7 @@ namespace Dominion {
 			s_RendererAPI->SetViewport(x, y, width, height);
 		}
 
-		static void SetClearColor(float r, float g, float b, float a = 1.0f)
+		static void SetClearColor(F32 r, F32 g, F32 b, F32 a = 1.0f)
 		{
 			s_RendererAPI->SetClearColor(r, g, b, a);
 		}
