@@ -6,7 +6,7 @@
 
 namespace Dominion {
 
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
+	OrthographicCameraController::OrthographicCameraController(F32 aspectRatio, bool rotation)
 		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
 	{
 
@@ -17,7 +17,7 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		glm::vec3& cameraPosition = m_Camera.GetPosition();
-		float& cameraRotation = m_Camera.GetRotation();
+		F32& cameraRotation = m_Camera.GetRotation();
 
 		bool recalculate = false;
 		if (Input::IsKeyPressed(Key::A))
@@ -79,7 +79,7 @@ namespace Dominion {
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 	}
 
-	void OrthographicCameraController::OnResize(float width, float height)
+	void OrthographicCameraController::OnResize(F32 width, F32 height)
 	{
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -95,12 +95,12 @@ namespace Dominion {
 		return m_Camera;
 	}
 
-	float OrthographicCameraController::GetZoomLevel() const
+	F32 OrthographicCameraController::GetZoomLevel() const
 	{
 		return m_ZoomLevel;
 	}
 
-	void OrthographicCameraController::SetZoomLevel(float level)
+	void OrthographicCameraController::SetZoomLevel(F32 level)
 	{
 		m_ZoomLevel = level;
 	}
@@ -119,7 +119,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		OnResize(static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()));
+		OnResize(static_cast<F32>(e.GetWidth()), static_cast<F32>(e.GetHeight()));
 		return false;
 	}
 

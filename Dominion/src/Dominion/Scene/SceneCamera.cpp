@@ -12,11 +12,11 @@ namespace Dominion {
 
 	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
 	{
-		m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
+		m_AspectRatio = static_cast<F32>(width) / static_cast<F32>(height);
 		RecalculateProjection();
 	}
 
-	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
+	void SceneCamera::SetPerspective(F32 verticalFOV, F32 nearClip, F32 farClip)
 	{
 		m_ProjectionType = ProjectionType::Perspective;
 		m_PerspectiveFOV = verticalFOV;
@@ -26,7 +26,7 @@ namespace Dominion {
 		RecalculateProjection();
 	}
 
-	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
+	void SceneCamera::SetOrthographic(F32 size, F32 nearClip, F32 farClip)
 	{
 		m_ProjectionType = ProjectionType::Orthographic;
 		m_OrthographicSize = size;
@@ -47,67 +47,67 @@ namespace Dominion {
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetPerspectiveFOV() const
+	F32 SceneCamera::GetPerspectiveFOV() const
 	{
 		return m_PerspectiveFOV;
 	}
 
-	void SceneCamera::SetPerspectiveFOV(float verticalFOV)
+	void SceneCamera::SetPerspectiveFOV(F32 verticalFOV)
 	{
 		m_PerspectiveFOV = verticalFOV;
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetPerspectiveNearClip() const
+	F32 SceneCamera::GetPerspectiveNearClip() const
 	{
 		return m_PerspectiveNear;
 	}
 
-	void SceneCamera::SetPerspectiveNearClip(float nearClip)
+	void SceneCamera::SetPerspectiveNearClip(F32 nearClip)
 	{
 		m_PerspectiveNear = nearClip;
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetPerspectiveFarClip() const
+	F32 SceneCamera::GetPerspectiveFarClip() const
 	{
 		return m_PerspectiveFar;
 	}
 
-	void SceneCamera::SetPerspectiveFarClip(float farClip)
+	void SceneCamera::SetPerspectiveFarClip(F32 farClip)
 	{
 		m_PerspectiveFar = farClip;
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetOrthographicSize() const
+	F32 SceneCamera::GetOrthographicSize() const
 	{
 		return m_OrthographicSize;
 	}
 
-	void SceneCamera::SetOrthographicSize(float size)
+	void SceneCamera::SetOrthographicSize(F32 size)
 	{
 		m_OrthographicSize = size;
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetOrthographicNearClip() const
+	F32 SceneCamera::GetOrthographicNearClip() const
 	{
 		return m_OrthographicNear;
 	}
 
-	void SceneCamera::SetOrthographicNearClip(float nearClip)
+	void SceneCamera::SetOrthographicNearClip(F32 nearClip)
 	{
 		m_OrthographicNear = nearClip;
 		RecalculateProjection();
 	}
 
-	float SceneCamera::GetOrthographicFarClip() const
+	F32 SceneCamera::GetOrthographicFarClip() const
 	{
 		return m_OrthographicFar;
 	}
 
-	void SceneCamera::SetOrthographicFarClip(float farClip)
+	void SceneCamera::SetOrthographicFarClip(F32 farClip)
 	{
 		m_OrthographicFar = farClip;
 		RecalculateProjection();
@@ -121,10 +121,10 @@ namespace Dominion {
 		}
 		else
 		{
-			float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
-			float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
-			float orthoBottom = -m_OrthographicSize * 0.5f;
-			float orthoTop = m_OrthographicSize * 0.5f;
+			F32 orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
+			F32 orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
+			F32 orthoBottom = -m_OrthographicSize * 0.5f;
+			F32 orthoTop = m_OrthographicSize * 0.5f;
 
 			m_Projection = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
 		}

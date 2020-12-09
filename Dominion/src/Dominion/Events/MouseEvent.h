@@ -55,11 +55,11 @@ namespace Dominion {
 	class MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(float x, float y)
+		MouseMovedEvent(F32 x, F32 y)
 			: m_MouseX(x), m_MouseY(y) {}
 
-		float GetX() const { return m_MouseX; }
-		float GetY() const { return m_MouseY; }
+		F32 GetX() const { return m_MouseX; }
+		F32 GetY() const { return m_MouseY; }
 
 		virtual std::string ToString() const override
 		{
@@ -70,17 +70,17 @@ namespace Dominion {
 
 		EVENT_TYPE(EventType::MouseMoved)
 	private:
-		float m_MouseX, m_MouseY;
+		F32 m_MouseX, m_MouseY;
 	};
 
 	class MouseScrolledEvent : public Event
 	{
 	public:
-		MouseScrolledEvent(float xOffset, float yOffset)
+		MouseScrolledEvent(F32 xOffset, F32 yOffset)
 			: m_OffsetX(xOffset), m_OffsetY(yOffset) {}
 
-		float GetXOffset() const { return m_OffsetX; }
-		float GetYOffset() const { return m_OffsetY; }
+		F32 GetXOffset() const { return m_OffsetX; }
+		F32 GetYOffset() const { return m_OffsetY; }
 
 		virtual std::string ToString() const override
 		{
@@ -91,7 +91,7 @@ namespace Dominion {
 
 		EVENT_TYPE(EventType::MouseScrolled)
 	private:
-		float m_OffsetX, m_OffsetY;
+		F32 m_OffsetX, m_OffsetY;
 	};
 
 }

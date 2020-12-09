@@ -11,9 +11,9 @@ namespace Dominion {
 	public:
 		static bool IsKeyPressed(KeyCode keycode);
 		static bool IsMousePressed(MouseCode button);
-		static std::pair<float, float> GetMousePosition();
-		static float GetMouseX();
-		static float GetMouseY();
+		static std::pair<F32, F32> GetMousePosition();
+		static F32 GetMouseX();
+		static F32 GetMouseY();
 	};
 
 }

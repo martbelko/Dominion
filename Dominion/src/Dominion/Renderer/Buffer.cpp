@@ -18,7 +18,7 @@ namespace Dominion {
 		return nullptr;
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(const F32* vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{

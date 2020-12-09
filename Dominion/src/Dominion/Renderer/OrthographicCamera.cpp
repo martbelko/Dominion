@@ -5,7 +5,7 @@
 
 namespace Dominion {
 
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
+	OrthographicCamera::OrthographicCamera(F32 left, F32 right, F32 bottom, F32 top)
 		: m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.0f, 1.0f)), m_ViewMatrix(1.0f)
 	{
 		DM_PROFILE_FUNCTION();
@@ -13,7 +13,7 @@ namespace Dominion {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	void OrthographicCamera::SetProjection(float left, float right, float bottom, float top)
+	void OrthographicCamera::SetProjection(F32 left, F32 right, F32 bottom, F32 top)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -43,12 +43,12 @@ namespace Dominion {
 		RecalculateViewMatrix();
 	}
 
-	float OrthographicCamera::GetRotation() const
+	F32 OrthographicCamera::GetRotation() const
 	{
 		return m_Rotation;
 	}
 
-	void OrthographicCamera::SetRotation(float rotation)
+	void OrthographicCamera::SetRotation(F32 rotation)
 	{
 		m_Rotation = rotation;
 		RecalculateViewMatrix();

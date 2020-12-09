@@ -55,15 +55,15 @@ namespace Dominion {
 		return distribution(s_Generator);
 	}
 
-	float Random::RandomFloat(float low, float high)
+	F32 Random::RandomFloat(F32 low, F32 high)
 	{
-		std::uniform_real_distribution<float> distribution(low, high);
+		std::uniform_real_distribution<F32> distribution(low, high);
 		return distribution(s_Generator);
 	}
 
-	double Random::RandomDouble(double low, double high)
+	double Random::RandomDouble(F64 low, F64 high)
 	{
-		std::uniform_real_distribution<double> distribution(low, high);
+		std::uniform_real_distribution<F64> distribution(low, high);
 		return distribution(s_Generator);
 	}
 

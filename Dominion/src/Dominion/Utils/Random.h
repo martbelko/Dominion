@@ -20,8 +20,8 @@ namespace Dominion {
 		static int64_t RandomInt64(int64_t low, int64_t high);
 		static uint64_t RandomUint64(uint64_t low, uint64_t high);
 
-		static float RandomFloat(float low, float high);
-		static double RandomDouble(double low, double high);
+		static F32 RandomFloat(F32 low, F32 high);
+		static double RandomDouble(F64 low, F64 high);
 	private:
 		static std::default_random_engine s_Generator;
 	};
