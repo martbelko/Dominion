@@ -34,13 +34,3 @@
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"
 #include "Dominion/Utils/Timer.h"
-
-#if defined(new)
-	#undef new
-	#include "../imgui/imgui.h"
-	#include "../imgui/imgui_internal.h"
-	#define new DEBUG_NEW
-#else
-	#include "../imgui/imgui.h"
-	#include "../imgui/imgui_internal.h"
-#endif
