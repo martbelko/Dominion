@@ -26,9 +26,9 @@ namespace Dominion {
 			s_RendererAPI->SetClearColor(r, g, b, a);
 		}
 
-		static void Clear()
+		static void ClearColorBuffer()
 		{
-			s_RendererAPI->Clear();
+			s_RendererAPI->ClearColorBuffer();
 		}
 
 		static void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count = 0)

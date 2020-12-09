@@ -85,7 +85,7 @@ void Sandbox3D::OnUpdate(const Dominion::Timestep& timestep)
 	Dominion::Renderer2D::ResetStats();
 
 	Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	Dominion::RenderCommand::Clear();
+	Dominion::RenderCommand::ClearColorBuffer();
 
 	Dominion::Renderer::BeginScene(m_Camera.GetCamera());
 
