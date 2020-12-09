@@ -54,6 +54,9 @@ Chess2DLayer::Chess2DLayer()
 
 void Chess2DLayer::OnAttach()
 {
+	/* Setup resources */
+	m_HoveredSquareFrame = Dominion::Texture2D::Create("assets/Textures/Frame.png");
+
 	/* Setup camera */
 	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
 	float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
@@ -85,14 +88,29 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 
 	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
+	int index = 0;
 	for (const Square& square : m_Chessboard->GetSquares())
 	{
-		Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f },
-			square.IsSelected() ? m_PossibleMoveColor : m_Chessboard->GetSquareColor(square));
+		if (square.IsSelected())
+		{
+			if (square.GetStandingChessman())
+			{
+				Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			}
+			else
+			{
+				Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f },
+					index++ % 2 == 0 ? glm::vec4(0.2f, 0.3f, 0.8f, 1.0f) : glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+			}
+		}
+		else
+		{
+			Dominion::Renderer2D::DrawQuad({ square.GetOffset().x, square.GetOffset().y }, { 1.0f, 1.0f }, m_Chessboard->GetSquareColor(square));
+		}
 	}
 
 	if (m_HoveredSquare)
-		Dominion::Renderer2D::DrawQuad(m_HoveredSquare->GetOffset(), { 1.0f, 1.0f }, m_HoveredSquareColor);
+		Dominion::Renderer2D::DrawQuad(m_HoveredSquare->GetOffset(), { 1.0f, 1.0f }, m_HoveredSquareFrame);
 
 	if (m_SelectedChessman)
 	{

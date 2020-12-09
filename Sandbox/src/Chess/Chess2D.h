@@ -28,6 +28,7 @@ private:
 	static constexpr glm::vec4 m_WhiteColor = glm::vec4(0.949f, 0.8784f, 0.6588f, 1.0f);
 	static constexpr glm::vec4 m_BlackColor = glm::vec4(0.6039f, 0.1725f, 0.0078f, 1.0f);
 	static constexpr glm::vec4 m_SelectedSquareColor = glm::vec4(0.0627f, 0.4118f, 0.0235f, 1.0f);
-	static constexpr glm::vec4 m_HoveredSquareColor = glm::vec4(1.0f, 0.996f, 0.0f, 1.0f);
+	//static constexpr glm::vec4 m_HoveredSquareColor = glm::vec4(1.0f, 0.996f, 0.0f, 1.0f);
+	Dominion::Ref<Dominion::Texture2D> m_HoveredSquareFrame;
 	static constexpr glm::vec4 m_PossibleMoveColor = glm::vec4(0.0039f, 0.3333f, 0.6863f, 1.0f);
 };
