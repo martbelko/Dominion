@@ -21,6 +21,7 @@ namespace Dominion {
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 		virtual void SetClearColor(float r, float g, float b, float a) = 0;
 		virtual void ClearColorBuffer() = 0;
+		virtual void ClearDepthBuffer() = 0;
 		virtual void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count) = 0;
 		virtual void Draw(const Ref<Pipeline> pipeline, uint32_t count) = 0;
 

@@ -31,6 +31,11 @@ namespace Dominion {
 			s_RendererAPI->ClearColorBuffer();
 		}
 
+		static void ClearDepthBuffer()
+		{
+			s_RendererAPI->ClearDepthBuffer();
+		}
+
 		static void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count = 0)
 		{
 			s_RendererAPI->DrawIndexed(pipeline, count);

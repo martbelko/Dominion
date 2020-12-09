@@ -85,6 +85,7 @@ void Chess2DLayer::OnUpdate(const Dominion::Timestep& timestep)
 	// Render
 	Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	Dominion::RenderCommand::ClearColorBuffer();
+	Dominion::RenderCommand::ClearDepthBuffer();
 
 	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
 
