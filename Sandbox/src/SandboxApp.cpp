@@ -4,6 +4,7 @@
 #include "Sandbox2D.h"
 #include "Sandbox3D.h"
 #include "Chess/Chess2D.h"
+#include "Graphs/GraphLayer.h"
 
 class Sandbox : public Dominion::Application
 {
