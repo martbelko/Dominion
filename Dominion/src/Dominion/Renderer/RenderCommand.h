@@ -36,6 +36,21 @@ namespace Dominion {
 			s_RendererAPI->ClearDepthBuffer();
 		}
 
+		static void EnableDepthTest()
+		{
+			s_RendererAPI->EnableDepthTest();
+		}
+
+		virtual void DisableDepthTest()
+		{
+			s_RendererAPI->DisableDepthTest();
+		}
+
+		virtual void SetDepthTestFunc(DepthTestFunc func)
+		{
+			s_RendererAPI->SetDepthTestFunc(func);
+		}
+
 		static void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count = 0)
 		{
 			s_RendererAPI->DrawIndexed(pipeline, count);

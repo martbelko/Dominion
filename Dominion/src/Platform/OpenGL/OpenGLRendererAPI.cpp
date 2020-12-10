@@ -62,6 +62,37 @@ namespace Dominion {
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
+	void OpenGLRendererAPI::EnableDepthTest()
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLRendererAPI::DisableDepthTest()
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLRendererAPI::SetDepthTestFunc(DepthTestFunc func)
+	{
+		GLenum glFunc;
+		switch (func)
+		{
+			case Dominion::DepthTestFunc::NEVER:        glFunc = GL_NEVER;    break;
+			case Dominion::DepthTestFunc::LESS:         glFunc = GL_LESS;     break;
+			case Dominion::DepthTestFunc::EQUAL:        glFunc = GL_EQUAL;    break;
+			case Dominion::DepthTestFunc::LESSEQUAL:    glFunc = GL_LEQUAL;   break;
+			case Dominion::DepthTestFunc::GREATER:      glFunc = GL_GREATER;  break;
+			case Dominion::DepthTestFunc::NOTEQUAL:     glFunc = GL_NOTEQUAL; break;
+			case Dominion::DepthTestFunc::GREATEREQUAL: glFunc = GL_GEQUAL;   break;
+			case Dominion::DepthTestFunc::ALWAYS:       glFunc = GL_ALWAYS;   break;
+		#ifdef DM_DEBUG
+			default: DM_CORE_ASSERT(false, "Unknown DepthTestFunc!"); glFunc = 0; break;
+		#endif
+		}
+
+		glDepthFunc(glFunc);
+	}
+
 	void OpenGLRendererAPI::DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count)
 	{
 		uint32_t indexCount = count ? count : pipeline->GetIndexBuffer()->GetCount();
