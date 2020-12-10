@@ -41,12 +41,12 @@ namespace Dominion {
 			s_RendererAPI->EnableDepthTest();
 		}
 
-		virtual void DisableDepthTest()
+		static void DisableDepthTest()
 		{
 			s_RendererAPI->DisableDepthTest();
 		}
 
-		virtual void SetDepthTestFunc(DepthTestFunc func)
+		static void SetDepthTestFunc(DepthTestFunc func)
 		{
 			s_RendererAPI->SetDepthTestFunc(func);
 		}
