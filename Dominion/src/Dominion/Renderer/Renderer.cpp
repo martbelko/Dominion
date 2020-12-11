@@ -61,7 +61,7 @@ namespace Dominion {
 		}
 	}
 
-	void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform /*= glm::mat4(1.0f)*/)
+	/*void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform)
 	{
 		const Ref<Mesh>& mesh = model->GetMesh();
 		const Ref<Material>& material = model->GetMaterial();
@@ -82,6 +82,6 @@ namespace Dominion {
 			uint32_t count = pipeline->GetVertexBuffer()->GetSize() / pipeline->GetInputLayout()->GetStride();
 			RenderCommand::Draw(pipeline, count);
 		}
-	}
+	}*/
 
 }
