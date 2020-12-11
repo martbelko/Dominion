@@ -19,18 +19,6 @@
 
 #endif
 
-#if defined(new)
-#undef new
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#define new DEBUG_NEW
-#else
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#endif
-
 namespace Dominion {
 
 	Application* Application::s_Application = nullptr;
