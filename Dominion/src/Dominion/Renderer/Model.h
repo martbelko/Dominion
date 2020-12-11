@@ -1,26 +1,33 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
+#include "Dominion/Renderer/Mesh.h"
+#include "Dominion/Renderer/Shader.h"
+
+#include <string>
+#include <vector>
+
+struct aiNode;
+struct aiMesh;
+struct aiScene;
+struct aiMaterial;
+enum aiTextureType;
 
 namespace Dominion {
-
-	// Forward declarations
-	class Mesh;
-	class Material;
 
 	class Model
 	{
 	public:
-		Model(const Ref<Mesh>& mesh, const Ref<Material>& material)
-			: m_Mesh(mesh), m_Material(material) {}
-
-		const Ref<Mesh>& GetMesh() const { return m_Mesh; }
-		const Ref<Material>& GetMaterial() const { return m_Material; }
-
-		static Ref<Model> Create(const Ref<Mesh>& mesh, const Ref<Material>& material) { return CreateRef<Model>(mesh, material); }
+		Model(const std::string& path);
+		void Draw(Ref<Shader>& shader);
 	private:
-		Ref<Mesh> m_Mesh;
-		Ref<Material> m_Material;
+		void LoadModel(const std::string& path);
+		void ProcessNode(aiNode* node, const aiScene* scene);
+		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		std::vector<MeshTexture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+	private:
+		std::vector<MeshTexture> m_TexturesLoaded;
+		std::vector<Mesh> m_Meshes;
+		std::string m_Directory;
 	};
 
 }
