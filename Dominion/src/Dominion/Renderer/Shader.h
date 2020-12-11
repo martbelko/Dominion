@@ -20,6 +20,8 @@ namespace Dominion {
 
 		virtual const std::string& GetName() const { return m_Name; }
 
+		virtual bool HasUniform(const std::string_view& name) = 0;
+
 		virtual void SetInt(const std::string_view& name, int value) = 0;
 		virtual void SetIntArray(const std::string_view& name, int* values, uint32_t count) = 0;
 		virtual void SetFloat(const std::string_view& name, F32 value) = 0;

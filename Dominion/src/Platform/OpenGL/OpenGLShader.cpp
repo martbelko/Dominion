@@ -37,6 +37,14 @@ namespace Dominion {
 		glUseProgram(m_RendererID);
 	}
 
+	bool OpenGLShader::HasUniform(const std::string_view& name)
+	{
+		DM_PROFILE_FUNCTION();
+
+		GLint location = glGetUniformLocation(m_RendererID, name.data());
+		return location != -1;
+	}
+
 	void OpenGLShader::SetInt(const std::string_view& name, int value)
 	{
 		DM_PROFILE_FUNCTION();

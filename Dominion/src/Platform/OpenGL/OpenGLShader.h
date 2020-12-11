@@ -19,6 +19,8 @@ namespace Dominion {
 
 		virtual void Bind() const override;
 
+		virtual bool HasUniform(const std::string_view& name) override;
+
 		virtual void SetInt(const std::string_view& name, int value) override;
 		virtual void SetIntArray(const std::string_view& name, int* values, uint32_t count) override;
 		virtual void SetFloat(const std::string_view& name, float value) override;
