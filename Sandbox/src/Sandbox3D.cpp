@@ -19,8 +19,8 @@ void Sandbox3D::OnAttach()
 	m_Camera = Dominion::PerspectiveCameraController(ratio, false);
 	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
 
-	/* Setup 3D Render stuff */
-	float vertices[] = {
+	ourShader = Dominion::Shader::Create("ModelShader", "assets/Shaders/3DVS.glsl", "assets/Shaders/3DPS.glsl");
+	ourModel = Dominion::CreateRef<Dominion::Model>("assets/Models/backpack/backpack.obj");
 }
 
 void Sandbox3D::OnUpdate(const Dominion::Timestep& timestep)
@@ -30,11 +30,13 @@ void Sandbox3D::OnUpdate(const Dominion::Timestep& timestep)
 
 	Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	Dominion::RenderCommand::ClearColorBuffer();
+	Dominion::RenderCommand::ClearDepthBuffer();
 
 	Dominion::Renderer::BeginScene(m_Camera.GetCamera());
 
 	ourShader->Bind();
 	ourShader->SetMat4("u_ViewProjection", m_Camera.GetCamera().GetViewProjectionMatrix());
+	ourShader->SetMat4("u_Transform", glm::mat4(1.0f));
 
 	ourModel->Draw(ourShader);
 

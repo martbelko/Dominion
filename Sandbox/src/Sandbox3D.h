@@ -12,10 +12,8 @@ public:
 private:
 	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
 private:
-	Dominion::Ref<Dominion::Model> m_Model;
-
 	Dominion::PerspectiveCameraController m_Camera;
 
-	bool m_ShowCursor = false;
-
+	Dominion::Ref<Dominion::Shader> ourShader;
+	Dominion::Ref<Dominion::Model> ourModel;
 };
