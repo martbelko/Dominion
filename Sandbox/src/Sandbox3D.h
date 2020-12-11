@@ -18,8 +18,4 @@ private:
 
 	bool m_ShowCursor = false;
 
-	float m_Rotation = 0.0f;
-	float m_RotationSpeed = 40.0f;
-
-	int m_Count = 10;
 };
