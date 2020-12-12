@@ -128,7 +128,8 @@ namespace Dominion {
 		std::vector<Dominion::MeshTexture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 		textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-		return Dominion::Mesh(reinterpret_cast<F32*>(vertices.data()), vertices.size() * sizeof(Vertex), indices.data(), indices.size(), textures);
+		return Dominion::Mesh(reinterpret_cast<F32*>(vertices.data()), static_cast<U32F>(vertices.size() * sizeof(Vertex)),
+			indices.data(), static_cast<U32F>(indices.size()), textures);
 	}
 
 	std::vector<MeshTexture> Model::LoadMaterialTextures(const aiMaterial* material, aiTextureType type, const std::string& typeName)
