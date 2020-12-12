@@ -8,38 +8,26 @@
 #include <glm/glm.hpp>
 
 #if defined(new)
-#undef new
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#define new DEBUG_NEW
+	#undef new
+	#include <assimp/Importer.hpp>
+	#include <assimp/scene.h>
+	#include <assimp/postprocess.h>
+	#define new DEBUG_NEW
 #else
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+	#include <assimp/Importer.hpp>
+	#include <assimp/scene.h>
+	#include <assimp/postprocess.h>
 #endif
 
 namespace Dominion {
 
-	Ref<Texture2D> TextureFromFile(const char* path, const std::string& directory, bool gamma = false)
+	static Ref<Texture2D> TextureFromFile(std::string_view path, const std::string& directory)
 	{
-		std::string filename = std::string(path);
-		filename = directory + '/' + filename;
+		std::string filename = directory + '/' + std::string(path);
 		return Dominion::Texture2D::Create(filename);
 	}
 
 	Model::Model(const std::string& path)
-	{
-		LoadModel(path);
-	}
-
-	void Model::Draw(Dominion::Ref<Dominion::Shader>& shader)
-	{
-		for (unsigned int i = 0; i < m_Meshes.size(); i++)
-			m_Meshes[i].Draw(shader);
-	}
-
-	void Model::LoadModel(std::string const& path)
 	{
 		Assimp::Importer importer;
 		importer.GetErrorString();
@@ -55,22 +43,22 @@ namespace Dominion {
 		ProcessNode(scene->mRootNode, scene);
 	}
 
-	void Model::ProcessNode(aiNode* node, const aiScene* scene)
+	void Model::ProcessNode(const aiNode* node, const aiScene* scene)
 	{
-		for (unsigned int i = 0; i < node->mNumMeshes; i++)
+		for (U32F i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			m_Meshes.push_back(ProcessMesh(mesh, scene));
 		}
 
-		for (unsigned int i = 0; i < node->mNumChildren; i++)
+		for (U32F i = 0; i < node->mNumChildren; i++)
 		{
 			ProcessNode(node->mChildren[i], scene);
 		}
 
 	}
 
-	Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+	Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<U32> indices;
@@ -143,13 +131,13 @@ namespace Dominion {
 		return Dominion::Mesh(reinterpret_cast<F32*>(vertices.data()), vertices.size() * sizeof(Vertex), indices.data(), indices.size(), textures);
 	}
 
-	std::vector<MeshTexture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
+	std::vector<MeshTexture> Model::LoadMaterialTextures(const aiMaterial* material, aiTextureType type, const std::string& typeName)
 	{
 		std::vector<MeshTexture> textures;
-		for (U32F i = 0; i < mat->GetTextureCount(type); i++)
+		for (U32F i = 0; i < material->GetTextureCount(type); i++)
 		{
 			aiString str;
-			mat->GetTexture(type, i, &str);
+			material->GetTexture(type, i, &str);
 			bool skip = false;
 			for (U32F j = 0; j < m_TexturesLoaded.size(); j++)
 			{

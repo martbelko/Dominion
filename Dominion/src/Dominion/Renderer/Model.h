@@ -18,12 +18,12 @@ namespace Dominion {
 	{
 	public:
 		Model(const std::string& path);
-		void Draw(Ref<Shader>& shader);
+
+		const std::vector<Mesh>& GetMeshes() const { return m_Meshes; }
 	private:
-		void LoadModel(const std::string& path);
-		void ProcessNode(aiNode* node, const aiScene* scene);
-		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<MeshTexture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+		void ProcessNode(const aiNode* node, const aiScene* scene);
+		Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene);
+		std::vector<MeshTexture> LoadMaterialTextures(const aiMaterial* material, aiTextureType type, const std::string& typeName);
 	private:
 		std::vector<MeshTexture> m_TexturesLoaded;
 		std::vector<Mesh> m_Meshes;
