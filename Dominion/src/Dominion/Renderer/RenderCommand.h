@@ -46,9 +46,39 @@ namespace Dominion {
 			s_RendererAPI->DisableDepthTest();
 		}
 
-		static void SetDepthTestFunc(DepthTestFunc func)
+		static void SetDepthTestFunc(TestFunc func)
 		{
 			s_RendererAPI->SetDepthTestFunc(func);
+		}
+
+		static void ClearStencilBuffer()
+		{
+			s_RendererAPI->ClearStencilBuffer();
+		}
+
+		static void EnableStencilTest()
+		{
+			s_RendererAPI->EnableStencilTest();
+		}
+
+		static void DisableStencilTest()
+		{
+			s_RendererAPI->DisableStencilTest();
+		}
+
+		static void SetStencilTestFunc(TestFunc func, I32F ref, U32F mask)
+		{
+			s_RendererAPI->SetStencilTestFunc(func, ref, mask);
+		}
+
+		static void SetStencilOperation(StencilOperation stencilFail, StencilOperation stencilPassDepthFail, StencilOperation stencilDepthPass)
+		{
+			s_RendererAPI->SetStencilOperation(stencilFail, stencilPassDepthFail, stencilDepthPass);
+		}
+
+		static void SetStencilMask(U32F mask)
+		{
+			s_RendererAPI->SetStencilMask(mask);
 		}
 
 		static void DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count = 0)

@@ -5,7 +5,7 @@
 
 namespace Dominion {
 
-	void OpenGLMessageCallback(
+	static void OpenGLMessageCallback(
 		unsigned source,
 		unsigned type,
 		unsigned id,
@@ -25,6 +25,42 @@ namespace Dominion {
 		DM_CORE_ASSERT(false, "Unknown severity level!");
 	}
 
+	static GLenum TestFuncToOpenGLFunc(TestFunc func)
+	{
+		switch (func)
+		{
+			case TestFunc::NEVER:        return GL_NEVER;
+			case TestFunc::LESS:         return GL_LESS;
+			case TestFunc::EQUAL:        return GL_EQUAL;
+			case TestFunc::LESSEQUAL:    return GL_LEQUAL;
+			case TestFunc::GREATER:      return GL_GREATER;
+			case TestFunc::NOTEQUAL:     return GL_NOTEQUAL;
+			case TestFunc::GREATEREQUAL: return GL_GEQUAL;
+			case TestFunc::ALWAYS:       return GL_ALWAYS;
+		#ifdef DM_DEBUG
+			default: DM_CORE_ASSERT(false, "Unknown TestFunc!"); return 0;
+		#endif
+		}
+	}
+
+	static GLenum StencilOperationToGLOperation(StencilOperation op)
+	{
+		switch (op)
+		{
+			case Dominion::StencilOperation::KEEP:      return GL_KEEP;
+			case Dominion::StencilOperation::ZERO:      return GL_ZERO;
+			case Dominion::StencilOperation::REPLACE:   return GL_REPLACE;
+			case Dominion::StencilOperation::INCR:      return GL_INCR;
+			case Dominion::StencilOperation::INCR_WRAP: return GL_INCR_WRAP;
+			case Dominion::StencilOperation::DECR:      return GL_DECR;
+			case Dominion::StencilOperation::DECR_WRAP: return GL_DECR_WRAP;
+			case Dominion::StencilOperation::INVERT:    return GL_INVERT;
+		#if DM_DEBUG
+			default: DM_CORE_ASSERT(false, "Unknown StencilOperation!"); return 0;
+		#endif
+		}
+	}
+
 	void OpenGLRendererAPI::Init()
 	{
 	#ifdef DM_DEBUG
@@ -40,6 +76,10 @@ namespace Dominion {
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
+
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		glStencilMask(0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	}
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -72,25 +112,39 @@ namespace Dominion {
 		glDisable(GL_DEPTH_TEST);
 	}
 
-	void OpenGLRendererAPI::SetDepthTestFunc(DepthTestFunc func)
+	void OpenGLRendererAPI::SetDepthTestFunc(TestFunc func)
 	{
-		GLenum glFunc;
-		switch (func)
-		{
-			case Dominion::DepthTestFunc::NEVER:        glFunc = GL_NEVER;    break;
-			case Dominion::DepthTestFunc::LESS:         glFunc = GL_LESS;     break;
-			case Dominion::DepthTestFunc::EQUAL:        glFunc = GL_EQUAL;    break;
-			case Dominion::DepthTestFunc::LESSEQUAL:    glFunc = GL_LEQUAL;   break;
-			case Dominion::DepthTestFunc::GREATER:      glFunc = GL_GREATER;  break;
-			case Dominion::DepthTestFunc::NOTEQUAL:     glFunc = GL_NOTEQUAL; break;
-			case Dominion::DepthTestFunc::GREATEREQUAL: glFunc = GL_GEQUAL;   break;
-			case Dominion::DepthTestFunc::ALWAYS:       glFunc = GL_ALWAYS;   break;
-		#ifdef DM_DEBUG
-			default: DM_CORE_ASSERT(false, "Unknown DepthTestFunc!"); glFunc = 0; break;
-		#endif
-		}
+		glDepthFunc(TestFuncToOpenGLFunc(func));
+	}
 
-		glDepthFunc(glFunc);
+	void OpenGLRendererAPI::ClearStencilBuffer()
+	{
+		glClear(GL_STENCIL_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::EnableStencilTest()
+	{
+		glEnable(GL_STENCIL_TEST);
+	}
+
+	void OpenGLRendererAPI::DisableStencilTest()
+	{
+		glDisable(GL_STENCIL_TEST);
+	}
+
+	void OpenGLRendererAPI::SetStencilTestFunc(TestFunc func, I32F ref, U32F mask)
+	{
+		glStencilFunc(TestFuncToOpenGLFunc(func), ref, mask);
+	}
+
+	void OpenGLRendererAPI::SetStencilOperation(StencilOperation sfail, StencilOperation dpfail, StencilOperation dppass)
+	{
+		glStencilOp(StencilOperationToGLOperation(sfail), StencilOperationToGLOperation(dpfail), StencilOperationToGLOperation(dppass));
+	}
+
+	void OpenGLRendererAPI::SetStencilMask(U32F mask)
+	{
+		glStencilMask(mask);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<Pipeline> pipeline, uint32_t count)
