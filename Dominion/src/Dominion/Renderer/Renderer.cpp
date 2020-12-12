@@ -61,27 +61,50 @@ namespace Dominion {
 		}
 	}
 
-	/*void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform)
+	void Renderer::Submit(const Mesh& mesh, const Ref<Shader>& shader, const glm::mat4& transform)
 	{
-		const Ref<Mesh>& mesh = model->GetMesh();
-		const Ref<Material>& material = model->GetMaterial();
-		const Ref<Shader>& shader = material->GetShader();
-		const Ref<Pipeline>& pipeline = mesh->GetPipeline();
+		U32F diffuseNr = 1;
+		U32F specularNr = 1;
+		U32F normalNr = 1;
+		U32F heightNr = 1;
+
+		const std::vector<MeshTexture>& meshTextures = mesh.GetTextures();
+		for (U32F i = 0; i < meshTextures.size(); ++i)
+		{
+			std::string number;
+			const std::string& name = meshTextures[i].Type;
+			if (name == "texture_diffuse")
+				number = std::to_string(diffuseNr++);
+			else if (name == "texture_specular")
+				number = std::to_string(specularNr++);
+			else if (name == "texture_normal")
+				number = std::to_string(normalNr++);
+			else if (name == "texture_height")
+				number = std::to_string(heightNr++);
+
+			std::string fullname = name + number;
+			if (shader->HasUniform(fullname))
+				shader->SetInt(fullname, i);
+
+			meshTextures[i].Texture->Bind(i);
+		}
+
+		Dominion::Renderer::Submit(shader, mesh.GetPipeline());
+	}
+
+	void Renderer::Submit(const Ref<Model>& model, const Ref<Shader>& shader, const glm::mat4& transform)
+	{
+		const std::vector<Mesh> meshes = model->GetMeshes();
 
 		shader->Bind();
-		material->UploadAllShaderUniforms();
+
 		shader->SetMat4("u_ViewProjection", m_ProjectionViewMatrix);
 		shader->SetMat4("u_Transform", transform);
 
-		pipeline->Bind();
-
-		if (pipeline->GetIndexBuffer())
-			RenderCommand::DrawIndexed(pipeline);
-		else
+		for (const Mesh& mesh : meshes)
 		{
-			uint32_t count = pipeline->GetVertexBuffer()->GetSize() / pipeline->GetInputLayout()->GetStride();
-			RenderCommand::Draw(pipeline, count);
+			Renderer::Submit(mesh, shader, transform);
 		}
-	}*/
+	}
 
 }
