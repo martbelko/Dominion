@@ -9,7 +9,7 @@ namespace Dominion {
 	class Layer
 	{
 	public:
-		Layer(const std::string_view& debugName = "Layer");
+		Layer(const std::string_view& debugName = "Layer") : m_DebugName(debugName) {}
 		virtual ~Layer() = default;
 
 		virtual void OnAttach() {}

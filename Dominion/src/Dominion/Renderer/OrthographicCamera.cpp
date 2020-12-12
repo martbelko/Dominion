@@ -32,41 +32,4 @@ namespace Dominion {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	const glm::vec3& OrthographicCamera::GetPosition() const
-	{
-		return m_Position;
-	}
-
-	void OrthographicCamera::SetPosition(const glm::vec3& position)
-	{
-		m_Position = position;
-		RecalculateViewMatrix();
-	}
-
-	F32 OrthographicCamera::GetRotation() const
-	{
-		return m_Rotation;
-	}
-
-	void OrthographicCamera::SetRotation(F32 rotation)
-	{
-		m_Rotation = rotation;
-		RecalculateViewMatrix();
-	}
-
-	const glm::mat4& OrthographicCamera::GetProjectionMatrix() const
-	{
-		return m_ProjectionMatrix;
-	}
-
-	const glm::mat4& OrthographicCamera::GetViewMatrix() const
-	{
-		return m_ViewMatrix;
-	}
-
-	const glm::mat4& OrthographicCamera::GetViewProjectionMatrix() const
-	{
-		return m_ViewProjectionMatrix;
-	}
-
 }

@@ -13,17 +13,17 @@ namespace Dominion {
 
 		void SetProjection(F32 left, F32 right, F32 bottom, F32 top);
 
-		const glm::vec3& GetPosition() const;
+		const glm::vec3& GetPosition() const { return m_Position; }
 		glm::vec3& GetPosition() { return m_Position; }
-		void SetPosition(const glm::vec3& position);
+		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix(); }
 
-		F32 GetRotation() const;
+		F32 GetRotation() const { return m_Rotation; }
 		F32& GetRotation() { return m_Rotation; }
-		void SetRotation(F32 rotation);
+		void SetRotation(F32 rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 
-		const glm::mat4& GetProjectionMatrix() const;
-		const glm::mat4& GetViewMatrix() const;
-		const glm::mat4& GetViewProjectionMatrix() const;
+		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
+		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
+		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 	private:
 		void RecalculateViewMatrix();
 	private:

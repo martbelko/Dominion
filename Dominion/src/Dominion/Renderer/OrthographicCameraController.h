@@ -20,11 +20,11 @@ namespace Dominion {
 
 		void OnResize(F32 width, F32 height);
 
-		OrthographicCamera& GetCamera();
-		const OrthographicCamera& GetCamera() const;
+		OrthographicCamera& GetCamera() { return m_Camera; }
+		const OrthographicCamera& GetCamera() const { return m_Camera; }
 
-		F32 GetZoomLevel() const;
-		void SetZoomLevel(F32 level);
+		F32 GetZoomLevel() const { return m_ZoomLevel; }
+		void SetZoomLevel(F32 level) { m_ZoomLevel = level; } // TODO: Not recalculate? Maybe recalculate. needs check
 
 		F32 GetWidth() const { return 2 * m_AspectRatio * m_ZoomLevel; }
 		F32 GetHeight() const { return 2 * m_ZoomLevel; }

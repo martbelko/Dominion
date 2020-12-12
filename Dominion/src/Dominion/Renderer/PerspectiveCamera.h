@@ -20,7 +20,7 @@ namespace Dominion {
 		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 
-		glm::vec3 CreateRay();
+		glm::vec3 CreateRay() const { return m_Front; }
 	private:
 		void RecalculateViewMatrix();
 	private:

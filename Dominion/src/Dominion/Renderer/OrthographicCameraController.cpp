@@ -85,26 +85,6 @@ namespace Dominion {
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 
-	OrthographicCamera& OrthographicCameraController::GetCamera()
-	{
-		return m_Camera;
-	}
-
-	const OrthographicCamera& OrthographicCameraController::GetCamera() const
-	{
-		return m_Camera;
-	}
-
-	F32 OrthographicCameraController::GetZoomLevel() const
-	{
-		return m_ZoomLevel;
-	}
-
-	void OrthographicCameraController::SetZoomLevel(F32 level)
-	{
-		m_ZoomLevel = level;
-	}
-
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		DM_PROFILE_FUNCTION();
