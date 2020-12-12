@@ -1,7 +1,5 @@
 #include "EditorLayer.h"
 
-#include "Dominion/Utils/PlatformUtils.h"
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -28,52 +26,6 @@ namespace Dominion {
 		m_Framebuffer = Framebuffer::Create(desc);
 
 		m_ActiveScene = CreateRef<Scene>();
-#if 0
-		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
-		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-		m_RedSquare = m_ActiveScene->CreateEntity("Red Square");
-		m_RedSquare.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-		auto& cc = m_CameraEntity.AddComponent<CameraComponent>();
-		cc.Primary = true;
-
-		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-		cc = m_SecondCamera.AddComponent<CameraComponent>();
-
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			void OnCreate()
-			{
-
-			}
-
-			void OnDestroy()
-			{
-
-			}
-
-			void OnUpdate(Timestep ts)
-			{
-				glm::vec3& position = GetComponent<TransformComponent>().Position;
-				float speed = 5.0f;
-
-				if (Input::IsKeyPressed(Key::A))
-					position.x -= speed * ts;
-				else if (Input::IsKeyPressed(Key::D))
-					position.x += speed * ts;
-				if (Input::IsKeyPressed(Key::W))
-					position.y += speed * ts;
-				else if (Input::IsKeyPressed(Key::S))
-					position.y -= speed * ts;
-			}
-		};
-
-		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-#endif
-		m_Scenes.push_back(m_ActiveScene);
 		m_Panel.SetContext(m_ActiveScene);
 	}
 

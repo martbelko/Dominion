@@ -30,10 +30,6 @@ namespace Dominion {
 		Ref<Texture2D> m_TestTexture;
 
 		Ref<Scene> m_ActiveScene;
-		Entity m_SquareEntity;
-		Entity m_RedSquare;
-		Entity m_CameraEntity;
-		Entity m_SecondCamera;
 
 		OrthographicCameraController m_Camera;
 
