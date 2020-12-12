@@ -38,7 +38,7 @@ namespace Dominion {
 		Mesh(const F32* vertices, U32F size, const U32* indices, U32F count, const std::vector<MeshTexture>& textures);
 
 		const Ref<Pipeline>& GetPipeline() const { return m_Pipeline; }
-
+		const std::vector<MeshTexture>& GetTextures() const { return m_Textures; }
 	private:
 		std::vector<MeshTexture> m_Textures;
 		Ref<Pipeline> m_Pipeline;
