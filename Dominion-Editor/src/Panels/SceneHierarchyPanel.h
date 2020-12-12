@@ -13,6 +13,7 @@ namespace Dominion {
 		SceneHierarhyPanel(const Ref<Scene>& context = nullptr);
 
 		void SetContext(const Ref<Scene>& context);
+		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
 
 		void OnImGuiRender();
 	private:

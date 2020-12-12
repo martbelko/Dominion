@@ -45,6 +45,7 @@ namespace Dominion {
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class SceneHierarhyPanel;
+		friend class EditorLayer;
 	};
 
 }

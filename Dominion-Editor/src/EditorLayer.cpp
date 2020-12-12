@@ -7,6 +7,51 @@
 
 namespace Dominion {
 
+	static bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
+	{
+		constexpr float epsilon = 0.0000001f;
+		glm::vec3 edge1, edge2, h, s, q;
+		float a, f, u, v;
+		edge1 = vertex1 - vertex0;
+		edge2 = vertex2 - vertex0;
+		h = glm::cross(edge2, rayVector);
+		a = glm::dot(edge1, h);
+		if (a > -epsilon && a < epsilon)
+			return false;
+
+		f = 1.0f / a;
+		s = rayOrigin - vertex0;
+		u = f * glm::dot(s, h);
+		if (u < 0.0f || u > 1.0f)
+			return false;
+
+		q = glm::cross(edge1, s);
+		v = f * glm::dot(rayVector, q);
+		if (v < 0.0f || u + v > 1.0f)
+			return false;
+		float t = f * glm::dot(edge2, q);
+		if (t > epsilon)
+			return true;
+		else
+			return false;
+	}
+
+	static bool DoesIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& quadPos, const glm::vec2& quadSize)
+	{
+		float left = quadPos.x - quadSize.x / 2.0f;
+		float top = quadPos.y + quadSize.y / 2.0f;
+		float right = quadPos.x + quadSize.x / 2.0f;
+		float bottom = quadPos.y - quadSize.y / 2.0f;
+
+		glm::vec3 vertex0 = glm::vec3(left, bottom, quadPos.z);
+		glm::vec3 vertex1 = glm::vec3(right, top, quadPos.z);
+		glm::vec3 vertex2 = glm::vec3(left, top, quadPos.z);
+		glm::vec3 vertex3 = glm::vec3(right, bottom, quadPos.z);
+
+		return DoesIntersectTriangle(rayOrigin, rayVector, vertex0, vertex1, vertex2)
+			|| DoesIntersectTriangle(rayOrigin, rayVector, vertex0, vertex3, vertex1);
+	}
+
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D")
 	{
@@ -45,8 +90,7 @@ namespace Dominion {
 		}
 
 		// Update
-		if (m_ViewportFocused)
-			m_Camera.OnUpdate(ts);
+		m_Camera.OnUpdate(ts);
 
 		// Render
 		m_Framebuffer->Bind();
@@ -58,13 +102,6 @@ namespace Dominion {
 		m_ActiveScene->OnUpdateEditor(ts, m_Camera);
 
 		m_Framebuffer->Unbind();
-	}
-
-	void EditorLayer::OnEvent(Event& e)
-	{
-		m_Camera.OnEvent(e);
-
-		e.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -161,15 +198,20 @@ namespace Dominion {
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 			if (ImGui::Begin("Viewport"))
 			{
+				ImGuiDockNode* node = ImGui::GetWindowDockNode();
+				ImVec2 tabSize{ 0.0f, 0.0f };
+				if (!node->IsHiddenTabBar())
+					tabSize = ImGui::TabItemCalcSize("Viewport", true);
+
+				ImVec2 imPos = ImGui::GetWindowPos();
+				m_ViewportPosition = glm::vec2(imPos.x, imPos.y + tabSize.y);
+
 				m_ViewportFocused = ImGui::IsWindowFocused();
 				m_ViewportHovered = ImGui::IsWindowHovered();
 				Application::Get().GetImGuiLayer()->BlockEvents(!(m_ViewportFocused && m_ViewportHovered));
 
 				ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-				if (m_ViewportSize != *reinterpret_cast<glm::vec2*>(&viewportPanelSize))
-				{
-					m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-				}
+				m_ViewportSize = { viewportPanelSize.x - 1.0f, viewportPanelSize.y - 1.0f };
 
 				ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 			}
@@ -184,6 +226,15 @@ namespace Dominion {
 
 		Renderer2D::ResetStats();
 	}
+
+	void EditorLayer::OnEvent(Event& e)
+	{
+		m_Camera.OnEvent(e);
+
+		e.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+		e.Dispatch<MousePressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnMousePressed));
+	}
+
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
 	{
@@ -216,6 +267,46 @@ namespace Dominion {
 				break;
 			}
 		}
+
+		return false;
+	}
+
+	bool EditorLayer::OnMousePressed(MousePressedEvent& e)
+	{
+		const Window& wnd = Application::Get().GetWindow();
+
+		auto [mouseX, mouseY] = Input::GetMousePosition();
+		glm::vec2 screenMousePos = glm::vec2(mouseX + wnd.GetPosX(), mouseY + wnd.GetPosY());
+		glm::vec2 viewportMousePos = screenMousePos - m_ViewportPosition;
+
+		glm::vec2 viewportHalf = m_ViewportSize / 2.0f;
+
+		mouseX = (viewportMousePos.x - viewportHalf.x) / viewportHalf.x;
+		mouseY = (viewportMousePos.y - viewportHalf.y) / -viewportHalf.y;
+
+		glm::vec4 clipCoords{ mouseX, mouseY, 1.0f, 1.0f };
+
+		glm::vec3 worldCoords = glm::inverse(m_Camera.GetViewProjectionMatrix()) * clipCoords;
+		worldCoords = glm::normalize(worldCoords);
+
+		DM_CORE_INFO("Mouse Ray: {0}, {1}, {2}", worldCoords.x, worldCoords.y, worldCoords.z);
+
+		Entity selectedEntity;
+		const glm::vec3& cameraPos = m_Camera.GetPosition();
+		const glm::vec3& ray = worldCoords;
+		auto view = m_ActiveScene->m_Registry.view<TransformComponent>();
+		for (entt::entity entityID : view)
+		{
+			Entity entity(entityID, m_ActiveScene.get());
+			const TransformComponent& ts = entity.GetComponent<TransformComponent>();
+			if (DoesIntersect(cameraPos, ray, ts.Position, ts.Scale))
+			{
+				selectedEntity = entity;
+				break;
+			}
+		}
+
+		m_Panel.SetSelectedEntity(selectedEntity);
 
 		return false;
 	}

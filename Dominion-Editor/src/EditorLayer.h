@@ -19,6 +19,7 @@ namespace Dominion {
 		virtual void OnImGuiRender() override;
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMousePressed(MousePressedEvent& e);
 
 		void NewScene();
 		void OpenScene();
@@ -34,6 +35,7 @@ namespace Dominion {
 		Ref<Scene> m_ActiveScene;
 
 		glm::vec2 m_ViewportSize;
+		glm::vec2 m_ViewportPosition;
 		bool m_ViewportFocused, m_ViewportHovered;
 
 		// Panels
