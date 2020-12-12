@@ -28,7 +28,7 @@ namespace Dominion {
 
 		void DestroyEntity(Entity entity);
 
-		void OnUpdateEditor(Timestep timestep, const EditorCamera& camera);
+		void OnUpdateEditor(Timestep timestep, const EditorCamera& camera, Entity selectedEntity);
 		void OnUpdateRuntime(Timestep timestep);
 		void OnViewportResize(uint32_t width, uint32_t height);
 

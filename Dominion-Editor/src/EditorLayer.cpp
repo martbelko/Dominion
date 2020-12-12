@@ -99,7 +99,7 @@ namespace Dominion {
 		RenderCommand::ClearDepthBuffer();
 
 		// Update scene
-		m_ActiveScene->OnUpdateEditor(ts, m_Camera);
+		m_ActiveScene->OnUpdateEditor(ts, m_Camera, m_Panel.GetSelectedEntity());
 
 		m_Framebuffer->Unbind();
 	}
@@ -223,8 +223,6 @@ namespace Dominion {
 
 		ImGui::End();
 		ImGui::PopStyleVar();
-
-		Renderer2D::ResetStats();
 	}
 
 	void EditorLayer::OnEvent(Event& e)

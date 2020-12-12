@@ -4,6 +4,7 @@
 #include "Dominion/Scene/Components.h"
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Dominion/Renderer/RenderCommand.h"
 #include "Dominion/Scene/ScriptableEntity.h"
 
 #include <glm/glm.hpp>
@@ -39,21 +40,68 @@ namespace Dominion {
 		entity.Destroy();
 	}
 
-	void Scene::OnUpdateEditor(Timestep timestep, const EditorCamera& camera)
+	void Scene::OnUpdateEditor(Timestep timestep, const EditorCamera& camera, Entity selectedEntity)
 	{
 		Renderer2D::BeginScene(camera);
 
+		bool selectedEntityFound = false;
 		auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 		for (auto entity : view)
 		{
 			auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-			if (sprite.Texture != nullptr)
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
+
+			if (static_cast<uint32_t>(entity) == static_cast<uint32_t>(selectedEntity))
+			{
+				selectedEntityFound = true;
+			}
 			else
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			{
+				if (sprite.Texture != nullptr)
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
+				else
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			}
 		}
 
 		Renderer2D::EndScene();
+
+		if (selectedEntityFound)
+		{
+			RenderCommand::EnableStencilTest();
+
+			Renderer2D::BeginScene(camera);
+
+			RenderCommand::SetStencilOperation(Dominion::StencilOperation::KEEP, Dominion::StencilOperation::KEEP, Dominion::StencilOperation::REPLACE);
+			RenderCommand::SetStencilTestFunc(Dominion::TestFunc::ALWAYS, 0, 0xFF);
+			RenderCommand::SetStencilMask(0xFF);
+
+			RenderCommand::ClearStencilBuffer();
+
+			RenderCommand::SetStencilTestFunc(Dominion::TestFunc::ALWAYS, 1, 0xFF);
+
+			TransformComponent& tc = selectedEntity.GetComponent<TransformComponent>();
+			SpriteRendererComponent& sprite = selectedEntity.GetComponent<SpriteRendererComponent>();
+
+			if (sprite.Texture != nullptr)
+				Renderer2D::DrawQuad(tc.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
+			else
+				Renderer2D::DrawQuad(tc.GetTransform(), sprite.Color);
+
+			Renderer2D::EndScene();
+
+			Renderer2D::BeginScene(camera);
+
+			RenderCommand::SetStencilTestFunc(Dominion::TestFunc::NOTEQUAL, 1, 0xFF);
+			RenderCommand::SetStencilMask(0x00);
+
+			tc.Scale += glm::vec3(0.1f, 0.1f, 0.0f);
+			Renderer2D::DrawQuad(tc.GetTransform(), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			tc.Scale -= glm::vec3(0.1f, 0.1f, 0.0f);
+
+			Renderer2D::EndScene();
+
+			RenderCommand::DisableStencilTest();
+		}
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts)
