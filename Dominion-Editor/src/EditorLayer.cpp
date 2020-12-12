@@ -18,7 +18,7 @@ namespace Dominion {
 		float wHeight = static_cast<float>(Application::Get().GetWindow().GetHeight());
 		float wWidth = static_cast<float>(Application::Get().GetWindow().GetWidth());
 		float ratio = wWidth / wHeight;
-		m_Camera = OrthographicCameraController(ratio, 1.0f);
+		m_Camera = EditorCamera(45.0f, 1.778f, 0.01f, 1000.0f);
 
 		FramebufferDesc desc;
 		desc.Width = Application::Get().GetWindow().GetWidth();
@@ -39,7 +39,7 @@ namespace Dominion {
 			(desc.Width != m_ViewportSize.x || desc.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-			m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+			m_Camera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 
 			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
@@ -55,7 +55,7 @@ namespace Dominion {
 		RenderCommand::ClearDepthBuffer();
 
 		// Update scene
-		m_ActiveScene->OnUpdate(ts);
+		m_ActiveScene->OnUpdateEditor(ts, m_Camera);
 
 		m_Framebuffer->Unbind();
 	}

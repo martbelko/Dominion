@@ -23,6 +23,7 @@
 #include "Dominion/Renderer/OrthographicCameraController.h"
 #include "Dominion/Renderer/PerspectiveCamera.h"
 #include "Dominion/Renderer/PerspectiveCameraController.h"
+#include "Dominion/Renderer/EditorCamera.h"
 #include "Dominion/Renderer/Mesh.h"
 #include "Dominion/Renderer/Material.h"
 #include "Dominion/Renderer/Model.h"

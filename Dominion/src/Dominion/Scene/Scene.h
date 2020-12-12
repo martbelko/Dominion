@@ -13,7 +13,9 @@
 
 namespace Dominion {
 
+	// Forward declarations
 	class Entity;
+	class EditorCamera;
 
 	class Scene
 	{
@@ -26,7 +28,8 @@ namespace Dominion {
 
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(Timestep timestep);
+		void OnUpdateEditor(Timestep timestep, const EditorCamera& camera);
+		void OnUpdateRuntime(Timestep timestep);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		const std::string& GetName() const;
