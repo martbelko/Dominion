@@ -161,7 +161,6 @@ namespace Dominion {
 		}
 
 		ImGui::End();
-
 	}
 
 	void SceneHierarhyPanel::DrawEntityNode(Entity entity)
