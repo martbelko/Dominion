@@ -35,3 +35,4 @@
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"
 #include "Dominion/Utils/Timer.h"
+#include "Dominion/Utils/PlatformUtils.h"
