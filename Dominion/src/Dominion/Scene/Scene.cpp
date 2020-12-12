@@ -87,9 +87,7 @@ namespace Dominion {
 			else
 				Renderer2D::DrawQuad(tc.GetTransform(), sprite.Color);
 
-			Renderer2D::EndScene();
-
-			Renderer2D::BeginScene(camera);
+			Renderer2D::Flush();
 
 			RenderCommand::SetStencilTestFunc(Dominion::TestFunc::NOTEQUAL, 1, 0xFF);
 			RenderCommand::SetStencilMask(0x00);
