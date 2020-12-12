@@ -14,6 +14,6 @@ private:
 private:
 	Dominion::PerspectiveCameraController m_Camera;
 
-	Dominion::Ref<Dominion::Shader> ourShader;
-	Dominion::Ref<Dominion::Model> ourModel;
+	Dominion::Ref<Dominion::Shader> m_OurShader;
+	Dominion::Ref<Dominion::Model> m_OurModel;
 };
