@@ -3,6 +3,7 @@
 #include "Panels/SceneHierarchyPanel.h"
 
 #include <Dominion.h>
+#include <DominionImGui.h>
 
 #include <vector>
 

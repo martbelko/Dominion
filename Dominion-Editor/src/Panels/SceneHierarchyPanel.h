@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Dominion.h>
+#include <DominionImGui.h>
 
 namespace Dominion {
 
