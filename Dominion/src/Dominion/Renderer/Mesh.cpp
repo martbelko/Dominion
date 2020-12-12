@@ -40,33 +40,4 @@ namespace Dominion {
 		m_Pipeline = Pipeline::Create(vb, ib, il);
 	}
 
-	void Mesh::Draw(Ref<Shader>& shader)
-	{
-		U32F diffuseNr = 1;
-		U32F specularNr = 1;
-		U32F normalNr = 1;
-		U32F heightNr = 1;
-		for (U32F i = 0; i < m_Textures.size(); ++i)
-		{
-			std::string number;
-			const std::string& name = m_Textures[i].Type;
-			if (name == "texture_diffuse")
-				number = std::to_string(diffuseNr++);
-			else if (name == "texture_specular")
-				number = std::to_string(specularNr++);
-			else if (name == "texture_normal")
-				number = std::to_string(normalNr++);
-			else if (name == "texture_height")
-				number = std::to_string(heightNr++);
-
-			std::string fullname = name + number;
-			if (shader->HasUniform(fullname))
-				shader->SetInt(fullname, i);
-
-			m_Textures[i].Texture->Bind(i);
-		}
-
-		Dominion::Renderer::Submit(shader, m_Pipeline);
-	}
-
 }

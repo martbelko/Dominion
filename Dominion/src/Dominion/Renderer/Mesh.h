@@ -39,7 +39,6 @@ namespace Dominion {
 
 		const Ref<Pipeline>& GetPipeline() const { return m_Pipeline; }
 
-		void Draw(Ref<Shader>& shader);
 	private:
 		std::vector<MeshTexture> m_Textures;
 		Ref<Pipeline> m_Pipeline;
