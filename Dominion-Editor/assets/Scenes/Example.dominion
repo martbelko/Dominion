@@ -9,7 +9,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      Texture: D:\dev\C++\Dominion\Dominion-Editor\assets\Textures\TestTexture.jpg
+      Texture: assets\Textures\TestTexture.jpg
       TilingFactor: 1.0
   - Entity: 12837192831273
     TagComponent:
@@ -38,7 +38,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
-      Texture: D:\dev\C++\Dominion\Dominion-Editor\assets\Textures\unnamed.png
+      Texture: assets\Textures\unnamed.png
       TilingFactor: 1.0
   - Entity: 12837192831273
     TagComponent:
@@ -49,5 +49,5 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0, 1, 0, 1]
-      Texture: D:\dev\C++\Dominion\Dominion-Editor\assets\Textures\unnamed.png
+      Texture: assets\Textures\unnamed.png
       TilingFactor: 1.0
