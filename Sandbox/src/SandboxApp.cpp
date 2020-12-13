@@ -11,7 +11,7 @@ class Sandbox : public Dominion::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new Sandbox3D());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()
