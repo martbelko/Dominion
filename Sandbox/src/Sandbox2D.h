@@ -12,15 +12,7 @@ public:
 private:
 	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
 private:
-	Dominion::Ref<Dominion::Texture2D> m_Texture2D;
-	Dominion::Ref<Dominion::Texture2D> m_TestTexture;
-
-	Dominion::OrthographicCameraController m_Camera;
-
-	bool m_ShowCursor = false;
-
-	float m_Rotation = 0.0f;
-	float m_RotationSpeed = 40.0f;
-
-	int m_Count = 10;
+	Dominion::Scene m_Scene{ "Default Scene" };
+	Dominion::Entity m_Square;
+	Dominion::Entity m_Camera;
 };

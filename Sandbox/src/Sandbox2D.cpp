@@ -53,94 +53,33 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-	/* Load resources */
-	m_Texture2D = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
-	m_TestTexture = Dominion::Texture2D::Create("assets/Textures/unnamed.png");
+	const Dominion::Window& wnd = Dominion::Application::Get().GetWindow();
+	F32 wHeight = static_cast<F32>(wnd.GetHeight());
+	F32 wWidth = static_cast<F32>(wnd.GetWidth());
+	F32 ratio = wWidth / wHeight;
+	m_Scene.OnViewportResize(wWidth, wHeight);
 
-	/* Disable cursor */
-	Dominion::Application::Get().GetWindow().ShowCursor(false);
+	m_Square = m_Scene.CreateEntity();
+	m_Square.AddComponent<Dominion::TransformComponent>();
+	auto& sprite = m_Square.AddComponent<Dominion::SpriteRendererComponent>();
+	sprite.texture = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
 
-	/* Setup camera */
-	float wHeight = static_cast<float>(Dominion::Application::Get().GetWindow().GetHeight());
-	float wWidth = static_cast<float>(Dominion::Application::Get().GetWindow().GetWidth());
-	float ratio = wWidth / wHeight;
-
-	m_Camera = Dominion::OrthographicCameraController(ratio, false);
-	m_Camera.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, 0.5f));
-
-	Dominion::Timer timer;
-	timer.Start();
-	for (int i = 0; i < 100000; ++i)
-	{
-		Dominion::Random::RandomInt8(-128, 127);
-		Dominion::Random::RandomInt16(-2000, 2500);
-		Dominion::Random::RandomInt32(-65453125, 4552421);
-		Dominion::Random::RandomInt64(24515545151541, 54415154541651);
-		Dominion::Random::RandomUint8(0, 250);
-		Dominion::Random::RandomUint16(0, 151020);
-		Dominion::Random::RandomUint32(0, 1541561);
-		Dominion::Random::RandomUint64(645, 32552465);
-		Dominion::Random::RandomFloat(-50.0f, 50.0f);
-		Dominion::Random::RandomDouble(-50.0f, 50.0f);
-	}
-
-	float timeElapsed = timer.PeekNano();
-	DM_INFO("1 000 000 random numbers were generated in {0} nanoseconds", timeElapsed);
+	m_Camera = m_Scene.CreateEntity("Camera Entity");
+	m_Camera.AddComponent<Dominion::TransformComponent>();
+	m_Camera.AddComponent<Dominion::CameraComponent>();
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 {
-	static int sign = -1;
-	m_Rotation += timestep * sign * m_RotationSpeed;
-	m_Rotation = std::clamp(m_Rotation, -180.0f, 180.0f);
-	if (m_Rotation == -180.0f)
-		sign = 1;
-	else if (m_Rotation == 180.0f)
-		sign = -1;
-
-	// Update
-	m_Camera.OnUpdate(timestep);
-	Dominion::Renderer2D::ResetStats();
-
-	Dominion::RenderCommand::SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	Dominion::RenderCommand::ClearColorBuffer();
-
-	Dominion::Renderer2D::BeginScene(m_Camera.GetCamera());
-
-	float cap = m_Count / 2.0f;
-	for (float y = -cap; y < cap; y += 0.5f)
-	{
-		for (float x = -cap; x < cap; x += 0.5f)
-		{
-			glm::vec4 color = { (x + cap) / static_cast<float>(m_Count),
-				0.3f,
-				(y + cap) / static_cast<float>(m_Count),
-				1.0f };
-
-			bool intersect = DoesIntersect(m_Camera.GetCamera().GetPosition(), { 0.0f, 0.0f, -1.0f }, { x, y, 0.0f }, { 0.45f, 0.45f });
-			if (intersect)
-				Dominion::Renderer2D::DrawQuad({ x, y, }, { 0.45f, 0.45f }, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-			else
-				Dominion::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-		}
-	}
-
-	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_Texture2D);
-	Dominion::Renderer2D::DrawQuad(glm::mat4(1.0f), m_TestTexture, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);
-
-	Dominion::Renderer2D::EndScene();
+	m_Scene.OnUpdateRuntime(timestep);
 }
 
 void Sandbox2D::OnEvent(Dominion::Event& e)
 {
-	m_Camera.OnEvent(e);
 	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Sandbox2D::OnKeyPressed));
 }
 
 bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)
 {
-	if (e.GetKeyCode() == Dominion::Key::Escape)
-		m_ShowCursor = !m_ShowCursor;
-
 	return false;
 }
