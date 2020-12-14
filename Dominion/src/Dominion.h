@@ -31,8 +31,14 @@
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Scene/ScriptableEntity.h"
-#include "Dominion/Scene/Components.h"
 #include "Dominion/Scene/SceneSerializer.h"
+
+#include "Dominion/Scene/Components/BaseComponent.h"
+#include "Dominion/Scene/Components/TransformComponent.h"
+#include "Dominion/Scene/Components/SpriteRendererComponent.h"
+#include "Dominion/Scene/Components/CameraComponent.h"
+#include "Dominion/Scene/Components/NativeScriptComponent.h"
+
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"
 #include "Dominion/Utils/Timer.h"

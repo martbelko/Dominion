@@ -2,8 +2,14 @@
 #include "SceneSerializer.h"
 
 #include "Dominion/Core/Filesystem.h"
+
+#include "Dominion/Scene/Components/BaseComponent.h"
+#include "Dominion/Scene/Components/TransformComponent.h"
+#include "Dominion/Scene/Components/SpriteRendererComponent.h"
+#include "Dominion/Scene/Components/CameraComponent.h"
+#include "Dominion/Scene/Components/NativeScriptComponent.h"
+
 #include "Dominion/Scene/Entity.h"
-#include "Dominion/Scene/Components.h"
 #include "Dominion/Scene/SceneCamera.h"
 #include "Dominion/Renderer/Texture.h"
 
@@ -98,15 +104,15 @@ namespace Dominion {
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity" << YAML::Value << "12837192831273";
 
-		if (entity.HasComponent<TagComponent>())
+		if (entity.HasComponent<BaseComponent>())
 		{
-			out << YAML::Key << "TagComponent";
-			out << YAML::BeginMap; // TagComponent
+			out << YAML::Key << "NameComponent";
+			out << YAML::BeginMap; // BaseComponent
 
-			std::string& tag = entity.GetComponent<TagComponent>().Tag;
-			out << YAML::Key << "Tag" << YAML::Value << tag;
+			std::string& name = entity.GetComponent<BaseComponent>().Name;
+			out << YAML::Key << "baseComponent" << YAML::Value << name;
 
-			out << YAML::EndMap; // TagComponent
+			out << YAML::EndMap; // BaseComponent
 		}
 
 		if (entity.HasComponent<TransformComponent>())
@@ -213,14 +219,14 @@ namespace Dominion {
 			{
 				uint64_t id = entity["Entity"].as<uint64_t>(); // TODO
 
-				YAML::Node tagComponent = entity["TagComponent"];
-				if (!tagComponent)
+				YAML::Node baseComponent = entity["BaseComponent"];
+				if (!baseComponent)
 				{
 					DM_CORE_ASSERT(false, "TagComponent is required for every entity!");
 					return false;
 				}
 
-				std::string entityName = tagComponent["Tag"].as<std::string>();
+				std::string entityName = baseComponent["Name"].as<std::string>();
 				DM_CORE_TRACE("Deserializing entity with ID = {0}, name = {1}", id, entityName);
 				Entity deserializedEntity = m_Scene->CreateEntity(entityName);
 

@@ -1,7 +1,12 @@
 #include "dmpch.h"
 #include "Scene.h"
 
-#include "Dominion/Scene/Components.h"
+#include "Dominion/Scene/Components/BaseComponent.h"
+#include "Dominion/Scene/Components/TransformComponent.h"
+#include "Dominion/Scene/Components/SpriteRendererComponent.h"
+#include "Dominion/Scene/Components/CameraComponent.h"
+#include "Dominion/Scene/Components/NativeScriptComponent.h"
+
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Renderer/Renderer2D.h"
 #include "Dominion/Renderer/RenderCommand.h"
@@ -30,7 +35,7 @@ namespace Dominion {
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = Entity(m_Registry.create(), this);
-		entity.AddComponent<TagComponent>(name);
+		entity.AddComponent<BaseComponent>(name);
 		entity.AddComponent<TransformComponent>();
 		return entity;
 	}
@@ -190,7 +195,7 @@ namespace Dominion {
 	}
 
 	template<>
-	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	void Scene::OnComponentAdded<BaseComponent>(Entity entity, BaseComponent& component)
 	{
 
 	}
