@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
+static bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
 {
 	constexpr float epsilon = 0.0000001f;
 	glm::vec3 edge1, edge2, h, s, q;
@@ -32,7 +32,7 @@ bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVecto
 		return false;
 }
 
-bool DoesIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& quadPos, const glm::vec2& quadSize)
+static bool DoesIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& quadPos, const glm::vec2& quadSize)
 {
 	float left = quadPos.x - quadSize.x / 2.0f;
 	float top = quadPos.y + quadSize.y / 2.0f;
