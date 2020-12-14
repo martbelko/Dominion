@@ -7,7 +7,7 @@ namespace Dominion {
 
 	struct NativeScriptComponent
 	{
-		ScriptableEntity* Instance = nullptr;
+		ScriptableEntity* instance = nullptr;
 
 		ScriptableEntity* (*InstantiateScript)();
 		void (*DestroyScript)(NativeScriptComponent*);

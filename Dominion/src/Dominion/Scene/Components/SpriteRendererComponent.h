@@ -9,16 +9,16 @@ namespace Dominion {
 
 	struct SpriteRendererComponent
 	{
-		Ref<Texture2D> Texture = nullptr;
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		F32 TilingFactor = 1.0f;
+		Ref<Texture2D> texture = nullptr;
+		glm::vec4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		F32 tilingFactor = 1.0f;
 
-		bool FlipX = false, FlipY = false;
+		bool flipX = false, flipY = false;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4 & color)
-			: Color(color) {}
+		SpriteRendererComponent(const glm::vec4& color)
+			: color(color) {}
 	};
 
 }

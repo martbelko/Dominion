@@ -6,8 +6,8 @@ namespace Dominion {
 
 	struct BaseComponent
 	{
-		std::string Name;
-		bool Static = false;
+		std::string name;
+		bool isStatic = false;
 	};
 
 }

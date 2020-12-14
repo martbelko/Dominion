@@ -36,7 +36,7 @@ namespace Dominion {
 	{
 		Entity entity = Entity(m_Registry.create(), this);
 		entity.AddComponent<BaseComponent>(name);
-		entity.AddComponent<TransformComponent>();
+		//entity.AddComponent<TransformComponent>();
 		return entity;
 	}
 
@@ -61,10 +61,10 @@ namespace Dominion {
 			}
 			else
 			{
-				if (sprite.Texture != nullptr)
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
+				if (sprite.texture != nullptr)
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.texture, sprite.color, sprite.tilingFactor);
 				else
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.color);
 			}
 		}
 
@@ -87,19 +87,19 @@ namespace Dominion {
 			TransformComponent& tc = selectedEntity.GetComponent<TransformComponent>();
 			SpriteRendererComponent& sprite = selectedEntity.GetComponent<SpriteRendererComponent>();
 
-			if (sprite.Texture != nullptr)
-				Renderer2D::DrawQuad(tc.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
+			if (sprite.texture != nullptr)
+				Renderer2D::DrawQuad(tc.GetTransform(), sprite.texture, sprite.color, sprite.tilingFactor);
 			else
-				Renderer2D::DrawQuad(tc.GetTransform(), sprite.Color);
+				Renderer2D::DrawQuad(tc.GetTransform(), sprite.color);
 
 			Renderer2D::Flush();
 
 			RenderCommand::SetStencilTestFunc(Dominion::TestFunc::NOTEQUAL, 1, 0xFF);
 			RenderCommand::SetStencilMask(0x00);
 
-			tc.Scale += glm::vec3(0.1f, 0.1f, 0.0f);
+			tc.scale += glm::vec3(0.1f, 0.1f, 0.0f);
 			Renderer2D::DrawQuad(tc.GetTransform(), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-			tc.Scale -= glm::vec3(0.1f, 0.1f, 0.0f);
+			tc.scale -= glm::vec3(0.1f, 0.1f, 0.0f);
 
 			Renderer2D::EndScene();
 
@@ -114,46 +114,45 @@ namespace Dominion {
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 			{
 				// TODO: Move to Scene::OnScenePlay
-				if (!nsc.Instance)
+				if (!nsc.instance)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity(entity, this);
-					nsc.Instance->OnCreate();
+					nsc.instance = nsc.InstantiateScript();
+					nsc.instance->m_Entity = Entity(entity, this);
+					nsc.instance->OnCreate();
 				}
 
-				nsc.Instance->OnUpdate(ts);
+				nsc.instance->OnUpdate(ts);
 			});
 		}
 
-		// Render 2D
-		Camera* mainCamera = nullptr;
-		TransformComponent* mainCameraTc = nullptr;
-		{
-			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-				if (camera.Primary)
-				{
-					mainCamera = &camera.Cam;
-					mainCameraTc = &transform;
-					break;
-				}
-			}
-		}
+		RenderCommand::ClearColorBuffer();
 
-		if (mainCamera)
+		auto view = m_Registry.view<TransformComponent, CameraComponent>();
+		for (auto entity : view)
 		{
-			Renderer2D::BeginScene(*mainCamera, mainCameraTc->GetTransform());
+			auto [transformC, cameraC] = view.get<TransformComponent, CameraComponent>(entity);
+			if (cameraC.cameraClearFlag == CameraClearFlag::SOLID_COLOR)
+			{
+				const glm::vec4& color = cameraC.backgroundColor;
+				RenderCommand::SetClearColor(color.r, color.g, color.b, color.a);
+				RenderCommand::ClearColorBuffer();
+				RenderCommand::ClearDepthBuffer();
+			}
+			else if (cameraC.cameraClearFlag == CameraClearFlag::DEPTH_ONLY)
+			{
+				RenderCommand::ClearDepthBuffer();
+			}
+
+			Renderer2D::BeginScene(cameraC.camera, transformC.GetTransform());
 
 			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : view)
 			{
 				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-				if (sprite.Texture != nullptr)
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture, sprite.Color, sprite.TilingFactor);
+				if (sprite.texture != nullptr)
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.texture, sprite.color, sprite.tilingFactor);
 				else
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.color);
 			}
 
 			Renderer2D::EndScene();
@@ -170,11 +169,8 @@ namespace Dominion {
 		for (auto entity : view)
 		{
 			CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
-			if (!cameraComponent.FixedAspectRatio)
-			{
-				SceneCamera& cam = cameraComponent.Cam;
-				cam.SetViewportSize(width, height);
-			}
+			SceneCamera& cam = cameraComponent.camera;
+			cam.SetViewportSize(width, height);
 		}
 	}
 
@@ -215,7 +211,7 @@ namespace Dominion {
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
-		component.Cam.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		component.camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
 
 	template<>
