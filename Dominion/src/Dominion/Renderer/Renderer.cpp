@@ -89,7 +89,7 @@ namespace Dominion {
 			meshTextures[i].Texture->Bind(i);
 		}
 
-		Dominion::Renderer::Submit(shader, mesh.GetPipeline());
+		Renderer::Submit(shader, mesh.GetPipeline());
 	}
 
 	void Renderer::Submit(const Ref<Model>& model, const Ref<Shader>& shader, const glm::mat4& transform)
