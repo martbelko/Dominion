@@ -24,17 +24,29 @@ workspace "Dominion"
 		}
 
 	filter "configurations:Debug"
-		defines "DM_DEBUG"
+		defines
+		{
+			"_DEBUG",
+			"DM_DEBUG"
+		}
 		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
-		defines "DM_RELEASE"
+		defines
+		{
+			"NDEBUG",
+			"DM_RELEASE"
+		}
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
-		defines "DM_DIST"
+		defines
+		{
+			"NDEBUG",
+			"DM_DIST"
+		}
 		runtime "Release"
 		optimize "on"
 
@@ -64,6 +76,7 @@ workspace "Dominion"
 	IncludeDir["entt"] = "%{wks.location}/Dominion/vendor/entt/include"
 	IncludeDir["yaml_cpp"] = "%{wks.location}/Dominion/vendor/yaml-cpp/include"
 	IncludeDir["assimp"] = "%{wks.location}/Dominion/vendor/assimp/include"
+	IncludeDir["PhysX"] = "%{wks.location}/Dominion/vendor/PhysX"
 
 	group "Dependencies"
 		include "vendor/premake"
@@ -72,6 +85,7 @@ workspace "Dominion"
 		include "Dominion/vendor/ImGui"
 		include "Dominion/vendor/yaml-cpp"
 		include "Dominion/vendor/assimp"
+		include "Dominion/vendor/PhysX/physx"
 	group ""
 
 	include "Dominion"
