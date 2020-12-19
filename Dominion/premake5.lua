@@ -29,6 +29,10 @@ project "Dominion"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.assimp}",
+		"%{IncludeDir.PhysX}/physx/include",
+		"%{IncludeDir.PhysX}/physx/source/physxextensions/src",
+		"%{IncludeDir.PhysX}/pxshared/include",
+		"%{IncludeDir.PhysX}/physx/source/foundation/include"
 	}
 
 	links
@@ -38,10 +42,20 @@ project "Dominion"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"assimp"
+		"assimp",
+		"PhysX",
+		"PhysXCharacterKinematic",
+		"PhysXCommon",
+		-- "PhysXCooking",
+		"PhysXExtensions",
+		"PhysXFoundation",
+		"PhysXPvdSDK",
+		"PhysXVehicle",
+		"LowLevelDynamics"
 	}
 
 	defines
 	{
-		"GLFW_INCLUDE_NONE"
+		"GLFW_INCLUDE_NONE",
+		"PX_PHYSX_STATIC_LIB"
 	}
