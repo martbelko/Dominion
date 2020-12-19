@@ -23,7 +23,8 @@ namespace Dominion {
 		static F32 RandomFloat(F32 low, F32 high);
 		static double RandomDouble(F64 low, F64 high);
 	private:
-		static std::default_random_engine s_Generator;
+		static std::random_device s_RandomDevice;
+		static std::mt19937 s_Generator;
 	};
 
 }

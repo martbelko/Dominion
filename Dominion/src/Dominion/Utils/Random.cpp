@@ -5,7 +5,8 @@
 
 namespace Dominion {
 
-	std::default_random_engine Random::s_Generator;
+	std::random_device Random::s_RandomDevice;
+	std::mt19937 Random::s_Generator(time(0));
 
 	int8_t Random::RandomInt8(int8_t low, int8_t high)
 	{
