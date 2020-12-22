@@ -7,6 +7,8 @@
 #include "Dominion/Renderer/InputLayout.h"
 #include "Dominion/Renderer/Renderer.h"
 
+#include "Dominion/Core/Physics.h"
+
 /* TODO: Temporary */
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"
@@ -22,18 +24,10 @@
 #include "Dominion/Utils/Random.h"
 
 #if DM_INCLUDE_IMGUI == 1
-
-#if defined(new)
-#undef new
-#include <imgui.h>
-#define new DEBUG_NEW
-#else
-#include <imgui.h>
+	#include "DominionImGui.h"
 #endif
 
-#endif
-
-#include "PxPhysicsAPI.h"
+#include <PxPhysicsAPI.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -43,18 +37,8 @@ using namespace Dominion;
 
 #define PX_RELEASE(x)	if(x)	{ x->release(); x = NULL;	}
 
-physx::PxDefaultAllocator		gAllocator;
-physx::PxDefaultErrorCallback	gErrorCallback;
-
-physx::PxFoundation* gFoundation = NULL;
-physx::PxPhysics* gPhysics = NULL;
-
 physx::PxDefaultCpuDispatcher* gDispatcher = NULL;
 physx::PxScene* gScene = NULL;
-
-physx::PxPvd* gPvd = NULL;
-
-bool applyForce = false;
 
 PerspectiveCameraController* m_CameraController;
 Ref<Pipeline> pipeline;
@@ -113,40 +97,15 @@ class CollideCallback : public PxSimulationEventCallback
 
 CollideCallback callback;
 
-PX_INLINE physx::PxPhysics* NewPxCreatePhysics(physx::PxU32 version,
-	physx::PxFoundation& foundation,
-	const physx::PxTolerancesScale& scale,
-	bool trackOutstandingAllocations = false,
-	physx::PxPvd* pvd = NULL)
-{
-	physx::PxPhysics* physics = PxCreateBasePhysics(version, foundation, scale, trackOutstandingAllocations, pvd);
-	if (!physics)
-		return NULL;
-
-	PxRegisterArticulations(*physics);
-	PxRegisterArticulationsReducedCoordinate(*physics);
-	PxRegisterHeightFields(*physics);
-
-	return physics;
-}
-
 void initPhysics(bool interactive)
 {
-	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
-
-	gPvd = PxCreatePvd(*gFoundation);
-	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-	gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-
-	gPhysics = NewPxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true, gPvd);
-
-	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+	PxSceneDesc sceneDesc(Physics::GetPhysXPhysics()->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 	gDispatcher = PxDefaultCpuDispatcherCreate(1);
 	sceneDesc.cpuDispatcher = gDispatcher;
 	sceneDesc.filterShader = VehicleFilterShader;
 	sceneDesc.simulationEventCallback = &callback;
-	gScene = gPhysics->createScene(sceneDesc);
+	gScene = Physics::GetPhysXPhysics()->createScene(sceneDesc);
 
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
 	if (pvdClient)
@@ -156,23 +115,37 @@ void initPhysics(bool interactive)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 
-	PxMaterial* woodMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.1f);
-	PxMaterial* concreteMaterial = gPhysics->createMaterial(0.8f, 0.8f, 0.55f);
+	PxMaterial* woodMaterial = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
+	PxMaterial* concreteMaterial = Physics::GetPhysXPhysics()->createMaterial(0.8f, 0.8f, 0.55f);
 
 	PxBoxGeometry aBoxGeometry = PxBoxGeometry(1.0f / 2, 1.0f / 2, 1.0f / 2);
 
- 	F32 angleX = Random::RandomFloat(0, 3.14);
+ 	/*F32 angleX = Random::RandomFloat(0, 3.14);
  	F32 angleY = Random::RandomFloat(0, 3.14);
- 	F32 angleZ = Random::RandomFloat(0, 3.14);
+ 	F32 angleZ = Random::RandomFloat(0, 3.14);*/
+
+	F32 angleX = 0.0f;
+	F32 angleY = 0.0f;
+	F32 angleZ = 0.0f;
 
 	glm::quat q = glm::quat(glm::vec3(angleX, angleY, angleZ));
 
-	PxRigidDynamic* aBoxActor = gPhysics->createRigidDynamic(PxTransform(0.0f, 10.0f, 0, PxQuat(q.x, q.y, q.z, q.w)));
-	PxShape* aBoxShape = PxRigidActorExt::createExclusiveShape(*aBoxActor, aBoxGeometry, *woodMaterial);
-	PxRigidBodyExt::updateMassAndInertia(*aBoxActor, 1000.0f);
-	gScene->addActor(*aBoxActor);
+	for (float i = 1.0f; i < 10.5f; i += 1.0f)
+	{
+		for (float j = 0.0f; j < 4.0f; j += 1.0f)
+		{
+			for (float k = 0.0f; k < 4.0f; k += 1.0f)
+			{
+				PxRigidDynamic* aBoxActor = Physics::GetPhysXPhysics()->createRigidDynamic(PxTransform(j, i - 0.5f, k, PxQuat(q.x, q.y, q.z, q.w)));
+				PxShape* aBoxShape = PxRigidActorExt::createExclusiveShape(*aBoxActor, aBoxGeometry, *woodMaterial);
+				aBoxActor->setLinearVelocity(PxVec3(0, 0, 0));
+				aBoxActor->setAngularVelocity(PxVec3(0, 0, 0));
+				gScene->addActor(*aBoxActor);
+			}
+		}
+	}
 
-	PxRigidStatic* groundPlaneActor = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *concreteMaterial);
+	PxRigidStatic* groundPlaneActor = PxCreatePlane(*Physics::GetPhysXPhysics(), PxPlane(0, 1, 0, 0), *concreteMaterial);
 	gScene->addActor(*groundPlaneActor);
 
 	float vertices[] = {
@@ -234,36 +207,12 @@ void stepPhysics(float ts)
 {
 	gScene->simulate(ts);
 	gScene->fetchResults(true);
-	if (applyForce)
-	{
-		applyForce = false;
-		PxScene* scene;
-		PxGetPhysics().getScenes(&scene, 1);
-		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
-		if (nbActors)
-		{
-			std::vector<PxRigidActor*> actors(nbActors);
-			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			PxRigidDynamic* rigidDynamic = static_cast<PxRigidDynamic*>(actors[0]);
-			gScene->lockWrite();
-			rigidDynamic->addForce(PxVec3(0, 50, 0));
-			gScene->unlockWrite();
-		}
-	}
 }
 
 void cleanupPhysics(bool)
 {
 	PX_RELEASE(gScene);
 	PX_RELEASE(gDispatcher);
-	PX_RELEASE(gPhysics);
-	if (gPvd)
-	{
-		PxPvdTransport* transport = gPvd->getTransport();
-		gPvd->release();	gPvd = NULL;
-		PX_RELEASE(transport);
-	}
-	PX_RELEASE(gFoundation);
 }
 
 void RenderLoop(Timestep ts)
@@ -279,31 +228,33 @@ void RenderLoop(Timestep ts)
 	PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 	if (nbActors)
 	{
-		std::vector<PxRigidActor*> actors(nbActors);
+		std::vector<PxRigidActor*> actors(nbActors - 1);
 		scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-		PxRigidDynamic* rigidDynamic = static_cast<PxRigidDynamic*>(actors[0]);
-		gScene->lockRead();
-		PxTransform t = rigidDynamic->getGlobalPose();
-		gScene->unlockRead();
-		glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
-		glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
-		glm::mat4 locTrans = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot) * glm::scale(glm::mat4(1.0f), { 0.5f, 0.5f, 0.5f });
+		for (PxRigidActor* dyn : actors)
+		{
+			gScene->lockRead();
+			PxTransform t = dyn->getGlobalPose();
+			gScene->unlockRead();
+			glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
+			glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
+			glm::mat4 locTrans = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot) * glm::scale(glm::mat4(1.0f), { 0.5f, 0.5f, 0.5f });
 
-		// Cube
-		shader->Bind();
-		shader->SetFloat4("u_Color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-		Renderer::Submit(shader, pipeline, locTrans);
+			// Cube
+			shader->Bind();
+			shader->SetFloat4("u_Color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			Renderer::Submit(shader, pipeline, locTrans);
+		}
 
-		std::vector<PxRigidActor*> staticActors(nbActors);
+		std::vector<PxRigidActor*> staticActors(1);
 		scene->getActors(PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&staticActors[0]), nbActors);
 		PxRigidStatic* rigidStatic = static_cast<PxRigidStatic*>(staticActors[0]);
 		gScene->lockRead();
-		t = rigidStatic->getGlobalPose();
+		PxTransform t = rigidStatic->getGlobalPose();
 		gScene->unlockRead();
-		pos = { t.p.x, t.p.y, t.p.z };
-		rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
+		glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
+		glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
 		glm::mat4 test = glm::toMat4(rot);
-		locTrans = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot);
+		glm::mat4 locTrans = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot);
 
 		shader->SetFloat4("u_Color", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		Renderer::Submit(shader, planePipeline, locTrans);
@@ -424,6 +375,7 @@ namespace Dominion {
 		e.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(Application::OnWindowResized));
 		e.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(Application::OnKeyPressed));
+		e.Dispatch<MousePressedEvent>(DM_BIND_EVENT_FN(Application::OnMousePressed));
 
 		m_CameraController->OnEvent(e);
 
@@ -498,26 +450,50 @@ namespace Dominion {
 
 	bool Application::OnKeyPressed(KeyPressedEvent& e)
 	{
-		if (e.GetKeyCode() == Key::R)
+		/*if (e.GetKeyCode() == Key::R)
 		{
 			PxScene* scene;
 			PxGetPhysics().getScenes(&scene, 1);
 			PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
 			if (nbActors)
 			{
-				std::vector<PxRigidActor*> actors(nbActors);
-				scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-				PxRigidDynamic* rigidDynamic = static_cast<PxRigidDynamic*>(actors[0]);
-				gScene->lockWrite();
-				F32 angleX = Random::RandomFloat(0, 3.14);
-				F32 angleY = Random::RandomFloat(0, 3.14);
-				F32 angleZ = Random::RandomFloat(0, 3.14);
-				glm::quat q = glm::quat(glm::vec3(angleX, angleY, angleZ));
-				rigidDynamic->setLinearVelocity(PxVec3(0, 0, 0));
-				rigidDynamic->setAngularVelocity(PxVec3(0, 0, 0));
-				rigidDynamic->setGlobalPose(PxTransform(0, 10, 0, PxQuat(q.x, q.y, q.z, q.w)));
-				gScene->unlockWrite();
+				for (float i = 1.0f; i < 10.5f; i += 1.0f)
+				{
+					for (float j = 0.0f; j < 4.0f; j += 1.0f)
+					{
+						for (float k = 0.0f; k < 4.0f; k += 1.0f)
+						{
+							PxRigidDynamic* aBoxActor = Physics::GetPhysXPhysics()->createRigidDynamic(PxTransform(j, i - 0.5f, k, PxQuat(q.x, q.y, q.z, q.w)));
+							PxShape* aBoxShape = PxRigidActorExt::createExclusiveShape(*aBoxActor, aBoxGeometry, *woodMaterial);
+							aBoxActor->setLinearVelocity(PxVec3(0, 0, 0));
+							aBoxActor->setAngularVelocity(PxVec3(0, 0, 0));
+							gScene->addActor(*aBoxActor);
+						}
+					}
+				}
 			}
+		}*/
+
+		return false;
+	}
+
+	bool Application::OnMousePressed(MousePressedEvent& e)
+	{
+		if (e.GetButton() == Mouse::Button0)
+		{
+			PxMaterial* woodMaterial = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
+			PxBoxGeometry aBoxGeometry = PxBoxGeometry(1.0f / 2, 1.0f / 2, 1.0f / 2);
+
+			const PerspectiveCamera& camera = m_CameraController->GetCamera();
+			const glm::vec3& pos = camera.GetPosition();
+			glm::vec3 ray = camera.CreateRay() * 50.0f;
+			glm::vec3 cubePos = pos + camera.CreateRay();
+
+			PxRigidDynamic* aBoxActor = Physics::GetPhysXPhysics()->createRigidDynamic(PxTransform(cubePos.x, cubePos.y + 1.0f, cubePos.z + 1.0f));
+			PxShape* aBoxShape = PxRigidActorExt::createExclusiveShape(*aBoxActor, aBoxGeometry, *woodMaterial);
+			aBoxActor->setLinearVelocity(PxVec3(ray.x, ray.y, ray.z));
+			PxRigidBodyExt::updateMassAndInertia(*aBoxActor, 1000.0f);
+			gScene->addActor(*aBoxActor);
 		}
 
 		return false;

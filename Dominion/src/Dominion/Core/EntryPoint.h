@@ -19,6 +19,7 @@ int main(int argc, char** argv)
 	DM_PROFILE_BEGIN_SESSION("Startup", "DominionProfile-Startup.json");
 	Dominion::Filesystem::Init();
 	Dominion::Log::Init();
+	Dominion::Physics::Init();
 	DM_CORE_INFO("Initialized engine core logger");
 	DM_INFO("Initialized client logger");
 
@@ -32,6 +33,7 @@ int main(int argc, char** argv)
 	DM_PROFILE_BEGIN_SESSION("Shutdown", "DominionProfile-Shutdown.json");
 	delete app;
 
+	Dominion::Physics::Shutdown();
 	Dominion::Log::Shutdown();
 	DM_PROFILE_END_SESSION();
 

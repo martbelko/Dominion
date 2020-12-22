@@ -4,6 +4,7 @@
 #include "Dominion/Core/Window.h"
 #include "Dominion/Events/WindowEvent.h"
 #include "Dominion/Events/KeyEvent.h"
+#include "Dominion/Events/MouseEvent.h"
 #include "Dominion/Core/Layer.h"
 #include "Dominion/Core/LayerStack.h"
 #include "Dominion/ImGui/ImGuiLayer.h"
@@ -37,6 +38,7 @@ namespace Dominion {
 		bool OnWindowClosed(WindowClosedEvent& e);
 		bool OnWindowResized(WindowResizedEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMousePressed(MousePressedEvent& e);
 	private:
 		static Application* s_Application;
 		Window* m_Window = nullptr;
