@@ -26,7 +26,6 @@ workspace "Dominion"
 	filter "configurations:Debug"
 		defines
 		{
-			"_DEBUG",
 			"DM_DEBUG"
 		}
 		runtime "Debug"
@@ -35,7 +34,6 @@ workspace "Dominion"
 	filter "configurations:Release"
 		defines
 		{
-			"NDEBUG",
 			"DM_RELEASE"
 		}
 		runtime "Release"
@@ -44,7 +42,6 @@ workspace "Dominion"
 	filter "configurations:Dist"
 		defines
 		{
-			"NDEBUG",
 			"DM_DIST"
 		}
 		runtime "Release"
