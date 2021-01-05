@@ -23,7 +23,7 @@
 #include "Dominion/Events/KeyEvent.h"
 #include "Dominion/Utils/Random.h"
 
-#if DM_INCLUDE_IMGUI == 1
+#if DM_INCLUDE_IMGUI
 	#include "DominionImGui.h"
 #endif
 
