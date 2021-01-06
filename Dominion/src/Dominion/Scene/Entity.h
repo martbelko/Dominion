@@ -12,6 +12,7 @@ namespace Dominion {
 	public:
 		Entity() = default;
 		Entity(entt::entity entityHandle, Scene* scene);
+		Entity(U32 entityHandle, Scene* scene) : Entity(static_cast<entt::entity>(entityHandle), scene) {}
 		Entity(const Entity&) = default;
 		virtual ~Entity() = default;
 

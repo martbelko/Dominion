@@ -17,6 +17,7 @@
 #include "Dominion/Scene/Components/SpriteRendererComponent.h"
 #include "Dominion/Scene/Components/CameraComponent.h"
 #include "Dominion/Scene/Components/NativeScriptComponent.h"
+#include "Dominion/Scene/Components/ColliderComponent.h"
 #include "Dominion/Renderer/PerspectiveCameraController.h"
 #include "Dominion/Renderer/Model.h"
 #include "Dominion/Renderer/Shader.h"
@@ -29,100 +30,50 @@
 
 #include <PxPhysicsAPI.h>
 
+#include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
 using namespace physx;
 using namespace Dominion;
 
-#define PX_RELEASE(x)	if(x)	{ x->release(); x = NULL;	}
-
-physx::PxDefaultCpuDispatcher* gDispatcher = NULL;
-physx::PxScene* gScene = NULL;
+Scene* gScene;
 
 PerspectiveCameraController* m_CameraController;
 Ref<Pipeline> pipeline;
 Ref<Shader> shader;
 Ref<Pipeline> planePipeline;
 
-PxFilterFlags VehicleFilterShader
-(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
-{
-	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
-	{
-		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-		return PxFilterFlag::eDEFAULT;
-	}
-	// generate contacts for all that were not filtered above
-	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
-
-	pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
-	return PxFilterFlag::eDEFAULT;
-}
-
-class CollideCallback : public PxSimulationEventCallback
-{
-	virtual void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count)
-	{
-	}
-
-	virtual void onWake(PxActor** actors, PxU32 count)
-	{
-	}
-
-	virtual void onSleep(PxActor** actors, PxU32 count)
-	{
-	}
-
-	virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
-	{
-		PxRigidActor* shape1 = pairs->shapes[0]->getActor();
-		PxTransform t1 = shape1->getGlobalPose();
-		PxRigidActor* shape2 = pairs->shapes[1]->getActor();
-		PxTransform t2 = shape2->getGlobalPose();
-
-		PxRigidDynamic* dyn = shape1->is<PxRigidDynamic>();
-	}
-
-	virtual void onTrigger(PxTriggerPair* pairs, PxU32 count)
-	{
-	}
-
-	virtual void onAdvance(const PxRigidBody* const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count)
-	{
-	}
-};
-
-CollideCallback callback;
-
 void initPhysics(bool interactive)
 {
-	PxSceneDesc sceneDesc(Physics::GetPhysXPhysics()->getTolerancesScale());
-	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
-	gDispatcher = PxDefaultCpuDispatcherCreate(1);
-	sceneDesc.cpuDispatcher = gDispatcher;
-	sceneDesc.filterShader = VehicleFilterShader;
-	sceneDesc.simulationEventCallback = &callback;
-	gScene = Physics::GetPhysXPhysics()->createScene(sceneDesc);
+	gScene = new Scene();
+	U32 wwidth = Application::Get().GetWindow().GetWidth(), wheight = Application::Get().GetWindow().GetHeight();
+	gScene->OnViewportResize(wwidth, wheight);
+	gScene->GetPhysicsScene()->userData = gScene;
 
-	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
-	if (pvdClient)
-	{
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-	}
+	Entity camera = gScene->CreateEntity();
+	auto& tc = camera.AddComponent<TransformComponent>();
+	tc.position += glm::vec3(0, 0, 0.5);
+	auto& cc = camera.AddComponent<CameraComponent>();
 
-	PxMaterial* woodMaterial = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
+	Entity square = gScene->CreateEntity();
+	square.AddComponent<TransformComponent>();
+	square.AddComponent<SpriteRendererComponent>();
+	square.AddComponent<BoxCollider2DComponent>();
+
+	/*PxMaterial* mat = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
+	PxBoxGeometry squareGeo = PxBoxGeometry(0.5f, 0.5f, 0.0f);
+	PxRigidDynamic* squareActor = Physics::GetPhysXPhysics()->createRigidDynamic(PxTransform(0.0f, 0.0f, 0.0f));
+	PxShape* squareShape = PxRigidActorExt::createExclusiveShape(*squareActor, squareGeo, *mat);
+	squareActor->setLinearVelocity(PxVec3(0, 0, 0));
+	squareActor->setAngularVelocity(PxVec3(0, 0, 0));
+	squareActor->userData = reinterpret_cast<void*>(static_cast<U32>(square));
+	gScene->GetPhysicsScene()->addActor(*squareActor);*/
+
+	/*PxMaterial* woodMaterial = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 	PxMaterial* concreteMaterial = Physics::GetPhysXPhysics()->createMaterial(0.8f, 0.8f, 0.55f);
 
 	PxBoxGeometry aBoxGeometry = PxBoxGeometry(1.0f / 2, 1.0f / 2, 1.0f / 2);
-
- 	/*F32 angleX = Random::RandomFloat(0, 3.14);
- 	F32 angleY = Random::RandomFloat(0, 3.14);
- 	F32 angleZ = Random::RandomFloat(0, 3.14);*/
 
 	F32 angleX = 0.0f;
 	F32 angleY = 0.0f;
@@ -140,13 +91,13 @@ void initPhysics(bool interactive)
 				PxShape* aBoxShape = PxRigidActorExt::createExclusiveShape(*aBoxActor, aBoxGeometry, *woodMaterial);
 				aBoxActor->setLinearVelocity(PxVec3(0, 0, 0));
 				aBoxActor->setAngularVelocity(PxVec3(0, 0, 0));
-				gScene->addActor(*aBoxActor);
+				gScene->GetPhysicsScene()->addActor(*aBoxActor);
 			}
 		}
 	}
 
 	PxRigidStatic* groundPlaneActor = PxCreatePlane(*Physics::GetPhysXPhysics(), PxPlane(0, 1, 0, 0), *concreteMaterial);
-	gScene->addActor(*groundPlaneActor);
+	gScene->GetPhysicsScene()->addActor(*groundPlaneActor);
 
 	float vertices[] = {
 		-1.0f, -1.0f,  1.0f,
@@ -200,24 +151,48 @@ void initPhysics(bool interactive)
 	planePipeline = Pipeline::Create(planevb, planeib, inputLayout);
 
 	m_CameraController = new PerspectiveCameraController(1280.0f / 720.0f);
-	m_CameraController->GetCamera().SetPosition({ 1, 1, 5 });
+	m_CameraController->GetCamera().SetPosition({ 1, 1, 5 });*/
 }
 
 void stepPhysics(float ts)
 {
-	gScene->simulate(ts);
-	gScene->fetchResults(true);
+	gScene->GetPhysicsScene()->simulate(ts);
+	gScene->GetPhysicsScene()->fetchResults(true);
 }
 
 void cleanupPhysics(bool)
 {
-	PX_RELEASE(gScene);
-	PX_RELEASE(gDispatcher);
+	delete gScene;
 }
 
 void RenderLoop(Timestep ts)
 {
 	stepPhysics(ts.GetSeconds());
+
+	PxScene* physicsScene = gScene->GetPhysicsScene();
+	U32 nActors = physicsScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
+	if (nActors)
+	{
+		std::vector<PxRigidActor*> actors(nActors);
+		physicsScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nActors);
+		for (PxRigidActor* dyn : actors)
+		{
+			gScene->GetPhysicsScene()->lockRead();
+			PxTransform t = dyn->getGlobalPose();
+			gScene->GetPhysicsScene()->unlockRead();
+			glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
+			glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
+			glm::vec3 angle = glm::eulerAngles(rot);
+
+			U32 eh = reinterpret_cast<U32>(dyn->userData);
+			Entity entity(eh, gScene);
+			auto& tc = entity.GetComponent<TransformComponent>();
+			tc.position = pos;
+			tc.rotation = angle;
+		}
+	}
+
+	/*stepPhysics(ts.GetSeconds());
 
 	RenderCommand::ClearColorBuffer();
 	RenderCommand::ClearDepthBuffer();
@@ -232,9 +207,9 @@ void RenderLoop(Timestep ts)
 		scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
 		for (PxRigidActor* dyn : actors)
 		{
-			gScene->lockRead();
+			gScene->GetPhysicsScene()->lockRead();
 			PxTransform t = dyn->getGlobalPose();
-			gScene->unlockRead();
+			gScene->GetPhysicsScene()->unlockRead();
 			glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
 			glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
 			glm::mat4 locTrans = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot) * glm::scale(glm::mat4(1.0f), { 0.5f, 0.5f, 0.5f });
@@ -248,9 +223,9 @@ void RenderLoop(Timestep ts)
 		std::vector<PxRigidActor*> staticActors(1);
 		scene->getActors(PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&staticActors[0]), nbActors);
 		PxRigidStatic* rigidStatic = static_cast<PxRigidStatic*>(staticActors[0]);
-		gScene->lockRead();
+		gScene->GetPhysicsScene()->lockRead();
 		PxTransform t = rigidStatic->getGlobalPose();
-		gScene->unlockRead();
+		gScene->GetPhysicsScene()->unlockRead();
 		glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
 		glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
 		glm::mat4 test = glm::toMat4(rot);
@@ -260,7 +235,7 @@ void RenderLoop(Timestep ts)
 		Renderer::Submit(shader, planePipeline, locTrans);
 	}
 
-	Renderer::EndScene();
+	Renderer::EndScene();*/
 }
 
 namespace Dominion {
@@ -321,9 +296,9 @@ namespace Dominion {
 			Timestep ts = static_cast<F32>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - m_LastFrameTime).count());
 			m_LastFrameTime = std::chrono::system_clock::now();
 
-			m_CameraController->OnUpdate(ts);
+			//m_CameraController->OnUpdate(ts);
 
-			if (Input::IsKeyPressed(Key::Space))
+			/*if (Input::IsKeyPressed(Key::Space))
 			{
 				PxScene* scene;
 				PxGetPhysics().getScenes(&scene, 1);
@@ -333,14 +308,15 @@ namespace Dominion {
 					std::vector<PxRigidActor*> actors(nbActors);
 					scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
 					PxRigidDynamic* rigidDynamic = static_cast<PxRigidDynamic*>(actors[0]);
-					gScene->lockWrite();
+					gScene->GetPhysicsScene()->lockWrite();
 					rigidDynamic->addForce(PxVec3(0, 5, 0));
-					gScene->unlockWrite();
+					gScene->GetPhysicsScene()->unlockWrite();
 				}
-			}
+			}*/
 
 			/* TODO: Temporary for physics test purposes */
 			RenderLoop(ts);
+			gScene->OnUpdateRuntime(ts);
 
 			if (!m_Minimized)
 			{
@@ -374,10 +350,10 @@ namespace Dominion {
 		e.Dispatch<WindowCreatedEvent>(DM_BIND_EVENT_FN(Application::OnWindowCreated));
 		e.Dispatch<WindowClosedEvent>(DM_BIND_EVENT_FN(Application::OnWindowClosed));
 		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(Application::OnWindowResized));
-		e.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(Application::OnKeyPressed));
+		/*e.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(Application::OnKeyPressed));
 		e.Dispatch<MousePressedEvent>(DM_BIND_EVENT_FN(Application::OnMousePressed));
 
-		m_CameraController->OnEvent(e);
+		m_CameraController->OnEvent(e);*/
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
@@ -443,6 +419,7 @@ namespace Dominion {
 		}
 
 		Renderer::OnWindowResize(width, height);
+		gScene->OnViewportResize(width, height);
 
 		m_Minimized = false;
 		return false;
@@ -493,7 +470,7 @@ namespace Dominion {
 			PxShape* aBoxShape = PxRigidActorExt::createExclusiveShape(*aBoxActor, aBoxGeometry, *woodMaterial);
 			aBoxActor->setLinearVelocity(PxVec3(ray.x, ray.y, ray.z));
 			PxRigidBodyExt::updateMassAndInertia(*aBoxActor, 1000.0f);
-			gScene->addActor(*aBoxActor);
+			gScene->GetPhysicsScene()->addActor(*aBoxActor);
 		}
 
 		return false;
