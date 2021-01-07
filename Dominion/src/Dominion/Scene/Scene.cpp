@@ -7,6 +7,7 @@
 #include "Dominion/Scene/Components/CameraComponent.h"
 #include "Dominion/Scene/Components/NativeScriptComponent.h"
 #include "Dominion/Scene/Components/ColliderComponent.h"
+#include "Dominion/Scene/Components/RigidBodyComponent.h"
 
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Renderer/Renderer2D.h"
@@ -301,11 +302,18 @@ namespace Dominion {
 
 		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(component.scale.x * 0.5f, component.scale.y * 0.5f, 0.0f);
 		component.physicsActor = Physics::GetPhysXPhysics()->createRigidDynamic(physx::PxTransform(tc.position.x + component.center.x, tc.position.y + component.center.y, 0.0f));
-		//physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.physicsActor, squareGeo, *component.physicsMaterial);
-		component.physicsActor->setLinearVelocity(physx::PxVec3(0.0f, 0.0f, 0.0f));
-		component.physicsActor->setAngularVelocity(physx::PxVec3(0.0f, 0.0f, 0.0f));
+		component.physicsActor->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, true);
+		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.physicsActor, squareGeo, *component.physicsMaterial);
 		component.physicsActor->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
 		m_PhysicsScene->addActor(*component.physicsActor);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<RigidBody2DComponent>(Entity entity, RigidBody2DComponent& component)
+	{
+		auto& cc = entity.GetComponent<BoxCollider2DComponent>();
+		cc.physicsActor->getmas
+		component.mass = entity;
 	}
 
 }
