@@ -18,6 +18,8 @@
 #include "Dominion/Scene/Components/CameraComponent.h"
 #include "Dominion/Scene/Components/NativeScriptComponent.h"
 #include "Dominion/Scene/Components/ColliderComponent.h"
+#include "Dominion/Scene/Components/RigidBodyComponent.h"
+
 #include "Dominion/Renderer/PerspectiveCameraController.h"
 #include "Dominion/Renderer/Model.h"
 #include "Dominion/Renderer/Shader.h"
@@ -28,13 +30,12 @@
 	#include "DominionImGui.h"
 #endif
 
-#include <PxPhysicsAPI.h>
+//#include <PxPhysicsAPI.h>
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-using namespace physx;
 using namespace Dominion;
 
 Scene* gScene;
@@ -52,14 +53,28 @@ void initPhysics(bool interactive)
 	gScene->GetPhysicsScene()->userData = gScene;
 
 	Entity camera = gScene->CreateEntity();
-	auto& tc = camera.AddComponent<TransformComponent>();
-	tc.position += glm::vec3(0, 0, 0.5);
-	auto& cc = camera.AddComponent<CameraComponent>();
+	{
+		auto& tc = camera.AddComponent<TransformComponent>();
+		tc.position = tc.position + glm::vec3(0.0f, 0.0f, 0.5f);
+		auto& cc = camera.AddComponent<CameraComponent>();
+	}
 
 	Entity square = gScene->CreateEntity();
-	square.AddComponent<TransformComponent>();
-	square.AddComponent<SpriteRendererComponent>();
-	square.AddComponent<BoxCollider2DComponent>();
+	{
+		square.AddComponent<TransformComponent>();
+		square.AddComponent<SpriteRendererComponent>();
+		square.AddComponent<BoxCollider2DComponent>();
+		square.AddComponent<RigidBody2DComponent>();
+	}
+
+	Entity plane = gScene->CreateEntity("Plane");
+	{
+		auto& tc = plane.AddComponent<TransformComponent>();
+		tc.position.y -= 3.0f;
+		auto& sc = plane.AddComponent<SpriteRendererComponent>();
+		sc.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		auto& bcc = plane.AddComponent<BoxCollider2DComponent>();
+	}
 
 	/*PxMaterial* mat = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 	PxBoxGeometry squareGeo = PxBoxGeometry(0.5f, 0.5f, 0.0f);
@@ -167,31 +182,6 @@ void cleanupPhysics(bool)
 
 void RenderLoop(Timestep ts)
 {
-	stepPhysics(ts.GetSeconds());
-
-	PxScene* physicsScene = gScene->GetPhysicsScene();
-	U32 nActors = physicsScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
-	if (nActors)
-	{
-		std::vector<PxRigidActor*> actors(nActors);
-		physicsScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nActors);
-		for (PxRigidActor* dyn : actors)
-		{
-			gScene->GetPhysicsScene()->lockRead();
-			PxTransform t = dyn->getGlobalPose();
-			gScene->GetPhysicsScene()->unlockRead();
-			glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
-			glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
-			glm::vec3 angle = glm::eulerAngles(rot);
-
-			U32 eh = reinterpret_cast<U32>(dyn->userData);
-			Entity entity(eh, gScene);
-			auto& tc = entity.GetComponent<TransformComponent>();
-			tc.position = pos;
-			tc.rotation = angle;
-		}
-	}
-
 	/*stepPhysics(ts.GetSeconds());
 
 	RenderCommand::ClearColorBuffer();
@@ -315,7 +305,6 @@ namespace Dominion {
 			}*/
 
 			/* TODO: Temporary for physics test purposes */
-			RenderLoop(ts);
 			gScene->OnUpdateRuntime(ts);
 
 			if (!m_Minimized)
@@ -456,7 +445,7 @@ namespace Dominion {
 
 	bool Application::OnMousePressed(MousePressedEvent& e)
 	{
-		if (e.GetButton() == Mouse::Button0)
+		/*if (e.GetButton() == Mouse::Button0)
 		{
 			PxMaterial* woodMaterial = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
 			PxBoxGeometry aBoxGeometry = PxBoxGeometry(1.0f / 2, 1.0f / 2, 1.0f / 2);
@@ -471,7 +460,7 @@ namespace Dominion {
 			aBoxActor->setLinearVelocity(PxVec3(ray.x, ray.y, ray.z));
 			PxRigidBodyExt::updateMassAndInertia(*aBoxActor, 1000.0f);
 			gScene->GetPhysicsScene()->addActor(*aBoxActor);
-		}
+		}*/
 
 		return false;
 	}
