@@ -109,7 +109,7 @@ namespace Dominion {
 			out << YAML::Key << "NameComponent";
 			out << YAML::BeginMap; // BaseComponent
 
-			std::string& name = entity.GetComponent<BaseComponent>().name;
+			const std::string& name = entity.GetComponent<BaseComponent>().name;
 			out << YAML::Key << "baseComponent" << YAML::Value << name;
 
 			out << YAML::EndMap; // BaseComponent
@@ -235,9 +235,13 @@ namespace Dominion {
 				{
 					// Entities always have transform component
 					TransformComponent& tc = deserializedEntity.GetComponent<TransformComponent>();
-					tc.position = transformComponent["Position"].as<glm::vec3>();
-					tc.rotation = transformComponent["Rotation"].as<glm::vec3>();
-					tc.scale = transformComponent["Scale"].as<glm::vec3>();
+					glm::vec3 position = transformComponent["Position"].as<glm::vec3>();
+					glm::vec3 rotation = transformComponent["Rotation"].as<glm::vec3>();
+					glm::vec3 scale = transformComponent["Scale"].as<glm::vec3>();
+
+					tc.position = position;
+					tc.rotation = rotation;
+					tc.scale = scale;
 				}
 
 				YAML::Node cameraComponent = entity["CameraComponent"];
