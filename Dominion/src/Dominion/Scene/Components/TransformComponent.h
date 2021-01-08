@@ -2,6 +2,8 @@
 
 #include "Dominion/Core/Base.h"
 
+#include "Dominion/Scene/Components/ColliderComponent.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

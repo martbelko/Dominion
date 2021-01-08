@@ -2,6 +2,8 @@
 
 #include "Dominion/Core/Base.h"
 
+#include <string>
+
 namespace Dominion {
 
 	struct BaseComponent

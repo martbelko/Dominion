@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
+
 #include "Dominion/Renderer/Texture.h"
 
 #include <glm/glm.hpp>

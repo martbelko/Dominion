@@ -9,7 +9,7 @@ namespace Dominion {
 
 	struct RigidBody2DComponent
 	{
-		U32& mass;
+		float mass = 1.0f;
 	};
 
 }
