@@ -10,7 +10,7 @@ namespace Dominion {
 	struct BoxCollider2DComponent
 	{
 		glm::vec2 centerOffset{ 0.0f, 0.0f };
-		physx::PxMaterial* physicsMaterial = Physics::GetPhysXPhysics()->createMaterial(0.5f, 0.5f, 0.1f);
+		physx::PxMaterial* physicsMaterial = Physics::GetPhysXPhysics()->createMaterial(1.0f, 1.0f, 0.0f);
 		physx::PxRigidActor* physicsActor = nullptr;
 	};
 
