@@ -22,33 +22,27 @@
 
 class CollideCallback : public physx::PxSimulationEventCallback
 {
-	virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
+	virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override
 	{
 	}
 
-	virtual void onWake(physx::PxActor** actors, physx::PxU32 count)
+	virtual void onWake(physx::PxActor** actors, physx::PxU32 count) override
 	{
 	}
 
-	virtual void onSleep(physx::PxActor** actors, physx::PxU32 count)
+	virtual void onSleep(physx::PxActor** actors, physx::PxU32 count) override
 	{
 	}
 
-	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
-	{
-		physx::PxRigidActor* shape1 = pairs->shapes[0]->getActor();
-		physx::PxTransform t1 = shape1->getGlobalPose();
-		physx::PxRigidActor* shape2 = pairs->shapes[1]->getActor();
-		physx::PxTransform t2 = shape2->getGlobalPose();
-
-		physx::PxRigidDynamic* dyn = shape1->is<physx::PxRigidDynamic>();
-	}
-
-	virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override
 	{
 	}
 
-	virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
+	virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override
+	{
+	}
+
+	virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override
 	{
 	}
 };
@@ -65,10 +59,10 @@ physx::PxFilterFlags VehicleFilterShader
 		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
 		return physx::PxFilterFlag::eDEFAULT;
 	}
-	// generate contacts for all that were not filtered above
-	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
 	return physx::PxFilterFlag::eDEFAULT;
 }
 
@@ -358,7 +352,7 @@ namespace Dominion {
 		DM_CORE_ASSERT(entity.HasComponent<TransformComponent>(), "Entity must have TransformComponent before adding BoxCollider2DComponent!");
 		auto& tc = entity.GetComponent<TransformComponent>();
 
-		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 0.1f);
+		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 1.0f);
 		component.physicsActor = Physics::GetPhysXPhysics()->createRigidStatic(physx::PxTransform(tc.position.x + component.centerOffset.x, tc.position.y + component.centerOffset.y, 0.0f));
 		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.physicsActor, squareGeo, *component.physicsMaterial);
 		component.physicsActor->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
@@ -374,10 +368,11 @@ namespace Dominion {
 		auto& bcc = entity.GetComponent<BoxCollider2DComponent>();
 		bcc.physicsActor->release();
 
-		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 0.1f);
+		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 1.0f);
 		physx::PxRigidDynamic* dyn = Physics::GetPhysXPhysics()->createRigidDynamic(physx::PxTransform(tc.position.x + bcc.centerOffset.x, tc.position.y + bcc.centerOffset.y, 0.0f));;
 		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*dyn, squareGeo, *bcc.physicsMaterial);
 		dyn->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
+		dyn->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y); // Locks only to 2D
 		physx::PxRigidBodyExt::updateMassAndInertia(*dyn, component.mass);
 		m_PhysicsScene->addActor(*dyn);
 
