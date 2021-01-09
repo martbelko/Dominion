@@ -37,8 +37,6 @@ namespace Dominion {
 		bool OnWindowCreated(WindowCreatedEvent& e);
 		bool OnWindowClosed(WindowClosedEvent& e);
 		bool OnWindowResized(WindowResizedEvent& e);
-		bool OnKeyPressed(KeyPressedEvent& e);
-		bool OnMousePressed(MousePressedEvent& e);
 	private:
 		static Application* s_Application;
 		Window* m_Window = nullptr;

@@ -60,13 +60,28 @@ void Sandbox2D::OnAttach()
 	m_Scene.OnViewportResize(wWidth, wHeight);
 
 	m_Square = m_Scene.CreateEntity();
-	m_Square.AddComponent<Dominion::TransformComponent>();
-	auto& sprite = m_Square.AddComponent<Dominion::SpriteRendererComponent>();
-	sprite.texture = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
+	{
+		m_Square.AddComponent<Dominion::TransformComponent>();
+		auto& sprite = m_Square.AddComponent<Dominion::SpriteRendererComponent>();
+		sprite.texture = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
+		m_Square.AddComponent<Dominion::BoxCollider2DComponent>();
+		m_Square.AddComponent<Dominion::RigidBody2DComponent>();
+	}
 
 	m_Camera = m_Scene.CreateEntity("Camera Entity");
-	m_Camera.AddComponent<Dominion::TransformComponent>();
-	m_Camera.AddComponent<Dominion::CameraComponent>();
+	{
+		m_Camera.AddComponent<Dominion::TransformComponent>();
+		m_Camera.AddComponent<Dominion::CameraComponent>();
+	}
+
+	m_Plane = m_Scene.CreateEntity("Plane");
+	{
+		auto& tc = m_Plane.AddComponent<Dominion::TransformComponent>();
+		tc.position.y -= 3.0f;
+		auto& sc = m_Plane.AddComponent<Dominion::SpriteRendererComponent>();
+		sc.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		auto& bcc = m_Plane.AddComponent<Dominion::BoxCollider2DComponent>();
+	}
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)

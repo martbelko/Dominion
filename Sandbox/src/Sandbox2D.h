@@ -15,4 +15,5 @@ private:
 	Dominion::Scene m_Scene{ "Default Scene" };
 	Dominion::Entity m_Square;
 	Dominion::Entity m_Camera;
+	Dominion::Entity m_Plane;
 };

@@ -39,6 +39,8 @@
 #include "Dominion/Scene/Components/SpriteRendererComponent.h"
 #include "Dominion/Scene/Components/CameraComponent.h"
 #include "Dominion/Scene/Components/NativeScriptComponent.h"
+#include "Dominion/Scene/Components/ColliderComponent.h"
+#include "Dominion/Scene/Components/RigidBodyComponent.h"
 
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"

@@ -105,7 +105,6 @@ namespace Dominion {
 	{
 		Entity entity = Entity(m_Registry.create(), this);
 		auto& bc = entity.AddComponent<BaseComponent>(name);
-		//entity.AddComponent<TransformComponent>();
 		return entity;
 	}
 
