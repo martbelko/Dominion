@@ -59,24 +59,28 @@ void Sandbox2D::OnAttach()
 	F32 ratio = wWidth / wHeight;
 	m_Scene.OnViewportResize(wWidth, wHeight);
 
-	m_Square = m_Scene.CreateEntity();
-	{
-		m_Square.AddComponent<Dominion::TransformComponent>();
-		auto& sprite = m_Square.AddComponent<Dominion::SpriteRendererComponent>();
-		sprite.texture = Dominion::Texture2D::Create("assets/Textures/TestTexture.jpg");
-		m_Square.AddComponent<Dominion::BoxCollider2DComponent>();
-		m_Square.AddComponent<Dominion::RigidBody2DComponent>();
-	}
-
 	m_Camera = m_Scene.CreateEntity("Camera Entity");
 	{
-		m_Camera.AddComponent<Dominion::TransformComponent>();
+		auto& tc = m_Camera.AddComponent<Dominion::TransformComponent>();
 		m_Camera.AddComponent<Dominion::CameraComponent>();
+	}
+
+	float xOffset = 0.0f;
+	for (float y = -3.0f + 0.1f + 0.5f; y < 8.0f; y += 1.05f)
+	{
+		for (float x = -4.0f + xOffset; x < 4.0f - xOffset; x += 1.05f)
+		{
+			glm::vec3 pos{ x, y, 0.0f };
+			CreateSquareEntity(pos);
+		}
+
+		xOffset += 0.5f;
 	}
 
 	m_Plane = m_Scene.CreateEntity("Plane");
 	{
 		auto& tc = m_Plane.AddComponent<Dominion::TransformComponent>();
+		tc.scale = glm::vec3(10.0f, 0.1f, 1.0f);
 		tc.position.y -= 3.0f;
 		auto& sc = m_Plane.AddComponent<Dominion::SpriteRendererComponent>();
 		sc.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -92,6 +96,18 @@ void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 void Sandbox2D::OnEvent(Dominion::Event& e)
 {
 	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Sandbox2D::OnKeyPressed));
+}
+
+Dominion::Entity Sandbox2D::CreateSquareEntity(const glm::vec3 position)
+{
+	Dominion::Entity square = m_Scene.CreateEntity();
+	auto& tc = square.AddComponent<Dominion::TransformComponent>();
+	tc.position = position;
+	square.AddComponent<Dominion::SpriteRendererComponent>();
+	square.AddComponent<Dominion::BoxCollider2DComponent>();
+	square.AddComponent<Dominion::RigidBody2DComponent>();
+
+	return square;
 }
 
 bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)

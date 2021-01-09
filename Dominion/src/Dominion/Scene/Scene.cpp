@@ -72,7 +72,7 @@ namespace Dominion {
 		: m_SceneName(sceneName)
 	{
 		physx::PxSceneDesc sceneDesc(Physics::GetPhysXPhysics()->getTolerancesScale());
-		sceneDesc.gravity = physx::PxVec3(0.0f, -0.81f, 0.0f);
+		sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 		m_PhysicsCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 		sceneDesc.cpuDispatcher = m_PhysicsCPUDispatcher;
 		sceneDesc.filterShader = VehicleFilterShader;
@@ -195,56 +195,62 @@ namespace Dominion {
 
 		// Update physics
 		{
-			auto view = m_Registry.view<TransformComponent, BoxCollider2DComponent>();
-			for (entt::entity entity : view)
+			static float mAccumulator = 0.0f;
+			mAccumulator += ts;
+			if (mAccumulator >= 1 / 60.0f)
 			{
-				auto& tc = view.get<TransformComponent>(entity);
-				auto& bcc = view.get<BoxCollider2DComponent>(entity);
-				physx::PxTransform physxTransform = bcc.physicsActor->getGlobalPose();
-				glm::vec3& position = *reinterpret_cast<glm::vec3*>(&physxTransform.p);
-
-				glm::vec3 vec3CenterOffset = glm::vec3(bcc.centerOffset, 0.0f);
-				if (position != tc.position + vec3CenterOffset)
+				mAccumulator -= 1 / 60.0f;
+				auto view = m_Registry.view<TransformComponent, BoxCollider2DComponent>();
+				for (entt::entity entity : view)
 				{
-					position = tc.position + vec3CenterOffset; // This is directly changing physxTransform variable (it's position)
-					bcc.physicsActor->setGlobalPose(physxTransform);
+					auto& tc = view.get<TransformComponent>(entity);
+					auto& bcc = view.get<BoxCollider2DComponent>(entity);
+					physx::PxTransform physxTransform = bcc.physicsActor->getGlobalPose();
+					glm::vec3& position = *reinterpret_cast<glm::vec3*>(&physxTransform.p);
+
+					glm::vec3 vec3CenterOffset = glm::vec3(bcc.centerOffset, 0.0f);
+					if (position != tc.position + vec3CenterOffset)
+					{
+						position = tc.position + vec3CenterOffset; // This is directly changing physxTransform variable (it's position)
+						bcc.physicsActor->setGlobalPose(physxTransform);
+					}
 				}
-			}
 
-			m_Registry.view<RigidBody2DComponent>().each([&](entt::entity entity, auto& rbc)
-			{
-				BoxCollider2DComponent& bcc = m_Registry.get<BoxCollider2DComponent>(entity);
-				physx::PxRigidDynamic* dyn = reinterpret_cast<physx::PxRigidDynamic*>(bcc.physicsActor);
-				float physxMass = dyn->getMass();
-				if (physxMass != rbc.mass)
+				m_Registry.view<RigidBody2DComponent>().each([&](entt::entity entity, auto& rbc)
 				{
-					physx::PxRigidBodyExt::updateMassAndInertia(*dyn, rbc.mass);
-				}
-			});
+					BoxCollider2DComponent& bcc = m_Registry.get<BoxCollider2DComponent>(entity);
+					physx::PxRigidDynamic* dyn = reinterpret_cast<physx::PxRigidDynamic*>(bcc.physicsActor);
+					float physxMass = dyn->getMass();
+					if (physxMass != rbc.mass)
+					{
+						dyn->setMass(rbc.mass);
+					}
+				});
 
-			m_PhysicsScene->simulate(ts);
-			m_PhysicsScene->fetchResults(true);
+				m_PhysicsScene->simulate(1 / 60.0f);
+				m_PhysicsScene->fetchResults(true);
 
-			U32 nActors = m_PhysicsScene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC);
-			if (nActors)
-			{
-				std::vector<physx::PxRigidActor*> actors(nActors);
-				m_PhysicsScene->getActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<physx::PxActor**>(&actors[0]), nActors);
-				for (physx::PxRigidActor* dyn : actors)
+				U32 nActors = m_PhysicsScene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC);
+				if (nActors)
 				{
-					m_PhysicsScene->lockRead();
-					physx::PxTransform t = dyn->getGlobalPose();
-					m_PhysicsScene->unlockRead();
-					glm::vec3 pos = { t.p.x, t.p.y, t.p.z };
-					glm::quat rot = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
-					glm::vec3 angle = glm::eulerAngles(rot);
+					std::vector<physx::PxRigidActor*> actors(nActors);
+					m_PhysicsScene->getActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<physx::PxActor**>(&actors[0]), nActors);
+					for (physx::PxRigidActor* dyn : actors)
+					{
+						m_PhysicsScene->lockRead();
+						physx::PxTransform t = dyn->getGlobalPose();
+						m_PhysicsScene->unlockRead();
+						glm::vec3 position = { t.p.x, t.p.y, t.p.z };
+						glm::quat rotation = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
+						glm::vec3 angle = glm::eulerAngles(rotation);
 
-					U32 eh = reinterpret_cast<U32>(dyn->userData);
-					Entity entity(eh, this);
-					auto& tc = entity.GetComponent<TransformComponent>();
-					auto& bcc = entity.GetComponent<BoxCollider2DComponent>();
-					tc.position = pos - glm::vec3(bcc.centerOffset, 0.0f);
-					tc.rotation = angle;
+						U32 entityID = reinterpret_cast<U32>(dyn->userData);
+						Entity entity(entityID, this);
+						auto& tc = entity.GetComponent<TransformComponent>();
+						auto& bcc = entity.GetComponent<BoxCollider2DComponent>();
+						tc.position = position - glm::vec3(bcc.centerOffset, 0.0f);
+						tc.rotation = angle;
+					}
 				}
 			}
 		}
@@ -351,7 +357,7 @@ namespace Dominion {
 		DM_CORE_ASSERT(entity.HasComponent<TransformComponent>(), "Entity must have TransformComponent before adding BoxCollider2DComponent!");
 		auto& tc = entity.GetComponent<TransformComponent>();
 
-		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 1.0f);
+		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(tc.scale.x * 0.5f, tc.scale.y * 0.5f, 1.0f);
 		component.physicsActor = Physics::GetPhysXPhysics()->createRigidStatic(physx::PxTransform(tc.position.x + component.centerOffset.x, tc.position.y + component.centerOffset.y, 0.0f));
 		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.physicsActor, squareGeo, *component.physicsMaterial);
 		component.physicsActor->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
@@ -372,7 +378,7 @@ namespace Dominion {
 		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*dyn, squareGeo, *bcc.physicsMaterial);
 		dyn->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
 		dyn->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y); // Locks only to 2D
-		physx::PxRigidBodyExt::updateMassAndInertia(*dyn, component.mass);
+		dyn->setMass(component.mass);
 		m_PhysicsScene->addActor(*dyn);
 
 		bcc.physicsActor = dyn;

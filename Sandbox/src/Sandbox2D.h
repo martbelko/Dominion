@@ -10,6 +10,8 @@ public:
 	virtual void OnUpdate(const Dominion::Timestep& timestep) override;
 	virtual void OnEvent(Dominion::Event& e) override;
 private:
+	Dominion::Entity CreateSquareEntity(const glm::vec3 position);
+
 	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
 private:
 	Dominion::Scene m_Scene{ "Default Scene" };
