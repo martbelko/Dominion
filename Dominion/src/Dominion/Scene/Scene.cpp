@@ -20,35 +20,6 @@
 
 #include <string_view>
 
-class CollideCallback : public physx::PxSimulationEventCallback
-{
-	virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override
-	{
-	}
-
-	virtual void onWake(physx::PxActor** actors, physx::PxU32 count) override
-	{
-	}
-
-	virtual void onSleep(physx::PxActor** actors, physx::PxU32 count) override
-	{
-	}
-
-	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override
-	{
-	}
-
-	virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override
-	{
-	}
-
-	virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override
-	{
-	}
-};
-
-CollideCallback callback;
-
 physx::PxFilterFlags VehicleFilterShader
 (physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
@@ -60,8 +31,11 @@ physx::PxFilterFlags VehicleFilterShader
 		return physx::PxFilterFlag::eDEFAULT;
 	}
 
+
 	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
 
 	return physx::PxFilterFlag::eDEFAULT;
 }
@@ -76,7 +50,8 @@ namespace Dominion {
 		m_PhysicsCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 		sceneDesc.cpuDispatcher = m_PhysicsCPUDispatcher;
 		sceneDesc.filterShader = VehicleFilterShader;
-		sceneDesc.simulationEventCallback = &callback;
+		sceneDesc.simulationEventCallback = &m_PhysicsSimulationEventCallback;
+		sceneDesc.userData = this;
 		m_PhysicsScene = Physics::GetPhysXPhysics()->createScene(sceneDesc);
 
 		physx::PxPvdSceneClient* pvdClient = m_PhysicsScene->getScenePvdClient();
@@ -90,6 +65,15 @@ namespace Dominion {
 
 	Scene::~Scene()
 	{
+		// Destroy scripts
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			{
+				nsc.instance->OnDestroy();
+				nsc.DestroyScript(&nsc);
+			});
+		}
+
 		if (m_PhysicsScene)
 			m_PhysicsScene->release();
 		if (m_PhysicsCPUDispatcher)
@@ -227,8 +211,28 @@ namespace Dominion {
 					}
 				});
 
-				m_PhysicsScene->simulate(1 / 60.0f);
+				m_PhysicsScene->collide(1 / 60.0f);
+				m_PhysicsScene->fetchCollision(true);
+				m_PhysicsScene->advance();
 				m_PhysicsScene->fetchResults(true);
+
+				for (const InternalCollision& internalCollision : m_PhysicsSimulationEventCallback.collisions)
+				{
+					Entity entity1(internalCollision.entity1Index, internalCollision.scene);
+					Entity entity2(internalCollision.entity2Index, internalCollision.scene);
+					if (entity1.HasComponent<NativeScriptComponent>())
+					{
+						auto& nsc = entity1.GetComponent<NativeScriptComponent>();
+						nsc.instance->OnCollision(entity2);
+					}
+					if (entity2.HasComponent<NativeScriptComponent>())
+					{
+						auto& nsc = entity2.GetComponent<NativeScriptComponent>();
+						nsc.instance->OnCollision(entity1);
+					}
+				}
+
+				m_PhysicsSimulationEventCallback.collisions.clear();
 
 				U32 nActors = m_PhysicsScene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC);
 				if (nActors)

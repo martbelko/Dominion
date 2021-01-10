@@ -85,6 +85,22 @@ void Sandbox2D::OnAttach()
 		auto& sc = m_Plane.AddComponent<Dominion::SpriteRendererComponent>();
 		sc.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		auto& bcc = m_Plane.AddComponent<Dominion::BoxCollider2DComponent>();
+
+		class Script : public Dominion::ScriptableEntity
+		{
+		private:
+			void OnCollision(Dominion::Entity entity) override
+			{
+				if (entity.HasComponent<Dominion::RigidBody2DComponent>())
+				{
+					physx::PxRigidDynamic* dyn = static_cast<physx::PxRigidDynamic*>(entity.GetComponent<Dominion::BoxCollider2DComponent>().physicsActor);
+					dyn->addForce(physx::PxVec3(0.0f, 200.0f, 0.0f));
+				}
+			}
+		};
+
+		auto& nsc = m_Plane.AddComponent<Dominion::NativeScriptComponent>();
+		nsc.Bind<Script>();
 	}
 }
 

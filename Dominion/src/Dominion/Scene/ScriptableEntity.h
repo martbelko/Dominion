@@ -19,6 +19,8 @@ namespace Dominion {
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(Timestep ts) {}
+
+		virtual void OnCollision(Entity entity) {};
 	private:
 		Entity m_Entity;
 
