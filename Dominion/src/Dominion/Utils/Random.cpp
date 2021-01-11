@@ -6,7 +6,7 @@
 namespace Dominion {
 
 	std::random_device Random::s_RandomDevice;
-	std::mt19937 Random::s_Generator(time(0));
+	std::mt19937 Random::s_Generator(static_cast<unsigned int>(time(0)));
 
 	int8_t Random::RandomInt8(int8_t low, int8_t high)
 	{

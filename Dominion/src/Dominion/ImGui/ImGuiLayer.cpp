@@ -7,17 +7,21 @@
 
 #if defined(new)
 	#undef new
+	#pragma warning (disable: 26495 26812)
 	#include <imgui.h>
 	#include <examples/imgui_impl_glfw.h>
 	#include <examples/imgui_impl_opengl3.h>
+	#pragma warning (default: 26495 26812)
 	#define new DEBUG_NEW
 #else
+	#pragma warning (disable: 26495 26812)
 	#include <imgui.h>
 	#include <examples/imgui_impl_glfw.h>
 	#include <examples/imgui_impl_opengl3.h>
+	#pragma warning (default: 26495 26812)
 #endif
 
-// Temporary
+// TODO: Temporary includes
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -103,8 +107,8 @@ namespace Dominion {
 
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		F32 windowWidth = app.GetWindow().GetWidth();
-		F32 windowHeight = app.GetWindow().GetHeight();
+		F32 windowWidth = static_cast<F32>(app.GetWindow().GetWidth());
+		F32 windowHeight = static_cast<F32>(app.GetWindow().GetHeight());
 		io.DisplaySize = ImVec2(windowWidth, windowHeight);
 
 		// Rendering

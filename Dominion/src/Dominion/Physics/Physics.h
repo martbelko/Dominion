@@ -1,6 +1,8 @@
 #pragma once
 
+#pragma warning (disable: 26115 26451 26495 26812 33010)
 #include <PxPhysicsAPI.h>
+#pragma warning (default: 26115 26451 26495 26812 33010)
 
 namespace Dominion {
 

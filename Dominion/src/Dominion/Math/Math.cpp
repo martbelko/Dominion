@@ -6,10 +6,9 @@
 
 namespace Dominion::Math {
 
+	// From glm::decompose in matrix_decompose.inl
 	bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
 	{
-		// From glm::decompose in matrix_decompose.inl
-
 		using namespace glm;
 		using T = float;
 
@@ -34,12 +33,14 @@ namespace Dominion::Math {
 		translation = vec3(LocalMatrix[3]);
 		LocalMatrix[3] = vec4(0, 0, 0, LocalMatrix[3].w);
 
-		vec3 Row[3], Pdum3;
+		vec3 Row[3];
 
 		// Now get scale and shear.
 		for (length_t i = 0; i < 3; ++i)
 			for (length_t j = 0; j < 3; ++j)
+			#pragma warning (disable: 6001)
 				Row[i][j] = LocalMatrix[i][j];
+			#pragma warning (default: 6001)
 
 		// Compute X scale factor and normalize first row.
 		scale.x = length(Row[0]);

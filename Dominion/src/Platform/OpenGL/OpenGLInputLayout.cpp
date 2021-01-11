@@ -71,7 +71,7 @@ namespace Dominion {
 
 
 	OpenGLInputLayoutElelent::OpenGLInputLayoutElelent(const InputLayoutElement& element)
-		: type(DataTypeToOpenGLType(element.type)), componentCount(GetComponentCount(element.type)), offset(reinterpret_cast<void*>(element.offset)) {}
+		: type(DataTypeToOpenGLType(element.type)), componentCount(GetComponentCount(element.type)), offset(reinterpret_cast<void*>(static_cast<U64>(element.offset))) {}
 
 
 	OpenGLInputLayout::OpenGLInputLayout(const std::vector<InputLayoutElement>& elements, uint32_t stride)

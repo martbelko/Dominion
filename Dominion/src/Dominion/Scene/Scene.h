@@ -2,7 +2,7 @@
 
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Timestep.h"
-#include "Dominion/Core/Physics.h"
+#include "Dominion/Physics/Physics.h"
 
 #pragma warning (disable: 4267 26439 26495)
 #include <entt.hpp>
@@ -23,7 +23,7 @@ namespace Dominion {
 		Scene(const std::string& sceneName = "Unknown Scene Name");
 		~Scene();
 
-		Entity CreateEntity() { return CreateEntity("Entity"); }
+		Entity CreateEntity();
 		Entity CreateEntity(const std::string& name);
 
 		void DestroyEntity(Entity entity);
@@ -72,8 +72,8 @@ namespace Dominion {
 			virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override
 			{
 				Dominion::Scene* scene = static_cast<Dominion::Scene*>(pairHeader.actors[0]->getScene()->userData);
-				U32 ent1Index = reinterpret_cast<U32>(pairHeader.actors[0]->userData);
-				U32 ent2Index = reinterpret_cast<U32>(pairHeader.actors[1]->userData);
+				U32 ent1Index = static_cast<U32>(reinterpret_cast<U64>(pairHeader.actors[0]->userData));
+				U32 ent2Index = static_cast<U32>(reinterpret_cast<U64>(pairHeader.actors[1]->userData));
 
 				InternalCollision collision;
 				collision.entity1Index = ent1Index;

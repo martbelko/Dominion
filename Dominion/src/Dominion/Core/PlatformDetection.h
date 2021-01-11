@@ -3,7 +3,7 @@
 	/* Windows x64/x86 */
 	#ifdef _WIN64
 		/* Windows x64  */
-		#if not defined(DM_PLATFORM_WINDOWS)
+		#ifndef DM_PLATFORM_WINDOWS
 			#define DM_PLATFORM_WINDOWS
 		#endif
 	#else

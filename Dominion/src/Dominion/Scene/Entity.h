@@ -57,7 +57,9 @@ namespace Dominion {
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }
-		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+		operator U32() const { return static_cast<uint32_t>(m_EntityHandle); }
+
+		U32 GetID() const { return static_cast<uint32_t>(m_EntityHandle); }
 
 		bool operator== (const Entity& other) const;
 		bool operator!= (const Entity& other) const;

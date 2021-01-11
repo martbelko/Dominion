@@ -79,10 +79,15 @@ namespace Dominion {
 			m_PhysicsCPUDispatcher->release();
 	}
 
+	Entity Scene::CreateEntity()
+	{
+		return CreateEntity("Entity");
+	}
+
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = Entity(m_Registry.create(), this);
-		auto& bc = entity.AddComponent<BaseComponent>(name);
+		entity.AddComponent<BaseComponent>(name);
 		return entity;
 	}
 
@@ -252,7 +257,7 @@ namespace Dominion {
 						glm::quat rotation = glm::quat(t.q.w, t.q.x, t.q.y, t.q.z);
 						glm::vec3 angle = glm::eulerAngles(rotation);
 
-						U32 entityID = reinterpret_cast<U32>(dyn->userData);
+						U32 entityID = static_cast<U32>(reinterpret_cast<U64>(dyn->userData));
 						Entity entity(entityID, this);
 						auto& tc = entity.GetComponent<TransformComponent>();
 						auto& bcc = entity.GetComponent<BoxCollider2DComponent>();
@@ -368,7 +373,7 @@ namespace Dominion {
 		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(tc.scale.x * 0.5f, tc.scale.y * 0.5f, 1.0f);
 		component.physicsActor = Physics::GetPhysXPhysics()->createRigidStatic(physx::PxTransform(tc.position.x + component.centerOffset.x, tc.position.y + component.centerOffset.y, 0.0f));
 		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.physicsActor, squareGeo, *component.physicsMaterial);
-		component.physicsActor->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
+		component.physicsActor->userData = reinterpret_cast<void*>(static_cast<U64>(entity.GetID()));
 		m_PhysicsScene->addActor(*component.physicsActor);
 	}
 
@@ -384,7 +389,7 @@ namespace Dominion {
 		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 1.0f);
 		physx::PxRigidDynamic* dyn = Physics::GetPhysXPhysics()->createRigidDynamic(physx::PxTransform(tc.position.x + bcc.centerOffset.x, tc.position.y + bcc.centerOffset.y, 0.0f));;
 		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*dyn, squareGeo, *bcc.physicsMaterial);
-		dyn->userData = reinterpret_cast<void*>(static_cast<U32>(entity));
+		dyn->userData = reinterpret_cast<void*>(static_cast<U64>(entity.GetID()));
 		dyn->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y); // Locks only to 2D
 		dyn->setMass(component.mass);
 		m_PhysicsScene->addActor(*dyn);

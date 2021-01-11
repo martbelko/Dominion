@@ -54,9 +54,9 @@ Sandbox2D::Sandbox2D()
 void Sandbox2D::OnAttach()
 {
 	const Dominion::Window& wnd = Dominion::Application::Get().GetWindow();
-	F32 wHeight = static_cast<F32>(wnd.GetHeight());
-	F32 wWidth = static_cast<F32>(wnd.GetWidth());
-	F32 ratio = wWidth / wHeight;
+	U32 wHeight = static_cast<U32>(wnd.GetHeight());
+	U32 wWidth = static_cast<U32>(wnd.GetWidth());
+	F32 ratio = static_cast<F32>(wWidth) / wHeight;
 	m_Scene.OnViewportResize(wWidth, wHeight);
 
 	m_Camera = m_Scene.CreateEntity("Camera Entity");

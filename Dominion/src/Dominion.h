@@ -3,7 +3,6 @@
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/BaseTypes.h"
 #include "Dominion/Core/Log.h"
-#include "Dominion/Core/Physics.h"
 #include "Dominion/Utils/PlatformUtils.h"
 #include "Dominion/Core/Application.h"
 #include "Dominion/Events/Event.h"
@@ -41,6 +40,8 @@
 #include "Dominion/Scene/Components/NativeScriptComponent.h"
 #include "Dominion/Scene/Components/ColliderComponent.h"
 #include "Dominion/Scene/Components/RigidBodyComponent.h"
+
+#include "Dominion/Physics/Physics.h"
 
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"

@@ -7,7 +7,7 @@
 #include "Dominion/Renderer/InputLayout.h"
 #include "Dominion/Renderer/Renderer.h"
 
-#include "Dominion/Core/Physics.h"
+#include "Dominion/Physics/Physics.h"
 
 /* TODO: Temporary */
 #include "Dominion/Scene/Scene.h"

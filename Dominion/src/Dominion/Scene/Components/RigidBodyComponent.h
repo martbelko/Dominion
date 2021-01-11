@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
-#include "Dominion/Core/Physics.h"
+#include "Dominion/Physics/Physics.h"
 
 #include <glm/glm.hpp>
 
