@@ -4,9 +4,9 @@
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Physics/Physics.h"
 
-#pragma warning (disable: 4267 26439 26495)
+#pragma warning (disable: 4267 26439 26451 26495 28020)
 #include <entt.hpp>
-#pragma warning (default: 4267 26439 26495)
+#pragma warning (default: 4267 26439 26451 26495 28020)
 
 #include <string>
 #include <deque>
