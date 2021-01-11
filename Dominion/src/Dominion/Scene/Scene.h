@@ -37,11 +37,21 @@ namespace Dominion {
 
 		physx::PxScene* GetPhysicsScene() { return m_PhysicsScene; }
 		const physx::PxScene* GetPhysicsScene() const { return m_PhysicsScene; }
+
+		entt::registry& GetRegistry() { return m_Registry; }
 	private:
 		struct InternalCollision
 		{
+			enum class Flag
+			{
+				COLLISION_START = 0,
+				COLLISION_STAY,
+				COLLISION_END
+			};
+
 			U32 entity1Index, entity2Index;
 			Scene* scene;
+			Flag flag;
 		};
 
 		class CollideCallback : public physx::PxSimulationEventCallback
@@ -72,21 +82,21 @@ namespace Dominion {
 				collision.entity2Index = ent2Index;
 				collision.scene = scene;
 
-				collisions.emplace_back(collision);
-
 				const physx::PxContactPair& cp = *pairs;
 				if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 				{
-					int x = 5;
+					collision.flag = InternalCollision::Flag::COLLISION_START;
 				}
-				if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+				else if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
 				{
-					int x = 5;
+					collision.flag = InternalCollision::Flag::COLLISION_STAY;
 				}
-				if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+				else if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
 				{
-					int x = 5;
+					collision.flag = InternalCollision::Flag::COLLISION_END;
 				}
+
+				collisions.emplace_back(collision);
 			}
 
 			virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override

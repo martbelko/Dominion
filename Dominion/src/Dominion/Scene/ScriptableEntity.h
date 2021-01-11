@@ -20,11 +20,14 @@ namespace Dominion {
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(Timestep ts) {}
 
-		virtual void OnCollision(Entity entity) {};
+		virtual void OnCollisionStart(Entity entity) {};
+		virtual void OnCollisionStay(Entity entity) {};
+		virtual void OnCollisionEnd(Entity entity) {};
 	private:
 		Entity m_Entity;
 
 		friend class Scene;
+		friend struct NativeScriptComponent;
 	};
 
 }

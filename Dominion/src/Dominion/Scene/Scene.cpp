@@ -67,10 +67,9 @@ namespace Dominion {
 	{
 		// Destroy scripts
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			m_Registry.view<Dominion::NativeScriptComponent>().each([=](auto entity, auto& nsc)
 			{
-				nsc.instance->OnDestroy();
-				nsc.DestroyScript(&nsc);
+				nsc.Destroy();
 			});
 		}
 
@@ -223,12 +222,22 @@ namespace Dominion {
 					if (entity1.HasComponent<NativeScriptComponent>())
 					{
 						auto& nsc = entity1.GetComponent<NativeScriptComponent>();
-						nsc.instance->OnCollision(entity2);
+						if (internalCollision.flag == InternalCollision::Flag::COLLISION_START)
+							nsc.instance->OnCollisionStart(entity2);
+						if (internalCollision.flag == InternalCollision::Flag::COLLISION_STAY)
+							nsc.instance->OnCollisionStay(entity2);
+						if (internalCollision.flag == InternalCollision::Flag::COLLISION_END)
+							nsc.instance->OnCollisionEnd(entity2);
 					}
 					if (entity2.HasComponent<NativeScriptComponent>())
 					{
 						auto& nsc = entity2.GetComponent<NativeScriptComponent>();
-						nsc.instance->OnCollision(entity1);
+						if (internalCollision.flag == InternalCollision::Flag::COLLISION_START)
+							nsc.instance->OnCollisionStart(entity1);
+						if (internalCollision.flag == InternalCollision::Flag::COLLISION_STAY)
+							nsc.instance->OnCollisionStay(entity1);
+						if (internalCollision.flag == InternalCollision::Flag::COLLISION_END)
+							nsc.instance->OnCollisionEnd(entity1);
 					}
 				}
 
