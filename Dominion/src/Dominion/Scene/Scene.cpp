@@ -79,11 +79,6 @@ namespace Dominion {
 			m_PhysicsCPUDispatcher->release();
 	}
 
-	Entity Scene::CreateEntity()
-	{
-		return CreateEntity("Entity");
-	}
-
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = Entity(m_Registry.create(), this);

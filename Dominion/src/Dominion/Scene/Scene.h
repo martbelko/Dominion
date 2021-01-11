@@ -23,7 +23,7 @@ namespace Dominion {
 		Scene(const std::string& sceneName = "Unknown Scene Name");
 		~Scene();
 
-		Entity CreateEntity();
+		Entity CreateEntity() { return CreateEntity("Entity"); }
 		Entity CreateEntity(const std::string& name);
 
 		void DestroyEntity(Entity entity);
