@@ -37,8 +37,6 @@ namespace Dominion {
 
 		physx::PxScene* GetPhysicsScene() { return m_PhysicsScene; }
 		const physx::PxScene* GetPhysicsScene() const { return m_PhysicsScene; }
-
-		entt::registry& GetRegistry() { return m_Registry; }
 	private:
 		struct InternalCollision
 		{
