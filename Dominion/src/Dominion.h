@@ -28,6 +28,7 @@
 #include "Dominion/Renderer/Material.h"
 #include "Dominion/Renderer/Model.h"
 #include "Dominion/Core/Timestep.h"
+
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"
 #include "Dominion/Scene/ScriptableEntity.h"
@@ -42,6 +43,7 @@
 #include "Dominion/Scene/Components/RigidBodyComponent.h"
 
 #include "Dominion/Physics/Physics.h"
+#include "Dominion/Physics/Collision.h"
 
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"

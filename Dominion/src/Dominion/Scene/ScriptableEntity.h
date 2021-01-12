@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
+
 #include "Dominion/Scene/Entity.h"
+
+#include "Dominion/Physics/Collision.h"
 
 namespace Dominion {
 
@@ -20,9 +23,9 @@ namespace Dominion {
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(Timestep ts) {}
 
-		virtual void OnCollisionStart(Entity entity) {};
-		virtual void OnCollisionStay(Entity entity) {};
-		virtual void OnCollisionEnd(Entity entity) {};
+		virtual void OnCollisionStart(const Collision& collision) {};
+		virtual void OnCollisionStay(const Collision& collision) {};
+		virtual void OnCollisionEnd(const Collision& collision) {};
 	private:
 		Entity m_Entity;
 
