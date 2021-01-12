@@ -89,25 +89,15 @@ void Sandbox2D::OnAttach()
 		class Script : public Dominion::ScriptableEntity
 		{
 		private:
-			void OnCollisionStart(Dominion::Entity entity) override
+			void OnCollisionStart(const Dominion::Collision& collision) override
 			{
-				/*if (entity.HasComponent<Dominion::RigidBody2DComponent>())
-				{
-					physx::PxRigidDynamic* dyn = static_cast<physx::PxRigidDynamic*>(entity.GetComponent<Dominion::BoxCollider2DComponent>().physicsActor);
-					dyn->addForce(physx::PxVec3(0.0f, 10.0f, 0.0f), physx::PxForceMode::eIMPULSE);
-				}*/
 			}
 
-			void OnCollisionStay(Dominion::Entity entity) override
+			void OnCollisionStay(const Dominion::Collision& collision) override
 			{
-				if (entity.HasComponent<Dominion::RigidBody2DComponent>())
-				{
-					physx::PxRigidDynamic* dyn = static_cast<physx::PxRigidDynamic*>(entity.GetComponent<Dominion::BoxCollider2DComponent>().physicsActor);
-					dyn->addForce(physx::PxVec3(0.0f, 10.0f, 0.0f), physx::PxForceMode::eVELOCITY_CHANGE);
-				}
 			}
 
-			void OnCollisionEnd(Dominion::Entity entity) override
+			void OnCollisionEnd(const Dominion::Collision& collision) override
 			{
 			}
 		};

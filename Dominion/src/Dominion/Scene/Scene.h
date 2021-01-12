@@ -2,6 +2,9 @@
 
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Timestep.h"
+
+#include "Dominion/Scene/Entity.h"
+
 #include "Dominion/Physics/Physics.h"
 
 #pragma warning (disable: 4267 26439 26451 26495 28020)
@@ -14,7 +17,6 @@
 namespace Dominion {
 
 	// Forward declarations
-	class Entity;
 	class EditorCamera;
 
 	class Scene
@@ -23,9 +25,7 @@ namespace Dominion {
 		Scene(const std::string& sceneName = "Unknown Scene Name");
 		~Scene();
 
-		Entity CreateEntity();
-		Entity CreateEntity(const std::string& name);
-
+		Entity CreateEntity(const std::string& name = "Entity");
 		void DestroyEntity(Entity entity);
 
 		void OnUpdateEditor(Timestep timestep, const EditorCamera& camera, Entity selectedEntity);
@@ -57,53 +57,12 @@ namespace Dominion {
 		public:
 			std::deque<InternalCollision> collisions;
 		private:
-			virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override
-			{
-			}
-
-			virtual void onWake(physx::PxActor** actors, physx::PxU32 count) override
-			{
-			}
-
-			virtual void onSleep(physx::PxActor** actors, physx::PxU32 count) override
-			{
-			}
-
-			virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override
-			{
-				Dominion::Scene* scene = static_cast<Dominion::Scene*>(pairHeader.actors[0]->getScene()->userData);
-				U32 ent1Index = static_cast<U32>(reinterpret_cast<U64>(pairHeader.actors[0]->userData));
-				U32 ent2Index = static_cast<U32>(reinterpret_cast<U64>(pairHeader.actors[1]->userData));
-
-				InternalCollision collision;
-				collision.entity1Index = ent1Index;
-				collision.entity2Index = ent2Index;
-				collision.scene = scene;
-
-				const physx::PxContactPair& cp = *pairs;
-				if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
-				{
-					collision.flag = InternalCollision::Flag::COLLISION_START;
-				}
-				else if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
-				{
-					collision.flag = InternalCollision::Flag::COLLISION_STAY;
-				}
-				else if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
-				{
-					collision.flag = InternalCollision::Flag::COLLISION_END;
-				}
-
-				collisions.emplace_back(collision);
-			}
-
-			virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override
-			{
-			}
-
-			virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override
-			{
-			}
+			virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override;
+			virtual void onWake(physx::PxActor** actors, physx::PxU32 count) override;
+			virtual void onSleep(physx::PxActor** actors, physx::PxU32 count) override;
+			virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
+			virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;
+			virtual void onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count) override;
 		};
 	private:
 		template<typename T>

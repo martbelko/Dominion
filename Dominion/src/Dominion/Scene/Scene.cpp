@@ -1,6 +1,9 @@
 #include "dmpch.h"
 #include "Scene.h"
 
+#include "Dominion/Scene/Entity.h"
+#include "Dominion/Scene/ScriptableEntity.h"
+
 #include "Dominion/Scene/Components/BaseComponent.h"
 #include "Dominion/Scene/Components/TransformComponent.h"
 #include "Dominion/Scene/Components/SpriteRendererComponent.h"
@@ -9,10 +12,10 @@
 #include "Dominion/Scene/Components/ColliderComponent.h"
 #include "Dominion/Scene/Components/RigidBodyComponent.h"
 
-#include "Dominion/Scene/Entity.h"
 #include "Dominion/Renderer/Renderer2D.h"
 #include "Dominion/Renderer/RenderCommand.h"
-#include "Dominion/Scene/ScriptableEntity.h"
+
+#include "Dominion/Physics/Collision.h"
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -30,7 +33,6 @@ physx::PxFilterFlags VehicleFilterShader
 		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
 		return physx::PxFilterFlag::eDEFAULT;
 	}
-
 
 	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
@@ -67,7 +69,7 @@ namespace Dominion {
 	{
 		// Destroy scripts
 		{
-			m_Registry.view<Dominion::NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			m_Registry.view<Dominion::NativeScriptComponent>().each([](auto& nsc)
 			{
 				nsc.Destroy();
 			});
@@ -77,11 +79,6 @@ namespace Dominion {
 			m_PhysicsScene->release();
 		if (m_PhysicsCPUDispatcher)
 			m_PhysicsCPUDispatcher->release();
-	}
-
-	Entity Scene::CreateEntity()
-	{
-		return CreateEntity("Entity");
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -199,7 +196,7 @@ namespace Dominion {
 					}
 				}
 
-				m_Registry.view<RigidBody2DComponent>().each([&](entt::entity entity, auto& rbc)
+				m_Registry.view<RigidBody2DComponent>().each([=](entt::entity entity, auto& rbc)
 				{
 					BoxCollider2DComponent& bcc = m_Registry.get<BoxCollider2DComponent>(entity);
 					physx::PxRigidDynamic* dyn = reinterpret_cast<physx::PxRigidDynamic*>(bcc.physicsActor);
@@ -217,27 +214,28 @@ namespace Dominion {
 
 				for (const InternalCollision& internalCollision : m_PhysicsSimulationEventCallback.collisions)
 				{
-					Entity entity1(internalCollision.entity1Index, internalCollision.scene);
-					Entity entity2(internalCollision.entity2Index, internalCollision.scene);
-					if (entity1.HasComponent<NativeScriptComponent>())
+					Collision collision;
+					collision.entity1 = Entity(internalCollision.entity1Index, internalCollision.scene);
+					collision.entity2 = Entity(internalCollision.entity2Index, internalCollision.scene);
+					if (collision.entity1.HasComponent<NativeScriptComponent>())
 					{
-						auto& nsc = entity1.GetComponent<NativeScriptComponent>();
+						auto& nsc = collision.entity1.GetComponent<NativeScriptComponent>();
 						if (internalCollision.flag == InternalCollision::Flag::COLLISION_START)
-							nsc.instance->OnCollisionStart(entity2);
+							nsc.instance->OnCollisionStart(collision);
 						if (internalCollision.flag == InternalCollision::Flag::COLLISION_STAY)
-							nsc.instance->OnCollisionStay(entity2);
+							nsc.instance->OnCollisionStay(collision);
 						if (internalCollision.flag == InternalCollision::Flag::COLLISION_END)
-							nsc.instance->OnCollisionEnd(entity2);
+							nsc.instance->OnCollisionEnd(collision);
 					}
-					if (entity2.HasComponent<NativeScriptComponent>())
+					if (collision.entity2.HasComponent<NativeScriptComponent>())
 					{
-						auto& nsc = entity2.GetComponent<NativeScriptComponent>();
+						auto& nsc = collision.entity2.GetComponent<NativeScriptComponent>();
 						if (internalCollision.flag == InternalCollision::Flag::COLLISION_START)
-							nsc.instance->OnCollisionStart(entity1);
+							nsc.instance->OnCollisionStart(collision);
 						if (internalCollision.flag == InternalCollision::Flag::COLLISION_STAY)
-							nsc.instance->OnCollisionStay(entity1);
+							nsc.instance->OnCollisionStay(collision);
 						if (internalCollision.flag == InternalCollision::Flag::COLLISION_END)
-							nsc.instance->OnCollisionEnd(entity1);
+							nsc.instance->OnCollisionEnd(collision);
 					}
 				}
 
@@ -396,6 +394,62 @@ namespace Dominion {
 
 		bcc.physicsActor = dyn;
 		dyn->wakeUp();
+	}
+
+	void Scene::CollideCallback::onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
+	{
+
+	}
+
+	void Scene::CollideCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
+	{
+
+	}
+
+	void Scene::CollideCallback::onSleep(physx::PxActor** actors, physx::PxU32 count)
+	{
+
+	}
+
+	void Scene::CollideCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+	{
+		if (nbPairs != 1)
+			DM_ASSERT(false, "More than one pair detected in collision!");
+
+		Dominion::Scene* scene = static_cast<Dominion::Scene*>(pairHeader.actors[0]->getScene()->userData);
+		U32 ent1Index = static_cast<U32>(reinterpret_cast<U64>(pairHeader.actors[0]->userData));
+		U32 ent2Index = static_cast<U32>(reinterpret_cast<U64>(pairHeader.actors[1]->userData));
+
+		InternalCollision collision;
+		collision.entity1Index = ent1Index;
+		collision.entity2Index = ent2Index;
+		collision.scene = scene;
+
+		const physx::PxContactPair& cp = *pairs;
+		if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			collision.flag = InternalCollision::Flag::COLLISION_START;
+		}
+		else if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+		{
+			collision.flag = InternalCollision::Flag::COLLISION_STAY;
+		}
+		else if (pairs->events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			collision.flag = InternalCollision::Flag::COLLISION_END;
+		}
+
+		collisions.emplace_back(collision);
+	}
+
+	void Scene::CollideCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+	{
+
+	}
+
+	void Scene::CollideCallback::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
+	{
+
 	}
 
 }

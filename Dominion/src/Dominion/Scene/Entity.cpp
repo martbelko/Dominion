@@ -1,6 +1,8 @@
 #include "dmpch.h"
 #include "Entity.h"
 
+#include "Dominion/Scene/Scene.h"
+
 namespace Dominion {
 
 	Entity::Entity(entt::entity entityHandle, Scene* scene)
