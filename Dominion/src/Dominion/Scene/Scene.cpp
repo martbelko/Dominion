@@ -56,6 +56,7 @@ namespace Dominion {
 		sceneDesc.userData = this;
 		m_PhysicsScene = Physics::GetPhysXPhysics()->createScene(sceneDesc);
 
+		// TODO: Remove PVD from physics entirely
 		physx::PxPvdSceneClient* pvdClient = m_PhysicsScene->getScenePvdClient();
 		if (pvdClient)
 		{
