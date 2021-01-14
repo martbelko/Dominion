@@ -23,7 +23,7 @@
 
 #include <string_view>
 
-physx::PxFilterFlags VehicleFilterShader
+physx::PxFilterFlags DefaultFilterShader
 (physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
@@ -51,7 +51,7 @@ namespace Dominion {
 		sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 		m_PhysicsCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 		sceneDesc.cpuDispatcher = m_PhysicsCPUDispatcher;
-		sceneDesc.filterShader = VehicleFilterShader;
+		sceneDesc.filterShader = DefaultFilterShader;
 		sceneDesc.simulationEventCallback = &m_PhysicsSimulationEventCallback;
 		sceneDesc.userData = this;
 		m_PhysicsScene = Physics::GetPhysXPhysics()->createScene(sceneDesc);
