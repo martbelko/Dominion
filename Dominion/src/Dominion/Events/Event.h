@@ -32,7 +32,7 @@ namespace Dominion {
 		{
 			if (T::GetStaticType() == GetType())
 			{
-				Handled = f(static_cast<T&>(*this));
+				Handled |= f(static_cast<T&>(*this));
 				return true;
 			}
 
