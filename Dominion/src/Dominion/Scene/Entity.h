@@ -30,10 +30,7 @@ namespace Dominion {
 		template<typename T, typename... Args>
 		T& GetOrAddComponent(Args&&... args)
 		{
-			if (HasComponent<T>())
-				return GetComponent<T>();
-
-			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_Scene->m_Registry.get_or_emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
@@ -45,17 +42,23 @@ namespace Dominion {
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
-		template<typename T>
-		T& GetComponent()
+		template<typename... T>
+		auto GetComponent()
 		{
-			DM_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
-			return m_Scene->m_Registry.get<T>(m_EntityHandle);
+			DM_CORE_ASSERT(HasComponent<T...>(), "Entity does not have these components!");
+			return m_Scene->m_Registry.get<T...>(m_EntityHandle);
 		}
 
-		template<typename T>
+		template<typename... T>
 		bool HasComponent()
 		{
-			return m_Scene->m_Registry.has<T>(m_EntityHandle);
+			return m_Scene->m_Registry.has<T...>(m_EntityHandle);
+		}
+
+		template<typename... T>
+		bool HasAnyComponent()
+		{
+			return m_Scene->m_Registry.any<T...>(m_EntityHandle);
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }
@@ -67,6 +70,7 @@ namespace Dominion {
 		bool operator!= (const Entity& other) const;
 	private:
 		void Destroy();
+		void RemoveAllComponents();
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
