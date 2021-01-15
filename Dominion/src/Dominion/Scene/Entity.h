@@ -43,7 +43,7 @@ namespace Dominion {
 		}
 
 		template<typename... T>
-		auto GetComponent()
+		decltype(auto) GetComponent()
 		{
 			DM_CORE_ASSERT(HasComponent<T...>(), "Entity does not have these components!");
 			return m_Scene->m_Registry.get<T...>(m_EntityHandle);
