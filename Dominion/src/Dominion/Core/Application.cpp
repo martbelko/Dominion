@@ -51,6 +51,7 @@ namespace Dominion {
 			wndProps.Height = 720;
 			m_Window = Window::Create(DM_BIND_EVENT_FN(Application::OnEvent), wndProps);
 
+			Physics::Init();
 			Renderer::Init();
 
 #if DM_INCLUDE_IMGUI

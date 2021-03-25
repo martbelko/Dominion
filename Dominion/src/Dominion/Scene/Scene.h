@@ -6,6 +6,7 @@
 #include "Dominion/Scene/Entity.h"
 
 #include "Dominion/Physics/Physics.h"
+#include "Dominion/Physics/PhysicsMaterial.h"
 
 #pragma warning (disable: 4267 26439 26451 26495 28020)
 #include <entt.hpp>
@@ -75,6 +76,8 @@ namespace Dominion {
 		physx::PxDefaultCpuDispatcher* m_PhysicsCPUDispatcher = nullptr;
 		physx::PxScene* m_PhysicsScene = nullptr;
 		CollideCallback m_PhysicsSimulationEventCallback = CollideCallback();
+
+		std::vector<PhysicsMaterial> m_PhysicsMaterials;
 
 		friend class Entity;
 		friend class SceneSerializer;

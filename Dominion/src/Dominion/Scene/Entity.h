@@ -66,8 +66,8 @@ namespace Dominion {
 
 		U32 GetID() const { return static_cast<uint32_t>(m_EntityHandle); }
 
-		bool operator== (const Entity& other) const;
-		bool operator!= (const Entity& other) const;
+		bool operator==(const Entity& other) const;
+		bool operator!=(const Entity& other) const;
 	private:
 		void Destroy();
 		void RemoveAllComponents();

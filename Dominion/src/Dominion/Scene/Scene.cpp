@@ -64,6 +64,9 @@ namespace Dominion {
 			pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 			pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
+
+		PhysicsMaterial defaultMaterial(0.5f, 0.5f, 0.5f);
+		m_PhysicsMaterials.emplace_back(defaultMaterial);
 	}
 
 	Scene::~Scene()
@@ -181,32 +184,6 @@ namespace Dominion {
 			if (mAccumulator >= 1 / 60.0f)
 			{
 				mAccumulator -= 1 / 60.0f;
-				auto view = m_Registry.view<TransformComponent, BoxCollider2DComponent>();
-				for (entt::entity entity : view)
-				{
-					auto& tc = view.get<TransformComponent>(entity);
-					auto& bcc = view.get<BoxCollider2DComponent>(entity);
-					physx::PxTransform physxTransform = bcc.physicsActor->getGlobalPose();
-					glm::vec3& position = *reinterpret_cast<glm::vec3*>(&physxTransform.p);
-
-					glm::vec3 vec3CenterOffset = glm::vec3(bcc.centerOffset, 0.0f);
-					if (position != tc.position + vec3CenterOffset)
-					{
-						position = tc.position + vec3CenterOffset; // This is directly changing physxTransform variable (it's position)
-						bcc.physicsActor->setGlobalPose(physxTransform);
-					}
-				}
-
-				m_Registry.view<RigidBody2DComponent>().each([=](entt::entity entity, auto& rbc)
-				{
-					BoxCollider2DComponent& bcc = m_Registry.get<BoxCollider2DComponent>(entity);
-					physx::PxRigidDynamic* dyn = reinterpret_cast<physx::PxRigidDynamic*>(bcc.physicsActor);
-					float physxMass = dyn->getMass();
-					if (physxMass != rbc.mass)
-					{
-						dyn->setMass(rbc.mass);
-					}
-				});
 
 				m_PhysicsScene->collide(1 / 60.0f);
 				m_PhysicsScene->fetchCollision(true);
@@ -258,9 +235,9 @@ namespace Dominion {
 
 						U32 entityID = static_cast<U32>(reinterpret_cast<U64>(dyn->userData));
 						Entity entity(entityID, this);
-						auto& tc = entity.GetComponent<TransformComponent>();
-						auto& bcc = entity.GetComponent<BoxCollider2DComponent>();
-						tc.position = position - glm::vec3(bcc.centerOffset, 0.0f);
+						TransformComponent& tc = entity.GetComponent<TransformComponent>();
+						BoxCollider2DComponent& bcc = entity.GetComponent<BoxCollider2DComponent>();
+						tc.position = position - glm::vec3(bcc.m_CenterOffset , 0.0f);
 						tc.rotation = angle;
 					}
 				}
@@ -367,13 +344,13 @@ namespace Dominion {
 	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
 	{
 		DM_CORE_ASSERT(entity.HasComponent<TransformComponent>(), "Entity must have TransformComponent before adding BoxCollider2DComponent!");
-		auto& tc = entity.GetComponent<TransformComponent>();
+		TransformComponent& tc = entity.GetComponent<TransformComponent>();
 
 		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(tc.scale.x * 0.5f, tc.scale.y * 0.5f, 1.0f);
-		component.physicsActor = Physics::GetPhysXPhysics()->createRigidStatic(physx::PxTransform(tc.position.x + component.centerOffset.x, tc.position.y + component.centerOffset.y, 0.0f));
-		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.physicsActor, squareGeo, *component.physicsMaterial);
-		component.physicsActor->userData = reinterpret_cast<void*>(static_cast<U64>(entity.GetID()));
-		m_PhysicsScene->addActor(*component.physicsActor);
+		component.m_PhysicsActor = Physics::GetPhysXPhysics()->createRigidStatic(physx::PxTransform(tc.position.x + component.m_CenterOffset.x, tc.position.y + component.m_CenterOffset.y, 0.0f));
+		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*component.m_PhysicsActor, squareGeo, *m_PhysicsMaterials[0].GetPhysxMaterial());
+		component.m_PhysicsActor->userData = reinterpret_cast<void*>(static_cast<U64>(entity.GetID()));
+		m_PhysicsScene->addActor(*component.m_PhysicsActor);
 	}
 
 	template<>
@@ -381,19 +358,21 @@ namespace Dominion {
 	{
 		DM_CORE_ASSERT(entity.HasComponent<BoxCollider2DComponent>(), "Entity must have ColliderComponent before adding RigidBody2DComponent!");
 
-		auto& tc = entity.GetComponent<TransformComponent>();
-		auto& bcc = entity.GetComponent<BoxCollider2DComponent>();
-		bcc.physicsActor->release();
+		TransformComponent& tc = entity.GetComponent<TransformComponent>();
+		BoxCollider2DComponent& bcc = entity.GetComponent<BoxCollider2DComponent>();
+		bcc.m_PhysicsActor->release();
 
-		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(1.0f * 0.5f, 1.0f * 0.5f, 1.0f);
-		physx::PxRigidDynamic* dyn = Physics::GetPhysXPhysics()->createRigidDynamic(physx::PxTransform(tc.position.x + bcc.centerOffset.x, tc.position.y + bcc.centerOffset.y, 0.0f));;
-		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*dyn, squareGeo, *bcc.physicsMaterial);
+		// TODO: Remember values from BoxCollider (or any other collider)
+		physx::PxBoxGeometry squareGeo = physx::PxBoxGeometry(tc.scale.x * 0.5f, tc.scale.y * 0.5f, 1.0f);
+		physx::PxRigidDynamic* dyn = Physics::GetPhysXPhysics()->createRigidDynamic(physx::PxTransform(tc.position.x + bcc.m_CenterOffset.x, tc.position.y + bcc.m_CenterOffset.y, 0.0f));;
+		physx::PxShape* squareShape = physx::PxRigidActorExt::createExclusiveShape(*dyn, squareGeo, *m_PhysicsMaterials[0].GetPhysxMaterial());
 		dyn->userData = reinterpret_cast<void*>(static_cast<U64>(entity.GetID()));
 		dyn->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X | physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y); // Locks only to 2D
-		dyn->setMass(component.mass);
+		dyn->setMass(1.0f);
 		m_PhysicsScene->addActor(*dyn);
+		component.m_DynamicActor = dyn;
 
-		bcc.physicsActor = dyn;
+		bcc.m_PhysicsActor = dyn;
 		dyn->wakeUp();
 	}
 

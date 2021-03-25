@@ -85,8 +85,12 @@ void Sandbox2D::OnAttach()
 		auto& sc = m_Plane.AddComponent<Dominion::SpriteRendererComponent>();
 		sc.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		auto& bcc = m_Plane.AddComponent<Dominion::BoxCollider2DComponent>();
+		auto& rbc = m_Plane.AddComponent<Dominion::RigidBody2DComponent>();
+		rbc.EnableGravity(false);
+		rbc.SetMass(0.0f);
+		rbc.SetMassSpaceInertiaTensor(glm::vec3(0.0f, 0.0f, 0.0f));
 
-		class Script : public Dominion::ScriptableEntity
+		/*class Script : public Dominion::ScriptableEntity
 		{
 		private:
 			void OnCollisionStart(const Dominion::Collision& collision) override
@@ -103,13 +107,24 @@ void Sandbox2D::OnAttach()
 		};
 
 		auto& nsc = m_Plane.AddComponent<Dominion::NativeScriptComponent>();
-		nsc.Bind<Script>();
+		nsc.Bind<Script>();*/
 	}
 }
 
 void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
 {
 	m_Scene.OnUpdateRuntime(timestep);
+
+	Dominion::RigidBody2DComponent& tc = m_Plane.GetComponent<Dominion::RigidBody2DComponent>();
+	glm::vec3 velocity = tc.GetLinearVelocity();
+	if (Dominion::Input::IsKeyPressed(Dominion::Key::A))
+		velocity.x -= 0.1f;
+	else if (Dominion::Input::IsKeyPressed(Dominion::Key::D))
+		velocity.x += 0.1f;
+	else
+		velocity.x = 0.0f;
+
+	tc.SetLinearVelocity(glm::vec3(velocity));
 }
 
 void Sandbox2D::OnEvent(Dominion::Event& e)

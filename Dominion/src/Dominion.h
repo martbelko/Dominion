@@ -44,6 +44,7 @@
 
 #include "Dominion/Physics/Physics.h"
 #include "Dominion/Physics/Collision.h"
+#include "Dominion/Physics/PhysicsMaterial.h"
 
 #include "Dominion/Debug/Instrumentor.h"
 #include "Dominion/Utils/Random.h"
