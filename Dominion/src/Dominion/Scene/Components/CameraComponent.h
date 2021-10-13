@@ -20,6 +20,7 @@ namespace Dominion {
 		SceneCamera camera;
 
 		bool primary;
+
 		CameraClearFlag cameraClearFlag = CameraClearFlag::SOLID_COLOR;
 		glm::vec4 backgroundColor{ 0.1f, 0.1f, 0.1f, 1.0f };
 
