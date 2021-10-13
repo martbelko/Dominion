@@ -13,6 +13,8 @@ namespace Dominion {
 		float GetMass() const { return m_DynamicActor->getMass(); }
 		void SetMass(float mass) { m_DynamicActor->setMass(mass); }
 
+		void SetSleepThreshold(float threshold) { m_DynamicActor->setSleepThreshold(threshold); }
+
 		void SetLinearVelocity(const glm::vec3& linearVelocity)
 		{
 			const physx::PxVec3* vel = reinterpret_cast<const physx::PxVec3*>(&linearVelocity);
