@@ -163,12 +163,12 @@ namespace Dominion {
 		m_Running = false;
 	}
 
-	bool Application::OnWindowCreated(WindowCreatedEvent& event)
+	bool Application::OnWindowCreated(WindowCreatedEvent& e)
 	{
 		return false;
 	}
 
-	bool Application::OnWindowClosed(WindowClosedEvent& event)
+	bool Application::OnWindowClosed(WindowClosedEvent& e)
 	{
 		m_Running = false;
 		return false;
