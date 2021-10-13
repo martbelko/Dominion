@@ -173,26 +173,6 @@ namespace Dominion {
 				ImGui::EndMenuBar();
 			}
 
-			if (ImGui::BeginMenuBar())
-			{
-				if (ImGui::BeginMenu("Scenes"))
-				{
-					for (int i = 0; i < m_Scenes.size(); ++i)
-					{
-						Ref<Scene> scene = m_Scenes[i];
-						if (ImGui::MenuItem(scene->GetName().c_str()))
-						{
-							m_ActiveScene = scene;
-							m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-						}
-					}
-
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenuBar();
-			}
-
 			m_Panel.OnImGuiRender();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -312,7 +292,6 @@ namespace Dominion {
 	void EditorLayer::NewScene()
 	{
 		Ref<Scene> scene = CreateRef<Scene>();
-		m_Scenes.push_back(scene);
 		m_ActiveScene = scene;
 		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		m_Panel.SetContext(m_ActiveScene);
@@ -324,7 +303,6 @@ namespace Dominion {
 		if (!filepath.empty())
 		{
 			Ref<Scene> scene = CreateRef<Scene>();
-			m_Scenes.push_back(scene);
 			m_ActiveScene = scene;
 			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_Panel.SetContext(m_ActiveScene);
