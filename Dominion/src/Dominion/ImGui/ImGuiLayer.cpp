@@ -7,18 +7,18 @@
 
 #if defined(new)
 	#undef new
-	#pragma warning (disable: 26495 26812)
+	#pragma warning(push, 0)
 	#include <imgui.h>
-	#include <examples/imgui_impl_glfw.h>
-	#include <examples/imgui_impl_opengl3.h>
-	#pragma warning (default: 26495 26812)
+	#include <backends/imgui_impl_glfw.h>
+	#include <backends/imgui_impl_opengl3.h>
+	#pragma warning(pop)
 	#define new DEBUG_NEW
 #else
-	#pragma warning (disable: 26495 26812)
+	#pragma warning(push, 0)
 	#include <imgui.h>
-	#include <examples/imgui_impl_glfw.h>
-	#include <examples/imgui_impl_opengl3.h>
-	#pragma warning (default: 26495 26812)
+	#include <backends/imgui_impl_glfw.h>
+	#include <backends/imgui_impl_opengl3.h>
+	#pragma warning(pop)
 #endif
 
 // TODO: Temporary includes
