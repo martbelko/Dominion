@@ -19,7 +19,11 @@ project "Dominion-Editor"
 		"%{wks.location}/Dominion/src",
 		"%{wks.location}/Dominion/vendor/spdlog/include",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.PhysX}/physx/include",
+		"%{IncludeDir.PhysX}/physx/source/physxextensions/src",
+		"%{IncludeDir.PhysX}/pxshared/include",
+		"%{IncludeDir.PhysX}/physx/source/foundation/include"
 	}
 
 	links
