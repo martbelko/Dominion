@@ -63,7 +63,7 @@ namespace Dominion {
 		float wHeight = static_cast<float>(Application::Get().GetWindow().GetHeight());
 		float wWidth = static_cast<float>(Application::Get().GetWindow().GetWidth());
 		float ratio = wWidth / wHeight;
-		m_Camera = EditorCamera(45.0f, 1.778f, 0.01f, 1000.0f);
+		m_Camera = EditorCamera(45.0f, ratio, 0.01f, 1000.0f);
 
 		FramebufferDesc desc;
 		desc.Width = Application::Get().GetWindow().GetWidth();
