@@ -11,12 +11,9 @@ namespace Dominion {
 
 	static bool s_GLFWInitialized = false;
 
-	std::vector<Window*> Window::s_Windows;
-
 	Window* Window::Create(const EventCallbackFn& callback, const WindowProps& props)
 	{
 		Window* wnd = new WindowsWindow(callback, props);
-		s_Windows.push_back(wnd);
 		return wnd;
 	}
 
@@ -48,12 +45,7 @@ namespace Dominion {
 
 		m_EventCallbackFn(WindowCreatedEvent(this, m_PosX, m_PosY, m_Width, m_Height));
 
-		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
-		{
-			WindowsWindow* wnd =  static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
-			WindowClosedEvent event(wnd);
-			wnd->m_EventCallbackFn(event);
-		});
+		glfwSetWindowCloseCallback(m_Window, OnCloseCallback);
 
 		glfwSetWindowPosCallback(m_Window, [](GLFWwindow* window, int x, int y)
 		{
@@ -147,11 +139,15 @@ namespace Dominion {
 
 		if (m_Active)
 			Close();
+		s_GLFWInitialized = false;
+		glfwTerminate();
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
 		DM_PROFILE_FUNCTION();
+
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
 
 		glfwPollEvents();
 		if (m_Active)
@@ -160,37 +156,51 @@ namespace Dominion {
 
 	int WindowsWindow::GetPosX() const
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		return m_PosX;
 	}
 
 	int WindowsWindow::GetPosY() const
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		return m_PosY;
 	}
 
 	uint32_t WindowsWindow::GetWidth() const
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		return m_Width;
 	}
 
 	uint32_t WindowsWindow::GetHeight() const
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		return m_Height;
 	}
 
 	void* WindowsWindow::GetNativeWindow() const
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		return m_Window;
 	}
 
 	void WindowsWindow::SetEventCallback(const EventCallbackFn& callback)
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		m_EventCallbackFn = callback;
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
 		DM_PROFILE_FUNCTION();
+
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
 
 		if (enabled)
 			glfwSwapInterval(1);
@@ -202,6 +212,8 @@ namespace Dominion {
 
 	bool WindowsWindow::IsVSync() const
 	{
+		DM_CORE_ASSERT(m_Active, "Window must be active (not closed)!");
+
 		return m_VSync;
 	}
 
@@ -210,15 +222,18 @@ namespace Dominion {
 		DM_PROFILE_FUNCTION();
 
 		DM_CORE_ASSERT(m_Active, "Window is already closed!");
+
+		glfwSetWindowShouldClose(m_Window, true);
+		OnCloseCallback(m_Window);
 		delete m_Context;
-		glfwDestroyWindow(m_Window);
 		m_Active = false;
-		s_Windows.erase(std::find(s_Windows.begin(), s_Windows.end(), this));
-		if (s_Windows.empty())
-		{
-			s_GLFWInitialized = false;
-			glfwTerminate();
-		}
+	}
+
+	void WindowsWindow::OnCloseCallback(GLFWwindow* window)
+	{
+		WindowsWindow* wnd = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+		WindowClosedEvent event(wnd);
+		wnd->m_EventCallbackFn(event);
 	}
 
 }

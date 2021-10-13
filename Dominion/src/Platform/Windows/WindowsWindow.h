@@ -30,6 +30,8 @@ namespace Dominion {
 
 		virtual void Close() override;
 	private:
+		static void OnCloseCallback(GLFWwindow* window);
+	private:
 		GLFWwindow* m_Window;
 		bool m_Active = true;
 
