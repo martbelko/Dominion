@@ -170,7 +170,6 @@ namespace Dominion {
 
 	bool Application::OnWindowClosed(WindowClosedEvent& event)
 	{
-		m_Window->Close();
 		m_Running = false;
 		return false;
 	}
