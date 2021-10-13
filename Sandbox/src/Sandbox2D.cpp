@@ -89,6 +89,7 @@ void Sandbox2D::OnAttach()
 		rbc.EnableGravity(false);
 		rbc.SetMass(0.0f);
 		rbc.SetMassSpaceInertiaTensor(glm::vec3(0.0f, 0.0f, 0.0f));
+		rbc.SetSleepThreshold(0.1f);
 
 		/*class Script : public Dominion::ScriptableEntity
 		{
@@ -146,5 +147,7 @@ Dominion::Entity Sandbox2D::CreateSquareEntity(const glm::vec3 position)
 
 bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)
 {
+	if (e.GetKeyCode() == Dominion::Key::Escape)
+		Dominion::Application::Get().GetWindow().Close();
 	return false;
 }
