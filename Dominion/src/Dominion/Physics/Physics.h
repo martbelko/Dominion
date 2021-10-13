@@ -1,8 +1,8 @@
 #pragma once
 
-#pragma warning (disable: 26115 26451 26495 26812 33010)
+#pragma warning(push, 0) // Disable warnings for external header files
 #include <PxPhysicsAPI.h>
-#pragma warning (default: 26115 26451 26495 26812 33010)
+#pragma warning (pop)
 
 namespace Dominion {
 
