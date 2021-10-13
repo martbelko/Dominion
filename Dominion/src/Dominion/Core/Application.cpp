@@ -58,7 +58,6 @@ namespace Dominion {
 			m_ImGuiLayer = new ImGuiLayer();
 			PushOverlay(m_ImGuiLayer);
 #endif
-			m_Window->ShowCursor(false);
 		}
 		else
 		{
