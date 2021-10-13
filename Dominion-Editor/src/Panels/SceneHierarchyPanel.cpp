@@ -168,7 +168,7 @@ namespace Dominion {
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanFullWidth;
 
-		std::string& tag = entity.GetComponent<TagComponent>().Tag;
+		std::string& tag = entity.GetComponent<BaseComponent>().name;
 
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uint64_t>(static_cast<uint32_t>(entity))), flags, tag.c_str());
 		if (ImGui::IsItemClicked())
@@ -203,9 +203,9 @@ namespace Dominion {
 
 	void SceneHierarhyPanel::DrawComponents(Entity entity)
 	{
-		if (entity.HasComponent<TagComponent>())
+		if (entity.HasComponent<BaseComponent>())
 		{
-			std::string& tag = entity.GetComponent<TagComponent>().Tag;
+			std::string& tag = entity.GetComponent<BaseComponent>().name;
 
 			static char name[256];
 			DM_CORE_ASSERT(sizeof(name) >= tag.size(), "Buffer Overflow");
@@ -251,18 +251,18 @@ namespace Dominion {
 
 		DrawComponent<TransformComponent>("Transform", entity, [](TransformComponent& component)
 		{
-			DrawVec3Control("Position", component.Position);
-			glm::vec3 rotation = glm::degrees(component.Rotation);
+			DrawVec3Control("Position", component.position);
+			glm::vec3 rotation = glm::degrees(component.rotation);
 			DrawVec3Control("Rotation", rotation);
-			component.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.Scale, 1.0f);
+			component.rotation = glm::radians(rotation);
+			DrawVec3Control("Scale", component.scale, 1.0f);
 		});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
 		{
-			SceneCamera& cam = component.Cam;
+			SceneCamera& cam = component.camera;
 
-			ImGui::Checkbox("Primary", &component.Primary);
+			ImGui::Checkbox("Primary", &component.primary);
 
 			const char* projectionTypeString[] = { "Perspective", "Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeString[static_cast<int>(cam.GetProjectionType())];
@@ -313,27 +313,27 @@ namespace Dominion {
 					cam.SetOrthographicFarClip(orthoFar);
 			}
 
-			ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+			// ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
 		});
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)
 		{
-			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-			if (component.Texture)
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
+			if (component.texture)
 			{
-				ImGui::Image(reinterpret_cast<void*>(component.Texture->GetRendererID()), ImVec2(64, 64));
+				ImGui::Image(reinterpret_cast<void*>(component.texture->GetRendererID()), ImVec2(64, 64));
 				if (ImGui::IsItemClicked(0)) // If we click on the image
 				{
 					std::string texturePath = FileDialogs::OpenFile("All (*.*)\0*\0");
 					if (!texturePath.empty())
-						component.Texture = Texture2D::Create(texturePath);
+						component.texture = Texture2D::Create(texturePath);
 				}
 
 				ImGui::SameLine();
 				if (ImGui::Button("Remove texture"))
-					component.Texture = nullptr;
+					component.texture = nullptr;
 
-				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, -50.0f, 50.0f, "%.2f");
+				ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, -50.0f, 50.0f, "%.2f");
 			}
 			else
 			{
@@ -342,7 +342,7 @@ namespace Dominion {
 				{
 					std::string texturePath = FileDialogs::OpenFile("All (*.*)\0*\0");
 					if (!texturePath.empty())
-						component.Texture = Texture2D::Create(texturePath);
+						component.texture = Texture2D::Create(texturePath);
 				}
 			}
 		});

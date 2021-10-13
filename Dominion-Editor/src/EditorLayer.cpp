@@ -277,7 +277,7 @@ namespace Dominion {
 		{
 			Entity entity(entityID, m_ActiveScene.get());
 			const TransformComponent& ts = entity.GetComponent<TransformComponent>();
-			if (DoesIntersect(cameraPos, ray, ts.Position, ts.Scale))
+			if (DoesIntersect(cameraPos, ray, ts.position, ts.scale))
 			{
 				selectedEntity = entity;
 				break;
