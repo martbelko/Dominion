@@ -41,8 +41,6 @@ namespace Dominion {
 		virtual void Close() = 0;
 
 		static Window* Create(const EventCallbackFn& callback, const WindowProps& props = WindowProps());
-	protected:
-		static std::vector<Window*> s_Windows;
 	};
 
 }
