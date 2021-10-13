@@ -15,6 +15,8 @@ namespace Dominion {
 		EditorCamera() = default;
 		EditorCamera(F32 fov, F32 aspectRatio, F32 nearClip, F32 farClip);
 
+		// TODO: Rule of 5
+
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
