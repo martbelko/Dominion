@@ -1,13 +1,13 @@
 Scene: Unknown Scene Name
 Entities:
   - Entity: 12837192831273
-    TagComponent:
-      Tag: Empty Entity
+    BaseComponent:
+      Name: Square
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [-0.800000012, 0, 1.89999998]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      Texture: assets\Textures\TestTexture.jpg
+      Color: [0.722007751, 0.20628792, 0.20628792, 1]
+      Texture: .
       TilingFactor: 1
