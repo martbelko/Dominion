@@ -171,6 +171,7 @@ namespace Dominion {
 		std::string& tag = entity.GetComponent<BaseComponent>().name;
 
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uint64_t>(static_cast<uint32_t>(entity))), flags, tag.c_str());
+		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<U64>(static_cast<U32>(entity))), flags, entityName.c_str());
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = entity;
 
