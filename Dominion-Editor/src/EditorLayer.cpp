@@ -66,8 +66,9 @@ namespace Dominion {
 		m_Camera = EditorCamera(45.0f, ratio, 0.01f, 1000.0f);
 
 		FramebufferDesc desc;
-		desc.Width = Application::Get().GetWindow().GetWidth();
-		desc.Height = Application::Get().GetWindow().GetHeight();
+		desc.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24STENCIL8 };
+		desc.width = Application::Get().GetWindow().GetWidth();
+		desc.height = Application::Get().GetWindow().GetHeight();
 		m_Framebuffer = Framebuffer::Create(desc);
 
 		m_ActiveScene = CreateRef<Scene>();
@@ -81,7 +82,7 @@ namespace Dominion {
 		// Resize
 		if (const FramebufferDesc& desc = m_Framebuffer->GetDesc();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
-			(desc.Width != m_ViewportSize.x || desc.Height != m_ViewportSize.y))
+			(desc.width != m_ViewportSize.x || desc.height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_Camera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
@@ -193,7 +194,7 @@ namespace Dominion {
 				ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 				m_ViewportSize = { viewportPanelSize.x - 1.0f, viewportPanelSize.y - 1.0f };
 
-				ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>(m_Framebuffer->GetColorAttachmentRendererID(1))), ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 			}
 
 			ImGui::End();
