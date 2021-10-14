@@ -106,11 +106,11 @@ namespace Dominion {
 
 		if (entity.HasComponent<BaseComponent>())
 		{
-			out << YAML::Key << "NameComponent";
+			out << YAML::Key << "BaseComponent";
 			out << YAML::BeginMap; // BaseComponent
 
 			const std::string& name = entity.GetComponent<BaseComponent>().name;
-			out << YAML::Key << "baseComponent" << YAML::Value << name;
+			out << YAML::Key << "Name" << YAML::Value << name;
 
 			out << YAML::EndMap; // BaseComponent
 		}
@@ -234,7 +234,7 @@ namespace Dominion {
 				if (transformComponent)
 				{
 					// Entities always have transform component
-					TransformComponent& tc = deserializedEntity.GetComponent<TransformComponent>();
+					auto& tc = deserializedEntity.AddComponent<TransformComponent>();
 					glm::vec3 position = transformComponent["Position"].as<glm::vec3>();
 					glm::vec3 rotation = transformComponent["Rotation"].as<glm::vec3>();
 					glm::vec3 scale = transformComponent["Scale"].as<glm::vec3>();
