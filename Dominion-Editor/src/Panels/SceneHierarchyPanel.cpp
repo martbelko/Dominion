@@ -165,12 +165,11 @@ namespace Dominion {
 
 	void SceneHierarhyPanel::DrawEntityNode(Entity entity)
 	{
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanFullWidth;
+		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)
+			| ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Bullet;
 
-		std::string& tag = entity.GetComponent<BaseComponent>().name;
+		const std::string& entityName = entity.GetComponent<BaseComponent>().name;
 
-		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uint64_t>(static_cast<uint32_t>(entity))), flags, tag.c_str());
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<U64>(static_cast<U32>(entity))), flags, entityName.c_str());
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = entity;
@@ -186,11 +185,9 @@ namespace Dominion {
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
-			bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(9812524151), flags, tag.c_str());
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanFullWidth;
 			if (opened)
 				ImGui::TreePop();
-			ImGui::TreePop();
 		}
 
 		if (markedForTermination)
