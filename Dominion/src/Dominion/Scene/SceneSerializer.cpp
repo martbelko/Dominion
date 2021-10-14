@@ -222,7 +222,7 @@ namespace Dominion {
 				YAML::Node baseComponent = entity["BaseComponent"];
 				if (!baseComponent)
 				{
-					DM_CORE_ASSERT(false, "TagComponent is required for every entity!");
+					DM_CORE_ASSERT(false, "BaseComponent is required for every entity!");
 					return false;
 				}
 
