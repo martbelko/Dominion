@@ -51,10 +51,10 @@ namespace Dominion {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
+	void OpenGLFramebuffer::Resize(U32 width, U32 height)
 	{
 		size_t size = static_cast<size_t>(std::max(m_Desc.Width, width)) * std::max(m_Desc.Height, height) * 4;
-		int8_t* pixels = new int8_t[size];
+		I8* pixels = new I8[size];
 		memset(pixels, 1, size);
 		glBindTexture(GL_TEXTURE_2D, m_ColorAttachmentID);
 		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);

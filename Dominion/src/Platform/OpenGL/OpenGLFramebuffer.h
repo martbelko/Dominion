@@ -16,7 +16,7 @@ namespace Dominion {
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
-		virtual void Resize(uint32_t width, uint32_t height) override;
+		virtual void Resize(U32 width, U32 height) override;
 
 		virtual uint32_t GetColorAttachmentRendererID() const override;
 
@@ -24,8 +24,8 @@ namespace Dominion {
 	private:
 		void Delete();
 	private:
-		uint32_t m_RendererID;
-		uint32_t m_ColorAttachmentID, m_DepthStencilAttachmentID;
+		U32 m_RendererID;
+		U32 m_ColorAttachmentID, m_DepthStencilAttachmentID;
 		FramebufferDesc m_Desc;
 	};
 
