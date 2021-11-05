@@ -1,7 +1,6 @@
 #include "dmpch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
-#include <fstream>
 #include <glad/glad.h>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -80,26 +79,29 @@ namespace Dominion {
 		{
 			switch (stage)
 			{
-			case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
-			case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
+				case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
+				case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
 			}
 
 			DM_CORE_ASSERT(false);
 			return "";
 		}
 
-
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& filepath)
-		: mFilePath(filepath)
+	OpenGLShader::OpenGLShader(const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath)
+		: mVertexFilepath(vertexFilepath), mFragmentFilepath(fragmentFilepath)
 	{
 		DM_PROFILE_FUNCTION();
 
 		Utils::CreateCacheDirectoryIfNeeded();
 
-		std::string source = ReadFile(filepath);
-		auto shaderSources = PreProcess(source);
+		std::string vertexSource = ReadFile(vertexFilepath);
+		std::string fragmentSource = ReadFile(fragmentFilepath);
+
+		std::unordered_map<GLenum, std::string> shaderSources;
+		shaderSources[GL_VERTEX_SHADER] = vertexSource;
+		shaderSources[GL_FRAGMENT_SHADER] = fragmentSource;
 
 		{
 			Timer timer;
@@ -109,12 +111,8 @@ namespace Dominion {
 			DM_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
 		}
 
-		// Extract name from filepath
-		auto lastSlash = filepath.find_last_of("/\\");
-		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-		auto lastDot = filepath.rfind('.');
-		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
-		mName = filepath.substr(lastSlash, count);
+		DM_CORE_ASSERT(vertexFilepath.stem() == fragmentFilepath.stem(), "Shader filenames must be the same!"); // TODO: Fix somehow?
+		mName = vertexFilepath.stem().string();
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
@@ -138,7 +136,7 @@ namespace Dominion {
 		glDeleteProgram(mRendererID);
 	}
 
-	std::string OpenGLShader::ReadFile(const std::string& filepath)
+	std::string OpenGLShader::ReadFile(const std::filesystem::path& filepath)
 	{
 		DM_PROFILE_FUNCTION();
 
@@ -167,33 +165,6 @@ namespace Dominion {
 		return result;
 	}
 
-	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
-	{
-		DM_PROFILE_FUNCTION();
-
-		std::unordered_map<GLenum, std::string> shaderSources;
-
-		const char* typeToken = "#type";
-		size_t typeTokenLength = strlen(typeToken);
-		size_t pos = source.find(typeToken, 0); //Start of shader type declaration line
-		while (pos != std::string::npos)
-		{
-			size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
-			DM_CORE_ASSERT(eol != std::string::npos, "Syntax error");
-			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
-			std::string type = source.substr(begin, eol - begin);
-			DM_CORE_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified");
-
-			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
-			DM_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
-			pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
-
-			shaderSources[Utils::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
-		}
-
-		return shaderSources;
-	}
-
 	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
 		GLuint program = glCreateProgram();
@@ -211,8 +182,8 @@ namespace Dominion {
 		shaderData.clear();
 		for (auto&& [stage, source] : shaderSources)
 		{
-			std::filesystem::path shaderFilePath = mFilePath;
-			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedVulkanFileExtension(stage));
+			const std::filesystem::path& currentShaderFilepath = stage == GL_VERTEX_SHADER ? mVertexFilepath : mFragmentFilepath; // TODO: Change when we add geometry shader
+			std::filesystem::path cachedPath = cacheDirectory / (currentShaderFilepath.filename().string() + Utils::GLShaderStageCachedVulkanFileExtension(stage));
 
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
 			if (in.is_open())
@@ -227,7 +198,8 @@ namespace Dominion {
 			}
 			else
 			{
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), mFilePath.c_str(), options);
+				std::string currentShaderFilepathString = currentShaderFilepath.string();
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), currentShaderFilepathString.c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					DM_CORE_ERROR(module.GetErrorMessage());
@@ -268,8 +240,8 @@ namespace Dominion {
 		mOpenGLSourceCode.clear();
 		for (auto&& [stage, spirv] : mVulkanSPIRV)
 		{
-			std::filesystem::path shaderFilePath = mFilePath;
-			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedOpenGLFileExtension(stage));
+			const std::filesystem::path& currentShaderFilepath = stage == GL_VERTEX_SHADER ? mVertexFilepath : mFragmentFilepath; // TODO: Change when we add geometry shader
+			std::filesystem::path cachedPath = cacheDirectory / (currentShaderFilepath.filename().string() + Utils::GLShaderStageCachedOpenGLFileExtension(stage));
 
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
 			if (in.is_open())
@@ -288,7 +260,8 @@ namespace Dominion {
 				mOpenGLSourceCode[stage] = glslCompiler.compile();
 				auto& source = mOpenGLSourceCode[stage];
 
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), mFilePath.c_str());
+				std::string currentShaderFilepathString = currentShaderFilepath.string();
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), currentShaderFilepathString.c_str());
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					DM_CORE_ERROR(module.GetErrorMessage());
@@ -333,7 +306,10 @@ namespace Dominion {
 
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			DM_CORE_ERROR("Shader linking failed ({0}):\n{1}", mFilePath, infoLog.data());
+			DM_CORE_ERROR("Shader linking failed:");
+			DM_CORE_ERROR("    Vertex shader: {0}", mVertexFilepath);
+			DM_CORE_ERROR("    Fragment shader: {0}", mFragmentFilepath);
+			DM_CORE_ERROR("    Error: {0}", infoLog.data());
 
 			glDeleteProgram(program);
 
@@ -355,7 +331,8 @@ namespace Dominion {
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		DM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::GLShaderStageToString(stage), mFilePath);
+		const std::filesystem::path& filepath = stage == GL_VERTEX_SHADER ? mVertexFilepath : mFragmentFilepath;
+		DM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::GLShaderStageToString(stage), filepath);
 		DM_CORE_TRACE("    {0} uniform buffers", resources.uniform_buffers.size());
 		DM_CORE_TRACE("    {0} resources", resources.sampled_images.size());
 

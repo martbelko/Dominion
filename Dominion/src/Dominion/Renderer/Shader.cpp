@@ -6,12 +6,12 @@
 
 namespace Dominion {
 
-	Ref<Shader> Shader::Create(const std::string& filepath)
+	Ref<Shader> Shader::Create(const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None:    DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath);
+			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(vertexFilepath, fragmentFilepath);
 		}
 
 		DM_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -42,16 +42,16 @@ namespace Dominion {
 		Add(name, shader);
 	}
 
-	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
+	Ref<Shader> ShaderLibrary::Load(const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath)
 	{
-		auto shader = Shader::Create(filepath);
+		auto shader = Shader::Create(vertexFilepath, fragmentFilepath);
 		Add(shader);
 		return shader;
 	}
 
-	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
+	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath)
 	{
-		auto shader = Shader::Create(filepath);
+		auto shader = Shader::Create(vertexFilepath, fragmentFilepath);
 		Add(name, shader);
 		return shader;
 	}

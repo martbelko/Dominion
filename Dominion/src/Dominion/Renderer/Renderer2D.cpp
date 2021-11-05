@@ -100,10 +100,10 @@ namespace Dominion {
 		sData.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		int32_t samplers[sData.MAX_TEXTURE_SLOTS];
-		for (uint32_t i = 0; i < sData.MAX_TEXTURE_SLOTS; i++)
+		for (uint32_t i = 0; i < sData.MAX_TEXTURE_SLOTS; ++i)
 			samplers[i] = i;
 
-		sData.textureShader = Shader::Create("assets/shaders/Texture.glsl");
+		sData.textureShader = Shader::Create("assets/shaders/Texture.vert", "assets/shaders/Texture.frag");
 
 		// Set first texture slot to 0
 		sData.textureSlots[0] = sData.whiteTexture;
@@ -177,12 +177,12 @@ namespace Dominion {
 		sData.quadVertexBuffer->SetData(sData.quadVertexBufferBase, dataSize);
 
 		// Bind textures
-		for (uint32_t i = 0; i < sData.textureSlotIndex; i++)
+		for (uint32_t i = 0; i < sData.textureSlotIndex; ++i)
 			sData.textureSlots[i]->Bind(i);
 
 		sData.textureShader->Bind();
 		RenderCommand::DrawIndexed(sData.quadVertexArray, sData.quadIndexCount);
-		sData.stats.drawCalls++;
+		++sData.stats.drawCalls;
 	}
 
 	void Renderer2D::NextBatch()
@@ -233,7 +233,7 @@ namespace Dominion {
 		if (sData.quadIndexCount >= Renderer2DData::MAX_INDICES)
 			NextBatch();
 
-		for (size_t i = 0; i < quadVertexCount; i++)
+		for (size_t i = 0; i < quadVertexCount; ++i)
 		{
 			sData.quadVertexBufferPtr->position = transform * sData.quadVertexPositions[i];
 			sData.quadVertexBufferPtr->color = color;
@@ -246,7 +246,7 @@ namespace Dominion {
 
 		sData.quadIndexCount += 6;
 
-		sData.stats.quadCount++;
+		++sData.stats.quadCount;
 	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int entityID)
@@ -260,7 +260,7 @@ namespace Dominion {
 			NextBatch();
 
 		float textureIndex = 0.0f;
-		for (uint32_t i = 1; i < sData.textureSlotIndex; i++)
+		for (uint32_t i = 1; i < sData.textureSlotIndex; ++i)
 		{
 			if (*sData.textureSlots[i] == *texture)
 			{
@@ -279,7 +279,7 @@ namespace Dominion {
 			++sData.textureSlotIndex;
 		}
 
-		for (size_t i = 0; i < quadVertexCount; i++)
+		for (size_t i = 0; i < quadVertexCount; ++i)
 		{
 			sData.quadVertexBufferPtr->position = transform * sData.quadVertexPositions[i];
 			sData.quadVertexBufferPtr->color = tintColor;
@@ -292,7 +292,7 @@ namespace Dominion {
 
 		sData.quadIndexCount += 6;
 
-		sData.stats.quadCount++;
+		++sData.stats.quadCount;
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)

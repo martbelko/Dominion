@@ -1,7 +1,10 @@
 #pragma once
 
-#include "Dominion/Renderer/Shader.h"
+#include <filesystem>
+
 #include <glm/glm.hpp>
+
+#include "Dominion/Renderer/Shader.h"
 
 // TODO: REMOVE!
 typedef unsigned int GLenum;
@@ -11,7 +14,7 @@ namespace Dominion {
 	class OpenGLShader : public Shader
 	{
 	public:
-		OpenGLShader(const std::string& filepath);
+		OpenGLShader(const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath);
 		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		virtual ~OpenGLShader();
 
@@ -39,17 +42,18 @@ namespace Dominion {
 		void UploadUniformMat3(const std::string& name, const glm::mat3& matrix);
 		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 	private:
-		std::string ReadFile(const std::string& filepath);
-		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
-
 		void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources);
 		void CompileOrGetOpenGLBinaries();
 		void CreateProgram();
 		void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
 	private:
+		static std::string ReadFile(const std::filesystem::path& filepath);
+	private:
 		uint32_t mRendererID;
-		std::string mFilePath;
 		std::string mName;
+
+		std::filesystem::path mVertexFilepath;
+		std::filesystem::path mFragmentFilepath;
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> mVulkanSPIRV;
 		std::unordered_map<GLenum, std::vector<uint32_t>> mOpenGLSPIRV;

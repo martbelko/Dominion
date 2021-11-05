@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <filesystem>
 
 #include <glm/glm.hpp>
 
@@ -25,7 +26,7 @@ namespace Dominion {
 
 		virtual const std::string& GetName() const = 0;
 
-		static Ref<Shader> Create(const std::string& filepath);
+		static Ref<Shader> Create(const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath);
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 
@@ -34,8 +35,8 @@ namespace Dominion {
 	public:
 		void Add(const std::string& name, const Ref<Shader>& shader);
 		void Add(const Ref<Shader>& shader);
-		Ref<Shader> Load(const std::string& filepath);
-		Ref<Shader> Load(const std::string& name, const std::string& filepath);
+		Ref<Shader> Load(const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath);
+		Ref<Shader> Load(const std::string& name, const std::filesystem::path& vertexFilepath, const std::filesystem::path& fragmentFilepath);
 
 		Ref<Shader> Get(const std::string& name);
 

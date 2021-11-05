@@ -119,7 +119,7 @@ ExampleLayer::ExampleLayer()
 
 	mFlatColorShader = Dominion::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 
-	auto textureShader = mShaderLibrary.Load("assets/shaders/Texture.glsl");
+	auto textureShader = mShaderLibrary.Load("assets/shaders/Texture.vert", "assets/shaders/Texture.frag");
 
 	mTexture = Dominion::Texture2D::Create("assets/textures/Checkerboard.png");
 	mChernoLogoTexture = Dominion::Texture2D::Create("assets/textures/ChernoLogo.png");
