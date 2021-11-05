@@ -15,7 +15,8 @@ workspace "Dominion"
 
 	flags
 	{
-		"MultiProcessorCompile"
+		"MultiProcessorCompile",
+		"ShadowedVariables"
 	}
 
 	solution_items
