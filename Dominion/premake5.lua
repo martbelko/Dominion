@@ -2,7 +2,7 @@ project "Dominion"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	pchheader "dmpch.h"
 	pchsource "src/dmpch.cpp"
@@ -11,28 +11,34 @@ project "Dominion"
 	{
 		"src/**.h",
 		"src/**.cpp",
+
 		"vendor/stb_image/**.h",
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
-		"vendor/glm/glm/**.inl"
+		"vendor/glm/glm/**.inl",
+		"vendor/ImGuizmo/ImGuizmo.h",
+		"vendor/ImGuizmo/ImGuizmo.cpp"
+	}
+
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
 	}
 
 	includedirs
 	{
 		"src",
 		"vendor/spdlog/include",
-		"vendor/stb_image",
+		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.assimp}",
-		"%{IncludeDir.PhysX}/physx/include",
-		"%{IncludeDir.PhysX}/physx/source/physxextensions/src",
-		"%{IncludeDir.PhysX}/pxshared/include",
-		"%{IncludeDir.PhysX}/physx/source/foundation/include"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.VulkanSDK}"
 	}
 
 	links
@@ -41,21 +47,43 @@ project "Dominion"
 		"opengl32.lib",
 		"Glad",
 		"ImGui",
-		"yaml-cpp",
-		"assimp",
-		"PhysX",
-		"PhysXCharacterKinematic",
-		"PhysXCommon",
-		-- "PhysXCooking",
-		"PhysXExtensions",
-		"PhysXFoundation",
-		"PhysXPvdSDK",
-		"PhysXVehicle",
-		"LowLevelDynamics"
+		"yaml-cpp"
 	}
 
-	defines
-	{
-		"GLFW_INCLUDE_NONE",
-		"PX_PHYSX_STATIC_LIB"
-	}
+	filter "files:vendor/ImGuizmo/**.cpp"
+		flags
+		{
+			"NoPCH"
+		}
+
+	filter "configurations:Debug"
+		links
+		{
+			"%{Library.ShaderC_Debug}",
+			"%{Library.SPIRV_Cross_Debug}",
+			"%{Library.SPIRV_Cross_GLSL_Debug}"
+		}
+
+	filter "configurations:Release"
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
+
+	filter "configurations:Dist"
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
+
+	filter "configurations:PGO"
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}

@@ -1,36 +1,33 @@
 #include "dmpch.h"
-#include "Log.h"
+#include "Dominion/Core/Log.h"
 
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace Dominion {
 
-	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
-	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+	Ref<spdlog::logger> Log::sCoreLogger;
+	Ref<spdlog::logger> Log::sClientLogger;
 
 	void Log::Init()
 	{
-		spdlog::set_pattern("%^[%T] %n: %v%$");
-		s_CoreLogger = spdlog::stdout_color_mt("DOMINION");
-		s_CoreLogger->set_level(spdlog::level::trace);
+		std::vector<spdlog::sink_ptr> logSinks;
+		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Dominion.log", true));
 
-		s_ClientLogger = spdlog::stdout_color_mt("APP");
-		s_ClientLogger->set_level(spdlog::level::trace);
-	}
+		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
-	void Log::Shutdown()
-	{
-		spdlog::shutdown();
-	}
+		sCoreLogger = std::make_shared<spdlog::logger>("DOMINION", begin(logSinks), end(logSinks));
+		spdlog::register_logger(sCoreLogger);
+		sCoreLogger->set_level(spdlog::level::trace);
+		sCoreLogger->flush_on(spdlog::level::trace);
 
-	std::shared_ptr<spdlog::logger>& Log::GetCoreLogger()
-	{
-		return s_CoreLogger;
-	}
-
-	std::shared_ptr<spdlog::logger>& Log::GetClientLogger()
-	{
-		return s_ClientLogger;
+		sClientLogger = std::make_shared<spdlog::logger>("APP", begin(logSinks), end(logSinks));
+		spdlog::register_logger(sClientLogger);
+		sClientLogger->set_level(spdlog::level::trace);
+		sClientLogger->flush_on(spdlog::level::trace);
 	}
 
 }
+

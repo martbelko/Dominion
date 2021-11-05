@@ -1,5 +1,5 @@
 #include "dmpch.h"
-#include "Framebuffer.h"
+#include "Dominion/Renderer/Framebuffer.h"
 
 #include "Dominion/Renderer/Renderer.h"
 
@@ -7,12 +7,12 @@
 
 namespace Dominion {
 
-	Ref<Framebuffer> Framebuffer::Create(const FramebufferDesc& desc)
+	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None:    DM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLFramebuffer>(desc);
+			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
 		}
 
 		DM_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -20,3 +20,4 @@ namespace Dominion {
 	}
 
 }
+

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
-
 #include <glm/glm.hpp>
 
 namespace Dominion {
@@ -9,36 +7,28 @@ namespace Dominion {
 	class OrthographicCamera
 	{
 	public:
-		OrthographicCamera(F32 left = -1.0f, F32 right = 1.0f, F32 bottom = -1.0f, F32 top = 1.0f, F32 size = 1.0f);
+		OrthographicCamera(float left, float right, float bottom, float top);
 
-		void SetProjection(F32 left, F32 right, F32 bottom, F32 top);
-		void SetProjection(F32 left, F32 right, F32 bottom, F32 top, F32 size);
+		void SetProjection(float left, float right, float bottom, float top);
 
-		const glm::vec3& GetPosition() const { return m_Position; }
-		glm::vec3& GetPosition() { return m_Position; }
-		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix(); }
+		const glm::vec3& GetPosition() const { return mPosition; }
+		void SetPosition(const glm::vec3& position) { mPosition = position; RecalculateViewMatrix(); }
 
-		F32 GetRotation() const { return m_Rotation; }
-		F32& GetRotation() { return m_Rotation; }
-		void SetRotation(F32 rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
+		float GetRotation() const { return mRotation; }
+		void SetRotation(float rotation) { mRotation = rotation; RecalculateViewMatrix(); }
 
-		void SetPositionAndRotation(const glm::vec3& position, F32 rotationInRadians) { m_Position = position, m_Rotation = rotationInRadians; RecalculateViewMatrix(); }
-
-		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
-		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
-		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
+		const glm::mat4& GetProjectionMatrix() const { return mProjectionMatrix; }
+		const glm::mat4& GetViewMatrix() const { return mViewMatrix; }
+		const glm::mat4& GetViewProjectionMatrix() const { return mViewProjectionMatrix; }
 	private:
 		void RecalculateViewMatrix();
 	private:
-		glm::mat4 m_ProjectionMatrix;
-		glm::mat4 m_ViewMatrix;
-		glm::mat4 m_ViewProjectionMatrix;
+		glm::mat4 mProjectionMatrix;
+		glm::mat4 mViewMatrix;
+		glm::mat4 mViewProjectionMatrix;
 
-		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		F32 m_Rotation = 0.0f; // In radians, around Z-axis
-		F32 m_Size;
-
-		friend class OrthographicCameraController;
+		glm::vec3 mPosition = { 0.0f, 0.0f, 0.0f };
+		float mRotation = 0.0f;
 	};
 
 }

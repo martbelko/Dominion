@@ -2,10 +2,7 @@ project "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
-
-    targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+    staticruntime "off"
 
     files
     {
@@ -16,17 +13,21 @@ project "Sandbox"
     includedirs
     {
         "src",
-        "%{wks.location}/Dominion/src",
         "%{wks.location}/Dominion/vendor/spdlog/include",
+		"%{wks.location}/Dominion/src",
+		"%{wks.location}/Dominion/vendor",
+
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}",
-		"%{IncludeDir.PhysX}/physx/include",
-		"%{IncludeDir.PhysX}/physx/source/physxextensions/src",
-		"%{IncludeDir.PhysX}/pxshared/include",
-		"%{IncludeDir.PhysX}/physx/source/foundation/include"
+		"%{IncludeDir.entt}"
     }
 
     links
     {
         "Dominion"
     }
+
+    filter "configurations:Debug"
+		postbuildcommands
+		{
+			"{COPYDIR} \"%{LibraryDir.VulkanSDK_DebugDLL}\" \"%{cfg.targetdir}\""
+		}

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
 #include "Dominion/Core/Window.h"
 #include "Dominion/Renderer/GraphicsContext.h"
 
@@ -11,37 +10,37 @@ namespace Dominion {
 	class WindowsWindow : public Window
 	{
 	public:
-		WindowsWindow(const EventCallbackFn& callback, const WindowProps& props);
-		virtual ~WindowsWindow() override;
+		WindowsWindow(const WindowProps& props);
+		virtual ~WindowsWindow();
 
-		void OnUpdate() override;
+		virtual void OnUpdate() override;
 
-		int GetPosX() const override;
-		int GetPosY() const override;
-		uint32_t GetWidth() const override;
-		uint32_t GetHeight() const override;
+		virtual unsigned int GetWidth() const override { return mData.width; }
+		virtual unsigned int GetHeight() const override { return mData.height; }
 
-		virtual void* GetNativeWindow() const override;
+		// Window attributes
+		virtual void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }
+		virtual void SetVSync(bool enabled) override;
+		virtual bool IsVSync() const override;
 
-		void SetEventCallback(const EventCallbackFn& callback) override;
-		void SetVSync(bool enabled) override;
-		bool IsVSync() const override;
-		virtual void ShowCursor(bool show) override { glfwSetInputMode(m_Window, GLFW_CURSOR, (show ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED)); }
-
-		virtual void Close() override;
+		virtual void* GetNativeWindow() const { return mWindow; }
 	private:
-		static void OnCloseCallback(GLFWwindow* window);
+		virtual void Init(const WindowProps& props);
+		virtual void Shutdown();
 	private:
-		GLFWwindow* m_Window;
-		bool m_Active = true;
+		GLFWwindow* mWindow;
+		Scope<GraphicsContext> mContext;
 
-		std::string m_Title;
-		int m_PosX, m_PosY;
-		uint32_t m_Width, m_Height;
-		bool m_VSync = true;
+		struct WindowData
+		{
+			std::string title;
+			unsigned int width, height;
+			bool vSync;
 
-		EventCallbackFn m_EventCallbackFn;
+			EventCallbackFn eventCallback;
+		};
 
-		GraphicsContext* m_Context;
+		WindowData mData;
 	};
+
 }

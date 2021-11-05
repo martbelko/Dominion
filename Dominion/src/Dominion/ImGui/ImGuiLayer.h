@@ -1,9 +1,10 @@
 #pragma once
 
-#if DM_INCLUDE_IMGUI == 1
-
-#include "Dominion/Core/Base.h"
 #include "Dominion/Core/Layer.h"
+
+#include "Dominion/Events/ApplicationEvent.h"
+#include "Dominion/Events/KeyEvent.h"
+#include "Dominion/Events/MouseEvent.h"
 
 namespace Dominion {
 
@@ -11,7 +12,7 @@ namespace Dominion {
 	{
 	public:
 		ImGuiLayer();
-		virtual ~ImGuiLayer() override = default;
+		~ImGuiLayer() = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
@@ -20,14 +21,11 @@ namespace Dominion {
 		void Begin();
 		void End();
 
-		void BlockEvents(bool block);
+		void BlockEvents(bool block) { mBlockEvents = block; }
 
 		void SetDarkThemeColors();
 	private:
-		bool m_BlockEvents = true;
-		F32 m_Time = 0.0f;
+		bool mBlockEvents = true;
 	};
 
 }
-
-#endif

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Dominion/Renderer/Camera.h"
+#include "Camera.h"
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Events/Event.h"
 #include "Dominion/Events/MouseEvent.h"
@@ -9,34 +9,31 @@
 
 namespace Dominion {
 
-	class EditorCamera
+	class EditorCamera : public Camera
 	{
 	public:
 		EditorCamera() = default;
-		EditorCamera(F32 fov, F32 aspectRatio, F32 nearClip, F32 farClip);
-
-		// TODO: Rule of 5
+		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
-		F32 GetDistance() const { return m_Distance; }
-		void SetDistance(F32 distance) { m_Distance = distance; }
+		inline float GetDistance() const { return mDistance; }
+		inline void SetDistance(float distance) { mDistance = distance; }
 
-		void SetViewportSize(F32 width, F32 height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
+		inline void SetViewportSize(float width, float height) { mViewportWidth = width; mViewportHeight = height; UpdateProjection(); }
 
-		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
-		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
-		glm::mat4 GetViewProjectionMatrix() const { return m_ProjectionMatrix * m_ViewMatrix; }
+		const glm::mat4& GetViewMatrix() const { return mViewMatrix; }
+		glm::mat4 GetViewProjection() const { return mProjection * mViewMatrix; }
 
 		glm::vec3 GetUpDirection() const;
 		glm::vec3 GetRightDirection() const;
 		glm::vec3 GetForwardDirection() const;
-		const glm::vec3& GetPosition() const { return m_Position; }
+		const glm::vec3& GetPosition() const { return mPosition; }
 		glm::quat GetOrientation() const;
 
-		F32 GetPitch() const { return m_Pitch; }
-		F32 GetYaw() const { return m_Yaw; }
+		float GetPitch() const { return mPitch; }
+		float GetYaw() const { return mYaw; }
 	private:
 		void UpdateProjection();
 		void UpdateView();
@@ -45,26 +42,26 @@ namespace Dominion {
 
 		void MousePan(const glm::vec2& delta);
 		void MouseRotate(const glm::vec2& delta);
-		void MouseZoom(F32 delta);
+		void MouseZoom(float delta);
 
 		glm::vec3 CalculatePosition() const;
 
-		std::pair<F32, F32> PanSpeed() const;
-		F32 RotationSpeed() const;
-		F32 ZoomSpeed() const;
+		std::pair<float, float> PanSpeed() const;
+		float RotationSpeed() const;
+		float ZoomSpeed() const;
 	private:
-		F32 m_FOV = 45.0f, m_AspectRatio = 1.778f, m_NearClip = 0.1f, m_FarClip = 1000.0f;
+		float mFOV = 45.0f, mAspectRatio = 1.778f, mNearClip = 0.1f, mFarClip = 1000.0f;
 
-		glm::mat4 m_ProjectionMatrix;
-		glm::mat4 m_ViewMatrix;
-		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 m_FocalPoint = { 0.0f, 0.0f, 0.0f };
-		glm::vec2 m_LastMousePosition;
+		glm::mat4 mViewMatrix;
+		glm::vec3 mPosition = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 mFocalPoint = { 0.0f, 0.0f, 0.0f };
 
-		F32 m_Distance = 10.0f;
-		F32 m_Pitch = 0.0f, m_Yaw = 0.0f;
+		glm::vec2 mInitialMousePosition = { 0.0f, 0.0f };
 
-		F32 m_ViewportWidth = 1280, m_ViewportHeight = 720;
+		float mDistance = 10.0f;
+		float mPitch = 0.0f, mYaw = 0.0f;
+
+		float mViewportWidth = 1280, mViewportHeight = 720;
 	};
 
 }

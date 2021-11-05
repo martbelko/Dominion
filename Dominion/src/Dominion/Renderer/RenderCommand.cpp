@@ -1,8 +1,8 @@
 #include "dmpch.h"
-#include "RenderCommand.h"
+#include "Dominion/Renderer/RenderCommand.h"
 
 namespace Dominion {
 
-	Scope<RendererAPI> RenderCommand::s_RendererAPI = RendererAPI::Create();
+	Scope<RendererAPI> RenderCommand::sRendererAPI = RendererAPI::Create();
 
 }

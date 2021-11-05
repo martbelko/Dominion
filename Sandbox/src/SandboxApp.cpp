@@ -2,25 +2,23 @@
 #include <Dominion/Core/EntryPoint.h>
 
 #include "Sandbox2D.h"
-#include "Sandbox3D.h"
-#include "Chess/Chess2D.h"
-#include "Graphs/GraphLayer.h"
+#include "ExampleLayer.h"
 
 class Sandbox : public Dominion::Application
 {
 public:
-	Sandbox()
+	Sandbox(Dominion::ApplicationCommandLineArgs args)
 	{
+		// PushLayer(new ExampleLayer());
 		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()
 	{
-
 	}
 };
 
-Dominion::Application* Dominion::CreateApplication()
+Dominion::Application* Dominion::CreateApplication(Dominion::ApplicationCommandLineArgs args)
 {
-	return new Sandbox();
+	return new Sandbox(args);
 }

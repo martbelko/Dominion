@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/Camera.h"
 
 namespace Dominion {
@@ -11,48 +10,41 @@ namespace Dominion {
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 	public:
 		SceneCamera();
-		virtual ~SceneCamera() override = default;
+		virtual ~SceneCamera() = default;
+
+		void SetPerspective(float verticalFOV, float nearClip, float farClip);
+		void SetOrthographic(float size, float nearClip, float farClip);
 
 		void SetViewportSize(uint32_t width, uint32_t height);
 
-		void SetPerspective(F32 verticalFOV, F32 nearClip, F32 farClip);
+		float GetPerspectiveVerticalFOV() const { return mPerspectiveFOV; }
+		void SetPerspectiveVerticalFOV(float verticalFov) { mPerspectiveFOV = verticalFov; RecalculateProjection(); }
+		float GetPerspectiveNearClip() const { return mPerspectiveNear; }
+		void SetPerspectiveNearClip(float nearClip) { mPerspectiveNear = nearClip; RecalculateProjection(); }
+		float GetPerspectiveFarClip() const { return mPerspectiveFar; }
+		void SetPerspectiveFarClip(float farClip) { mPerspectiveFar = farClip; RecalculateProjection(); }
 
-		void SetOrthographic(F32 size, F32 nearClip, F32 farClip);
+		float GetOrthographicSize() const { return mOrthographicSize; }
+		void SetOrthographicSize(float size) { mOrthographicSize = size; RecalculateProjection(); }
+		float GetOrthographicNearClip() const { return mOrthographicNear; }
+		void SetOrthographicNearClip(float nearClip) { mOrthographicNear = nearClip; RecalculateProjection(); }
+		float GetOrthographicFarClip() const { return mOrthographicFar; }
+		void SetOrthographicFarClip(float farClip) { mOrthographicFar = farClip; RecalculateProjection(); }
 
-		ProjectionType GetProjectionType() const;
-		void SetProjectionType(ProjectionType type);
-
-		// Perspective
-		F32 GetPerspectiveFOV() const;
-		void SetPerspectiveFOV(F32 verticalFOV);
-
-		F32 GetPerspectiveNearClip() const;
-		void SetPerspectiveNearClip(F32 nearClip);
-
-		F32 GetPerspectiveFarClip() const;
-		void SetPerspectiveFarClip(F32 farClip);
-
-		// Orthographic
-		F32 GetOrthographicSize() const;
-		void SetOrthographicSize(F32 size);
-
-		F32 GetOrthographicNearClip() const;
-		void SetOrthographicNearClip(F32 nearClip);
-
-		F32 GetOrthographicFarClip() const;
-		void SetOrthographicFarClip(F32 farClip);
+		ProjectionType GetProjectionType() const { return mProjectionType; }
+		void SetProjectionType(ProjectionType type) { mProjectionType = type; RecalculateProjection(); }
 	private:
 		void RecalculateProjection();
 	private:
-		ProjectionType m_ProjectionType = ProjectionType::Orthographic;
+		ProjectionType mProjectionType = ProjectionType::Orthographic;
 
-		F32 m_PerspectiveFOV = glm::radians(45.0f);
-		F32 m_PerspectiveNear = 0.01f, m_PerspectiveFar = 1000.0f;
+		float mPerspectiveFOV = glm::radians(45.0f);
+		float mPerspectiveNear = 0.01f, mPerspectiveFar = 1000.0f;
 
-		F32 m_OrthographicSize = 10.0f;
-		F32 m_OrthographicNear = -1.0f, m_OrthographicFar = 1.0f;
+		float mOrthographicSize = 10.0f;
+		float mOrthographicNear = -1.0f, mOrthographicFar = 1.0f;
 
-		F32 m_AspectRatio = 1.0f;
+		float mAspectRatio = 0.0f;
 	};
 
 }

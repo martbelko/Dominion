@@ -1,81 +1,63 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
+#include "Scene.h"
 
-#include <entt.hpp>
+#include "entt.hpp"
 
 namespace Dominion {
-
-	// Forward declarations
-	class Scene;
 
 	class Entity
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity entityHandle, Scene* scene);
-		Entity(U32 entityHandle, Scene* scene) : Entity(static_cast<entt::entity>(entityHandle), scene) {}
-		Entity(const Entity&) = default;
-		virtual ~Entity() = default;
+		Entity(entt::entity handle, Scene* scene);
+		Entity(const Entity& other) = default;
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			DM_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component!");
-			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_Scene->OnComponentAdded<T>(*this, component);
+			DM_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
+			T& component = mScene->mRegistry.emplace<T>(mEntityHandle, std::forward<Args>(args)...);
+			mScene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
 
-		template<typename T, typename... Args>
-		T& GetOrAddComponent(Args&&... args)
+		template<typename T>
+		T& GetComponent()
 		{
-			T& component = m_Scene->m_Registry.get_or_emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_Scene->OnComponentAdded<T>(*this, component);
-			return component;
+			DM_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			return mScene->mRegistry.get<T>(mEntityHandle);
+		}
+
+		template<typename T>
+		bool HasComponent()
+		{
+			return mScene->mRegistry.has<T>(mEntityHandle);
 		}
 
 		template<typename T>
 		void RemoveComponent()
 		{
-			DM_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
-			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+			DM_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			mScene->mRegistry.remove<T>(mEntityHandle);
 		}
 
-		template<typename... T>
-		decltype(auto) GetComponent()
+		operator bool() const { return mEntityHandle != entt::null; }
+		operator entt::entity() const { return mEntityHandle; }
+		operator uint32_t() const { return (uint32_t)mEntityHandle; }
+
+		bool operator==(const Entity& other) const
 		{
-			DM_CORE_ASSERT(HasComponent<T...>(), "Entity does not have these components!");
-			return m_Scene->m_Registry.get<T...>(m_EntityHandle);
+			return mEntityHandle == other.mEntityHandle && mScene == other.mScene;
 		}
 
-		template<typename... T>
-		bool HasComponent()
+		bool operator!=(const Entity& other) const
 		{
-			return m_Scene->m_Registry.has<T...>(m_EntityHandle);
+			return !(*this == other);
 		}
-
-		template<typename... T>
-		bool HasAnyComponent()
-		{
-			return m_Scene->m_Registry.any<T...>(m_EntityHandle);
-		}
-
-		operator bool() const { return m_EntityHandle != entt::null; }
-		operator U32() const { return static_cast<uint32_t>(m_EntityHandle); }
-
-		U32 GetID() const { return static_cast<uint32_t>(m_EntityHandle); }
-
-		bool operator==(const Entity& other) const;
-		bool operator!=(const Entity& other) const;
 	private:
-		void Destroy();
-		void RemoveAllComponents();
-	private:
-		entt::entity m_EntityHandle{ entt::null };
-		Scene* m_Scene = nullptr;
-
-		friend class Scene;
+		entt::entity mEntityHandle{ entt::null };
+		Scene* mScene = nullptr;
 	};
 
 }

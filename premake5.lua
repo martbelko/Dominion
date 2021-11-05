@@ -1,27 +1,30 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
+include "Dependencies.lua"
 
 workspace "Dominion"
 	architecture "x86_64"
+	startproject "DominionEditor"
 
-	startproject "Dominion-Editor"
+	configurations
+	{
+		"Debug",
+		"Release",
+		"Dist",
+		"PGO"
+	}
+
+	flags
+	{
+		"MultiProcessorCompile"
+	}
 
 	solution_items
 	{
 		".editorconfig"
 	}
 
-	defines
-	{
-		"DM_ARCH_X64",
-		"_CRT_SECURE_NO_WARNINGS"
-	}
-
 	filter "system:windows"
 		systemversion "latest"
-		defines
-		{
-			"DM_PLATFORM_WINDOWS"
-		}
 
 	filter "configurations:Debug"
 		defines
@@ -37,7 +40,7 @@ workspace "Dominion"
 			"DM_RELEASE"
 		}
 		runtime "Release"
-		optimize "on"
+		optimize "speed"
 
 	filter "configurations:Dist"
 		defines
@@ -45,35 +48,21 @@ workspace "Dominion"
 			"DM_DIST"
 		}
 		runtime "Release"
-		optimize "on"
+		optimize "speed"
+
+	filter "configurations:PGO"
+		defines
+		{
+			"DM_PGO"
+		}
+		runtime "Release"
+		optimize "speed"
 
 	filter {}
-
-	configurations
-	{
-		"Debug",
-		"Release",
-		"Dist"
-	}
-
-	flags
-	{
-		"MultiProcessorCompile"
-	}
 
 	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 	targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
-
-	IncludeDir = {}
-	IncludeDir["GLFW"] = "%{wks.location}/Dominion/vendor/GLFW/include"
-	IncludeDir["Glad"] = "%{wks.location}/Dominion/vendor/Glad/include"
-	IncludeDir["glm"] = "%{wks.location}/Dominion/vendor/glm"
-	IncludeDir["ImGui"] = "%{wks.location}/Dominion/vendor/ImGui"
-	IncludeDir["entt"] = "%{wks.location}/Dominion/vendor/entt/include"
-	IncludeDir["yaml_cpp"] = "%{wks.location}/Dominion/vendor/yaml-cpp/include"
-	IncludeDir["assimp"] = "%{wks.location}/Dominion/vendor/assimp/include"
-	IncludeDir["PhysX"] = "%{wks.location}/Dominion/vendor/PhysX"
 
 	group "Dependencies"
 		include "vendor/premake"
@@ -81,10 +70,8 @@ workspace "Dominion"
 		include "Dominion/vendor/Glad"
 		include "Dominion/vendor/ImGui"
 		include "Dominion/vendor/yaml-cpp"
-		include "Dominion/vendor/assimp"
-		include "Dominion/vendor/PhysX/physx"
 	group ""
 
 	include "Dominion"
 	include "Sandbox"
-	include "Dominion-Editor"
+	include "DominionEditor"

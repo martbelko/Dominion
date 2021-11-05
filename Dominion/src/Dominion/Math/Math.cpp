@@ -6,9 +6,10 @@
 
 namespace Dominion::Math {
 
-	// From glm::decompose in matrix_decompose.inl
 	bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
 	{
+		// From glm::decompose in matrix_decompose.inl
+
 		using namespace glm;
 		using T = float;
 
@@ -33,14 +34,12 @@ namespace Dominion::Math {
 		translation = vec3(LocalMatrix[3]);
 		LocalMatrix[3] = vec4(0, 0, 0, LocalMatrix[3].w);
 
-		vec3 Row[3];
+		vec3 Row[3], Pdum3;
 
 		// Now get scale and shear.
 		for (length_t i = 0; i < 3; ++i)
 			for (length_t j = 0; j < 3; ++j)
-			#pragma warning (disable: 6001)
 				Row[i][j] = LocalMatrix[i][j];
-			#pragma warning (default: 6001)
 
 		// Compute X scale factor and normalize first row.
 		scale.x = length(Row[0]);
@@ -53,7 +52,7 @@ namespace Dominion::Math {
 		// At this point, the matrix (in rows[]) is orthonormal.
 		// Check for a coordinate system flip.  If the determinant
 		// is -1, then negate the matrix and the scaling factors.
-#if 0
+	#if 0
 		Pdum3 = cross(Row[1], Row[2]); // v3Cross(row[1], row[2], Pdum3);
 		if (dot(Row[0], Pdum3) < 0)
 		{
@@ -63,7 +62,7 @@ namespace Dominion::Math {
 				Row[i] *= static_cast<T>(-1);
 			}
 		}
-#endif
+	#endif
 
 		rotation.y = asin(-Row[0][2]);
 		if (cos(rotation.y) != 0) {

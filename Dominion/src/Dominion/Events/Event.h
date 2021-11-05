@@ -1,45 +1,80 @@
 #pragma once
+#include <functional>
 
-#include <iostream>
+#include "Dominion/Debug/Instrumentor.h"
+#include "Dominion/Core/Base.h"
 
 namespace Dominion {
+
+	// Events in Dominion are currently blocking, meaning when an event occurs it
+	// immediately gets dispatched and must be dealt with right then an there.
+	// For the future, a better strategy might be to buffer events in an event
+	// bus and process them during the "event" part of the update stage.
 
 	enum class EventType
 	{
 		None = 0,
-		WindowCreated, WindowClosed, WindowResized, WindowFocus, WindowLostFocus, WindowMoved,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
 		KeyPressed, KeyReleased, KeyTyped,
-		MousePressed, MouseReleased, MouseMoved, MouseScrolled
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
-	#define EVENT_TYPE(type)    static EventType GetStaticType()    { return type; } \
-                                virtual EventType GetType() const   { return type; } \
-                                virtual const char* GetName() const override { return #type; }
+	enum EventCategory
+	{
+		None = 0,
+		EventCategoryApplication    = BIT(0),
+		EventCategoryInput          = BIT(1),
+		EventCategoryKeyboard       = BIT(2),
+		EventCategoryMouse          = BIT(3),
+		EventCategoryMouseButton    = BIT(4)
+	};
+
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
+	virtual EventType GetEventType() const override { return GetStaticType(); }\
+	virtual const char* GetName() const override { return #type; }
+
+#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
 	class Event
 	{
 	public:
-		Event() = default;
-		~Event() = default;
+		virtual ~Event() = default;
 
-		virtual EventType GetType() const = 0;
+		bool handled = false;
+
+		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
+		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 
-		template <typename T, typename F>
-		bool Dispatch(F f)
+		bool IsInCategory(EventCategory category)
 		{
-			if (T::GetStaticType() == GetType())
+			return GetCategoryFlags() & category;
+		}
+	};
+
+	class EventDispatcher
+	{
+	public:
+		EventDispatcher(Event& e)
+			: mEvent(e)
+		{
+		}
+
+		// F will be deduced by the compiler
+		template<typename T, typename F>
+		bool Dispatch(const F& func)
+		{
+			if (mEvent.GetEventType() == T::GetStaticType())
 			{
-				Handled |= f(static_cast<T&>(*this));
+				mEvent.handled |= func(static_cast<T&>(mEvent));
 				return true;
 			}
-
 			return false;
 		}
-	public:
-		bool Handled = false;
+	private:
+		Event& mEvent;
 	};
 
 	inline std::ostream& operator<<(std::ostream& os, const Event& e)
@@ -48,3 +83,4 @@ namespace Dominion {
 	}
 
 }
+

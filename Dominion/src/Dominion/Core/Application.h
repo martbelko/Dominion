@@ -1,55 +1,70 @@
 #pragma once
 
 #include "Dominion/Core/Base.h"
+
 #include "Dominion/Core/Window.h"
-#include "Dominion/Events/WindowEvent.h"
-#include "Dominion/Events/KeyEvent.h"
-#include "Dominion/Events/MouseEvent.h"
-#include "Dominion/Core/Layer.h"
 #include "Dominion/Core/LayerStack.h"
+#include "Dominion/Events/Event.h"
+#include "Dominion/Events/ApplicationEvent.h"
+
+#include "Dominion/Core/Timestep.h"
+
 #include "Dominion/ImGui/ImGuiLayer.h"
 
-#include <string>
+int main(int argc, char** argv);
 
 namespace Dominion {
+
+	struct ApplicationCommandLineArgs
+	{
+		int count = 0;
+		char** args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			DM_CORE_ASSERT(index < count);
+			return args[index];
+		}
+	};
 
 	class Application
 	{
 	public:
-		Application(const std::string_view& name = "Dominion App");
+		Application(const std::string& name = "Dominion App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 
-		void Run();
-
-		void OnEvent(Event& event);
+		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* overlay);
+		void PushOverlay(Layer* layer);
 
-		ImGuiLayer* GetImGuiLayer();
-
-		Window& GetWindow() const;
+		Window& GetWindow() { return *mWindow; }
 
 		void Close();
 
-		static Application& Get();
-	private:
-		bool OnWindowCreated(WindowCreatedEvent& e);
-		bool OnWindowClosed(WindowClosedEvent& e);
-		bool OnWindowResized(WindowResizedEvent& e);
-	private:
-		static Application* s_Application;
-		Window* m_Window = nullptr;
-		bool m_Running = true;
-		bool m_Minimized = false;
-		LayerStack m_LayerStack;
-#if DM_INCLUDE_IMGUI == 1
-		ImGuiLayer* m_ImGuiLayer = nullptr;
-#endif
+		ImGuiLayer* GetImGuiLayer() { return mImGuiLayer; }
 
-		std::chrono::system_clock::time_point m_LastFrameTime;
+		static Application& Get() { return *sInstance; }
+
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return mCommandLineArgs; }
+	private:
+		void Run();
+		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+	private:
+		ApplicationCommandLineArgs mCommandLineArgs;
+		Scope<Window> mWindow;
+		ImGuiLayer* mImGuiLayer;
+		bool mRunning = true;
+		bool mMinimized = false;
+		LayerStack mLayerStack;
+		float mLastFrameTime = 0.0f;
+	private:
+		static Application* sInstance;
+		friend int ::main(int argc, char** argv);
 	};
 
-	Application* CreateApplication();
+	// To be defined in CLIENT
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 
 }

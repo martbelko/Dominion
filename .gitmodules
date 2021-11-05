@@ -19,3 +19,6 @@
 [submodule "Dominion/vendor/PhysX"]
 	path = Dominion/vendor/PhysX
 	url = https://github.com/martbelko/PhysX
+[submodule "Dominion/vendor/ImGuizmo"]
+	path = Dominion/vendor/ImGuizmo
+	url = https://github.com/martbelko/ImGuizmo

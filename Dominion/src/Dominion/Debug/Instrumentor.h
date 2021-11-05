@@ -9,25 +9,24 @@
 #include <mutex>
 #include <sstream>
 
-#include "Dominion/Core/Base.h"
 #include "Dominion/Core/Log.h"
 
 namespace Dominion {
 
-	using FloatingPointMicroseconds = std::chrono::duration<F64, std::micro>;
+	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
 
 	struct ProfileResult
 	{
-		std::string Name;
+		std::string name;
 
-		FloatingPointMicroseconds Start;
-		std::chrono::microseconds ElapsedTime;
-		std::thread::id ThreadID;
+		FloatingPointMicroseconds start;
+		std::chrono::microseconds elapsedTime;
+		std::thread::id threadID;
 	};
 
 	struct InstrumentationSession
 	{
-		std::string Name;
+		std::string name;
 	};
 
 	class Instrumentor
@@ -38,8 +37,8 @@ namespace Dominion {
 
 		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
 		{
-			std::lock_guard lock(m_Mutex);
-			if (m_CurrentSession)
+			std::lock_guard lock(mMutex);
+			if (mCurrentSession)
 			{
 				// If there is already a current session, then close it before beginning new one.
 				// Subsequent profiling output meant for the original session will end up in the
@@ -47,15 +46,15 @@ namespace Dominion {
 				// profiling output.
 				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
 				{
-					DM_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
+					DM_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, mCurrentSession->name);
 				}
 				InternalEndSession();
 			}
-			m_OutputStream.open(filepath);
 
-			if (m_OutputStream.is_open())
+			mOutputStream.open(filepath);
+			if (mOutputStream.is_open())
 			{
-				m_CurrentSession = new InstrumentationSession({ name });
+				mCurrentSession = new InstrumentationSession({name});
 				WriteHeader();
 			}
 			else
@@ -69,7 +68,7 @@ namespace Dominion {
 
 		void EndSession()
 		{
-			std::lock_guard lock(m_Mutex);
+			std::lock_guard lock(mMutex);
 			InternalEndSession();
 		}
 
@@ -80,19 +79,19 @@ namespace Dominion {
 			json << std::setprecision(3) << std::fixed;
 			json << ",{";
 			json << "\"cat\":\"function\",";
-			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
-			json << "\"name\":\"" << result.Name << "\",";
+			json << "\"dur\":" << (result.elapsedTime.count()) << ',';
+			json << "\"name\":\"" << result.name << "\",";
 			json << "\"ph\":\"X\",";
 			json << "\"pid\":0,";
-			json << "\"tid\":" << result.ThreadID << ",";
-			json << "\"ts\":" << result.Start.count();
+			json << "\"tid\":" << result.threadID << ",";
+			json << "\"ts\":" << result.start.count();
 			json << "}";
 
-			std::lock_guard lock(m_Mutex);
-			if (m_CurrentSession)
+			std::lock_guard lock(mMutex);
+			if (mCurrentSession)
 			{
-				m_OutputStream << json.str();
-				m_OutputStream.flush();
+				mOutputStream << json.str();
+				mOutputStream.flush();
 			}
 		}
 
@@ -103,7 +102,7 @@ namespace Dominion {
 		}
 	private:
 		Instrumentor()
-			: m_CurrentSession(nullptr)
+			: mCurrentSession(nullptr)
 		{
 		}
 
@@ -114,63 +113,63 @@ namespace Dominion {
 
 		void WriteHeader()
 		{
-			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
-			m_OutputStream.flush();
+			mOutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
+			mOutputStream.flush();
 		}
 
 		void WriteFooter()
 		{
-			m_OutputStream << "]}";
-			m_OutputStream.flush();
+			mOutputStream << "]}";
+			mOutputStream.flush();
 		}
 
 		// Note: you must already own lock on m_Mutex before
 		// calling InternalEndSession()
 		void InternalEndSession()
 		{
-			if (m_CurrentSession)
+			if (mCurrentSession)
 			{
 				WriteFooter();
-				m_OutputStream.close();
-				delete m_CurrentSession;
-				m_CurrentSession = nullptr;
+				mOutputStream.close();
+				delete mCurrentSession;
+				mCurrentSession = nullptr;
 			}
 		}
 	private:
-		std::mutex m_Mutex;
-		InstrumentationSession* m_CurrentSession;
-		std::ofstream m_OutputStream;
+		std::mutex mMutex;
+		InstrumentationSession* mCurrentSession;
+		std::ofstream mOutputStream;
 	};
 
 	class InstrumentationTimer
 	{
 	public:
 		InstrumentationTimer(const char* name)
-			: m_Name(name), m_Stopped(false)
+			: mName(name), mStopped(false)
 		{
-			m_StartTimepoint = std::chrono::steady_clock::now();
+			mStartTimepoint = std::chrono::steady_clock::now();
 		}
 
 		~InstrumentationTimer()
 		{
-			if (!m_Stopped)
+			if (!mStopped)
 				Stop();
 		}
 
 		void Stop()
 		{
 			auto endTimepoint = std::chrono::steady_clock::now();
-			auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
-			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
+			auto highResStart = FloatingPointMicroseconds{ mStartTimepoint.time_since_epoch() };
+			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(mStartTimepoint).time_since_epoch();
 
-			Instrumentor::Get().WriteProfile({ m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
+			Instrumentor::Get().WriteProfile({ mName, highResStart, elapsedTime, std::this_thread::get_id() });
 
-			m_Stopped = true;
+			mStopped = true;
 		}
 	private:
-		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-		bool m_Stopped;
+		const char* mName;
+		std::chrono::time_point<std::chrono::steady_clock> mStartTimepoint;
+		bool mStopped;
 	};
 
 	namespace InstrumentorUtils {
@@ -198,11 +197,15 @@ namespace Dominion {
 				result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
 				srcIndex++;
 			}
+
 			return result;
 		}
+
 	}
+
 }
 
+#define DM_PROFILE 0
 #if DM_PROFILE
 	// Resolve which function signature macro will be used. Note that this only
 	// is resolved when the (pre)compiler starts, so the syntax highlighting
@@ -222,13 +225,13 @@ namespace Dominion {
 	#elif defined(__cplusplus) && (__cplusplus >= 201103)
 		#define DM_FUNC_SIG __func__
 	#else
-		#define DM_FUNC_SIG "DM_FUNC_SIG unknown!"
+		#define DM_FUNC_SIG "HZ_FUNC_SIG unknown!"
 	#endif
 
 	#define DM_PROFILE_BEGIN_SESSION(name, filepath) ::Dominion::Instrumentor::Get().BeginSession(name, filepath)
 	#define DM_PROFILE_END_SESSION() ::Dominion::Instrumentor::Get().EndSession()
 	#define DM_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Dominion::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
-                                               ::Dominion::InstrumentationTimer timer##line(fixedName##line.Data)
+											   ::Dominion::InstrumentationTimer timer##line(fixedName##line.Data)
 	#define DM_PROFILE_SCOPE_LINE(name, line) DM_PROFILE_SCOPE_LINE2(name, line)
 	#define DM_PROFILE_SCOPE(name) DM_PROFILE_SCOPE_LINE(name, __LINE__)
 	#define DM_PROFILE_FUNCTION() DM_PROFILE_SCOPE(DM_FUNC_SIG)

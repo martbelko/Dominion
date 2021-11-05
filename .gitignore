@@ -1,22 +1,18 @@
-.vs/
+# Binaries
 bin/
-!vendor/premake/bin
 bin-int/
 
-*.filters
+# Dominion files
+*.log
 
-*.user
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
 
-*.sln
-
-*.vcxproj
-
-Sandbox/imgui.ini
-
-Sandbox/DominionProfile-Runtime.json
-
-Sandbox/DominionProfile-Shutdown.json
-
-Sandbox/DominionProfile-Startup.json
-
-Dominion-Editor/imgui.ini
+# Directories
+Dominion/vendor/VulkanSDK
+DominionEditor/assets/cache
+scripts/__pycache__

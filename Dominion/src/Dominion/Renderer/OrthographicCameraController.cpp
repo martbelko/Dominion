@@ -1,105 +1,92 @@
 #include "dmpch.h"
-#include "OrthographicCameraController.h"
+#include "Dominion/Renderer/OrthographicCameraController.h"
 
 #include "Dominion/Core/Input.h"
 #include "Dominion/Core/KeyCodes.h"
 
 namespace Dominion {
 
-	OrthographicCameraController::OrthographicCameraController(F32 aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
+	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
+		: mAspectRatio(aspectRatio), mCamera(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel), mRotation(rotation)
 	{
-
 	}
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
 		DM_PROFILE_FUNCTION();
 
-		glm::vec3& cameraPosition = m_Camera.GetPosition();
-		F32& cameraRotation = m_Camera.GetRotation();
-
-		bool recalculate = false;
 		if (Input::IsKeyPressed(Key::A))
 		{
-			cameraPosition.x -= cos(cameraRotation) * m_CameraTranslationSpeed * ts;
-			cameraPosition.y -= sin(cameraRotation) * m_CameraTranslationSpeed * ts;
-			recalculate = true;
+			mCameraPosition.x -= cos(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
+			mCameraPosition.y -= sin(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(Key::D))
 		{
-			cameraPosition.x += cos(cameraRotation) * m_CameraTranslationSpeed* ts;
-			cameraPosition.y += sin(cameraRotation) * m_CameraTranslationSpeed* ts;
-			recalculate = true;
+			mCameraPosition.x += cos(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
+			mCameraPosition.y += sin(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
 		}
 
 		if (Input::IsKeyPressed(Key::W))
 		{
-			cameraPosition.x += -sin(cameraRotation) * m_CameraTranslationSpeed * ts;
-			cameraPosition.y += cos(cameraRotation) * m_CameraTranslationSpeed * ts;
-			recalculate = true;
+			mCameraPosition.x += -sin(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
+			mCameraPosition.y += cos(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(Key::S))
 		{
-			cameraPosition.x -= -sin(cameraRotation) * m_CameraTranslationSpeed * ts;
-			cameraPosition.y -= cos(cameraRotation) * m_CameraTranslationSpeed * ts;
-			recalculate = true;
+			mCameraPosition.x -= -sin(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
+			mCameraPosition.y -= cos(glm::radians(mCameraRotation)) * mCameraTranslationSpeed * ts;
 		}
 
-		if (m_Rotation)
+		if (mRotation)
 		{
 			if (Input::IsKeyPressed(Key::Q))
-			{
-				cameraRotation += m_CameraRotationSpeed * ts;
-				recalculate = true;
-			}
+				mCameraRotation += mCameraRotationSpeed * ts;
 			if (Input::IsKeyPressed(Key::E))
-			{
-				cameraRotation -= m_CameraRotationSpeed * ts;
-				recalculate = true;
-			}
+				mCameraRotation -= mCameraRotationSpeed * ts;
 
-			if (cameraRotation > 180.0f)
-				cameraRotation -= 360.0f;
-			else if (cameraRotation <= -180.0f)
-				cameraRotation += 360.0f;
+			if (mCameraRotation > 180.0f)
+				mCameraRotation -= 360.0f;
+			else if (mCameraRotation <= -180.0f)
+				mCameraRotation += 360.0f;
+
+			mCamera.SetRotation(mCameraRotation);
 		}
 
-		m_CameraTranslationSpeed = m_ZoomLevel;
+		mCamera.SetPosition(mCameraPosition);
 
-		if (recalculate)
-			m_Camera.RecalculateViewMatrix();
+		mCameraTranslationSpeed = mZoomLevel;
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
 		DM_PROFILE_FUNCTION();
 
-		e.Dispatch<MouseScrolledEvent>(DM_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
-		e.Dispatch<WindowResizedEvent>(DM_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<MouseScrolledEvent>(DM_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
+		dispatcher.Dispatch<WindowResizeEvent>(DM_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 	}
 
-	void OrthographicCameraController::OnResize(F32 width, F32 height)
+	void OrthographicCameraController::OnResize(float width, float height)
 	{
-		m_AspectRatio = width / height;
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		mAspectRatio = width / height;
+		mCamera.SetProjection(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		DM_PROFILE_FUNCTION();
 
-		m_ZoomLevel -= e.GetYOffset() * 0.25f;
-		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		mZoomLevel -= e.GetYOffset() * 0.25f;
+		mZoomLevel = std::max(mZoomLevel, 0.25f);
+		mCamera.SetProjection(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
 		return false;
 	}
 
-	bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& e)
+	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		DM_PROFILE_FUNCTION();
 
-		OnResize(static_cast<F32>(e.GetWidth()), static_cast<F32>(e.GetHeight()));
+		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
 	}
 

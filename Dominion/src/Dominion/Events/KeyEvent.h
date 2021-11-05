@@ -1,74 +1,72 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
-#include "Event.h"
+#include "Dominion/Events/Event.h"
 #include "Dominion/Core/KeyCodes.h"
-
-#include <sstream>
 
 namespace Dominion {
 
 	class KeyEvent : public Event
 	{
 	public:
-		KeyEvent(uint32_t keyCode)
-			: m_KeyCode(keyCode) {}
+		KeyCode GetKeyCode() const { return mKeyCode; }
 
-		uint32_t GetKeyCode() const { return m_KeyCode; }
+		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
-		KeyCode m_KeyCode;
+		KeyEvent(const KeyCode keycode)
+			: mKeyCode(keycode) {}
+
+		KeyCode mKeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(uint32_t keyCode, uint32_t repeatCount)
-			: KeyEvent(keyCode), m_RepeatCount(repeatCount) {}
+		KeyPressedEvent(const KeyCode keycode, const uint16_t repeatCount)
+			: KeyEvent(keycode), mRepeatCount(repeatCount) {}
 
-		uint32_t GetRepeatCount() const { return m_RepeatCount; }
+		uint16_t GetRepeatCount() const { return mRepeatCount; }
 
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressed: " << m_KeyCode << " (" << m_RepeatCount << ')';
+			ss << "KeyPressedEvent: " << mKeyCode << " (" << mRepeatCount << " repeats)";
 			return ss.str();
 		}
 
-		EVENT_TYPE(EventType::KeyPressed)
+		EVENT_CLASS_TYPE(KeyPressed)
 	private:
-		uint32_t m_RepeatCount;
+		uint16_t mRepeatCount;
 	};
 
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(uint32_t keyCode)
-			: KeyEvent(keyCode) {}
+		KeyReleasedEvent(const KeyCode keycode)
+			: KeyEvent(keycode) {}
 
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleased: " << m_KeyCode;
+			ss << "KeyReleasedEvent: " << mKeyCode;
 			return ss.str();
 		}
 
-		EVENT_TYPE(EventType::KeyReleased)
+		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(uint32_t keyCode)
-			: KeyEvent(keyCode) {}
+		KeyTypedEvent(const KeyCode keycode)
+			: KeyEvent(keycode) {}
 
 		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTyped: " << m_KeyCode;
+			ss << "KeyTypedEvent: " << mKeyCode;
 			return ss.str();
 		}
 
-		EVENT_TYPE(EventType::KeyTyped)
+		EVENT_CLASS_TYPE(KeyTyped)
 	};
-
 }

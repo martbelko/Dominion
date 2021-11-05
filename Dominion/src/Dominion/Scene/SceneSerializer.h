@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
-#include "Dominion/Scene/Scene.h"
+#include "Scene.h"
 
 namespace Dominion {
 
@@ -16,7 +15,7 @@ namespace Dominion {
 		bool Deserialize(const std::string& filepath);
 		bool DeserializeRuntime(const std::string& filepath);
 	private:
-		Ref<Scene> m_Scene;
+		Ref<Scene> mScene;
 	};
 
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
-
 namespace Dominion {
 
 	class GraphicsContext
@@ -11,6 +9,8 @@ namespace Dominion {
 
 		virtual void Init() = 0;
 		virtual void SwapBuffers() = 0;
+
+		static Scope<GraphicsContext> Create(void* window);
 	};
 
 }

@@ -1,35 +1,46 @@
 #include "dmpch.h"
-#include "LayerStack.h"
+#include "Dominion/Core/LayerStack.h"
 
 namespace Dominion {
 
 	LayerStack::~LayerStack()
 	{
-		for (Layer* layer : m_Layers)
+		for (Layer* layer : mLayers)
 		{
 			layer->OnDetach();
 			delete layer;
 		}
 	}
 
+	void LayerStack::PushLayer(Layer* layer)
+	{
+		mLayers.emplace(mLayers.begin() + mLayerInsertIndex, layer);
+		mLayerInsertIndex++;
+	}
+
+	void LayerStack::PushOverlay(Layer* overlay)
+	{
+		mLayers.emplace_back(overlay);
+	}
+
 	void LayerStack::PopLayer(Layer* layer)
 	{
-		auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
-		if (it != m_Layers.begin() + m_LayerInsertIndex)
+		auto it = std::find(mLayers.begin(), mLayers.begin() + mLayerInsertIndex, layer);
+		if (it != mLayers.begin() + mLayerInsertIndex)
 		{
 			layer->OnDetach();
-			m_Layers.erase(it);
-			m_LayerInsertIndex--;
+			mLayers.erase(it);
+			mLayerInsertIndex--;
 		}
 	}
 
 	void LayerStack::PopOverlay(Layer* overlay)
 	{
-		auto it = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), overlay);
-		if (it != m_Layers.end())
+		auto it = std::find(mLayers.begin() + mLayerInsertIndex, mLayers.end(), overlay);
+		if (it != mLayers.end())
 		{
 			overlay->OnDetach();
-			m_Layers.erase(it);
+			mLayers.erase(it);
 		}
 	}
 

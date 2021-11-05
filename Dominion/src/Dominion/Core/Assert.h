@@ -1,9 +1,9 @@
 #pragma once
 
+#include <filesystem>
+
 #include "Dominion/Core/Base.h"
 #include "Dominion/Core/Log.h"
-
-#include <filesystem>
 
 #ifdef DM_ENABLE_ASSERTS
 

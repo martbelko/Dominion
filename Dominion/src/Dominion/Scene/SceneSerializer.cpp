@@ -1,24 +1,12 @@
 #include "dmpch.h"
 #include "SceneSerializer.h"
 
-#include "Dominion/Core/Filesystem.h"
+#include "Entity.h"
+#include "Components.h"
 
-#include "Dominion/Scene/Components/BaseComponent.h"
-#include "Dominion/Scene/Components/TransformComponent.h"
-#include "Dominion/Scene/Components/SpriteRendererComponent.h"
-#include "Dominion/Scene/Components/CameraComponent.h"
-#include "Dominion/Scene/Components/NativeScriptComponent.h"
-
-#include "Dominion/Scene/Entity.h"
-#include "Dominion/Scene/SceneCamera.h"
-#include "Dominion/Renderer/Texture.h"
+#include <fstream>
 
 #include <yaml-cpp/yaml.h>
-#include <glm/glm.hpp>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 namespace YAML {
 
@@ -31,7 +19,7 @@ namespace YAML {
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
-
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 
@@ -40,10 +28,9 @@ namespace YAML {
 			if (!node.IsSequence() || node.size() != 3)
 				return false;
 
-			rhs.x = node[0].as<F32>();
-			rhs.y = node[1].as<F32>();
-			rhs.z = node[2].as<F32>();
-
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
 			return true;
 		}
 	};
@@ -58,7 +45,7 @@ namespace YAML {
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
 			node.push_back(rhs.w);
-
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 
@@ -67,52 +54,50 @@ namespace YAML {
 			if (!node.IsSequence() || node.size() != 4)
 				return false;
 
-			rhs.x = node[0].as<F32>();
-			rhs.y = node[1].as<F32>();
-			rhs.z = node[2].as<F32>();
-			rhs.w = node[3].as<F32>();
-
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
 			return true;
 		}
 	};
 
 }
-
 namespace Dominion {
 
-	static YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& vec3)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << vec3.x << vec3.y << vec3.z << YAML::EndSeq;
+		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
 		return out;
 	}
 
-	static YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& vec4)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << vec4.x << vec4.y << vec4.z << vec4.w << YAML::EndSeq;
+		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
 		return out;
 	}
 
 	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
-		: m_Scene(scene)
+		: mScene(scene)
 	{
 	}
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << "12837192831273";
+		out << YAML::Key << "Entity" << YAML::Value << "12837192831273"; // TODO: Entity ID goes here
 
-		if (entity.HasComponent<BaseComponent>())
+		if (entity.HasComponent<TagComponent>())
 		{
-			out << YAML::Key << "BaseComponent";
-			out << YAML::BeginMap; // BaseComponent
+			out << YAML::Key << "TagComponent";
+			out << YAML::BeginMap; // TagComponent
 
-			const std::string& name = entity.GetComponent<BaseComponent>().name;
-			out << YAML::Key << "Name" << YAML::Value << name;
+			auto& tag = entity.GetComponent<TagComponent>().tag;
+			out << YAML::Key << "Tag" << YAML::Value << tag;
 
-			out << YAML::EndMap; // BaseComponent
+			out << YAML::EndMap; // TagComponent
 		}
 
 		if (entity.HasComponent<TransformComponent>())
@@ -120,8 +105,8 @@ namespace Dominion {
 			out << YAML::Key << "TransformComponent";
 			out << YAML::BeginMap; // TransformComponent
 
-			TransformComponent& tc = entity.GetComponent<TransformComponent>();
-			out << YAML::Key << "Position" << YAML::Value << tc.position;
+			auto& tc = entity.GetComponent<TransformComponent>();
+			out << YAML::Key << "Translation" << YAML::Value << tc.translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.scale;
 
@@ -133,24 +118,22 @@ namespace Dominion {
 			out << YAML::Key << "CameraComponent";
 			out << YAML::BeginMap; // CameraComponent
 
-			CameraComponent& cc = entity.GetComponent<CameraComponent>();
-			//SceneCamera& cam = cc.Cam;
+			auto& cameraComponent = entity.GetComponent<CameraComponent>();
+			auto& camera = cameraComponent.camera;
 
-			/*out << YAML::Key << "Camera";
+			out << YAML::Key << "Camera" << YAML::Value;
 			out << YAML::BeginMap; // Camera
-			out << YAML::Key << "ProjectionType" << YAML::Value << static_cast<int>(cam.GetProjectionType());
+			out << YAML::Key << "ProjectionType" << YAML::Value << (int)camera.GetProjectionType();
+			out << YAML::Key << "PerspectiveFOV" << YAML::Value << camera.GetPerspectiveVerticalFOV();
+			out << YAML::Key << "PerspectiveNear" << YAML::Value << camera.GetPerspectiveNearClip();
+			out << YAML::Key << "PerspectiveFar" << YAML::Value << camera.GetPerspectiveFarClip();
+			out << YAML::Key << "OrthographicSize" << YAML::Value << camera.GetOrthographicSize();
+			out << YAML::Key << "OrthographicNear" << YAML::Value << camera.GetOrthographicNearClip();
+			out << YAML::Key << "OrthographicFar" << YAML::Value << camera.GetOrthographicFarClip();
+			out << YAML::EndMap; // Camera
 
-			out << YAML::Key << "PerspectiveFOV" << YAML::Value << cam.GetPerspectiveFOV();
-			out << YAML::Key << "PerspectiveNearClip" << YAML::Value << cam.GetPerspectiveNearClip();
-			out << YAML::Key << "PerspectiveFarClip" << YAML::Value << cam.GetPerspectiveFarClip();
-
-			out << YAML::Key << "OrthographicSize" << YAML::Value << cam.GetOrthographicSize();
-			out << YAML::Key << "OrthographicNearClip" << YAML::Value << cam.GetOrthographicNearClip();
-			out << YAML::Key << "OrthographicFarClip" << YAML::Value << cam.GetOrthographicFarClip();
-			out << YAML::EndMap; // Camera*/
-
-			/*out << YAML::Key << "Primary" << YAML::Value << cc.Primary;
-			out << YAML::Key << "FixedAspectRatio" << YAML::Value << cc.FixedAspectRatio;*/
+			out << YAML::Key << "Primary" << YAML::Value << cameraComponent.primary;
+			out << YAML::Key << "FixedAspectRatio" << YAML::Value << cameraComponent.fixedAspectRatio;
 
 			out << YAML::EndMap; // CameraComponent
 		}
@@ -160,10 +143,8 @@ namespace Dominion {
 			out << YAML::Key << "SpriteRendererComponent";
 			out << YAML::BeginMap; // SpriteRendererComponent
 
-			SpriteRendererComponent& sc = entity.GetComponent<SpriteRendererComponent>();
-			out << YAML::Key << "Color" << YAML::Value << sc.color;
-			out << YAML::Key << "Texture" << YAML::Value << (sc.texture ? Filesystem::GetRelativePathFromFullPath(sc.texture->GetPath()).data() : ".");
-			out << YAML::Key << "TilingFactor" << YAML::Value << sc.tilingFactor;
+			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.color;
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -174,19 +155,19 @@ namespace Dominion {
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
 		YAML::Emitter out;
-		out << YAML::BeginMap; // Scene
-		out << YAML::Key << "Scene" << YAML::Value << m_Scene->GetName();
+		out << YAML::BeginMap;
+		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		m_Scene->m_Registry.each([&](entt::entity entityID)
+		mScene->mRegistry.each([&](auto entityID)
 		{
-			Entity entity(entityID, m_Scene.get());
+			Entity entity = { entityID, mScene.get() };
 			if (!entity)
 				return;
 
 			SerializeEntity(out, entity);
 		});
 		out << YAML::EndSeq;
-		out << YAML::EndMap; // Scene
+		out << YAML::EndMap;
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
@@ -194,90 +175,79 @@ namespace Dominion {
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
 	{
-		DM_CORE_ASSERT(false, "Not implemented");
+		// TODO: Not implemented
+		DM_CORE_ASSERT(false);
 	}
 
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
-		std::ifstream fin(filepath);
-		std::stringstream ss;
-		ss << fin.rdbuf();
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath);
+		}
+		catch (YAML::ParserException e)
+		{
+			return false;
+		}
 
-		YAML::Node data = YAML::Load(ss.str());
 		if (!data["Scene"])
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		DM_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 
-		m_Scene->SetName(sceneName);
-
-		YAML::Node entities = data["Entities"];
+		auto entities = data["Entities"];
 		if (entities)
 		{
 			for (auto entity : entities)
 			{
-				uint64_t id = entity["Entity"].as<uint64_t>(); // TODO
+				uint64_t uuid = entity["Entity"].as<uint64_t>(); // TODO
 
-				YAML::Node baseComponent = entity["BaseComponent"];
-				if (!baseComponent)
-				{
-					DM_CORE_ASSERT(false, "BaseComponent is required for every entity!");
-					return false;
-				}
+				std::string name;
+				auto tagComponent = entity["TagComponent"];
+				if (tagComponent)
+					name = tagComponent["Tag"].as<std::string>();
 
-				std::string entityName = baseComponent["Name"].as<std::string>();
-				DM_CORE_TRACE("Deserializing entity with ID = {0}, name = {1}", id, entityName);
-				Entity deserializedEntity = m_Scene->CreateEntity(entityName);
+				DM_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-				YAML::Node transformComponent = entity["TransformComponent"];
+				Entity deserializedEntity = mScene->CreateEntity(name);
+
+				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
-					// Entities always have transform component
-					auto& tc = deserializedEntity.AddComponent<TransformComponent>();
-					glm::vec3 position = transformComponent["Position"].as<glm::vec3>();
-					glm::vec3 rotation = transformComponent["Rotation"].as<glm::vec3>();
-					glm::vec3 scale = transformComponent["Scale"].as<glm::vec3>();
-
-					tc.position = position;
-					tc.rotation = rotation;
-					tc.scale = scale;
+					// Entities always have transforms
+					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+					tc.translation = transformComponent["Translation"].as<glm::vec3>();
+					tc.rotation = transformComponent["Rotation"].as<glm::vec3>();
+					tc.scale = transformComponent["Scale"].as<glm::vec3>();
 				}
 
-				YAML::Node cameraComponent = entity["CameraComponent"];
+				auto cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
-					// TODO: Update this
-					/*CameraComponent& cc = deserializedEntity.AddComponent<CameraComponent>();
-					SceneCamera& cam = cc.Cam;
+					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
 
-					YAML::Node& cameraProps = cameraComponent["Camera"];
+					auto& cameraProps = cameraComponent["Camera"];
+					cc.camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
 
-					cam.SetProjectionType(static_cast<SceneCamera::ProjectionType>(cameraProps["ProjectionType"].as<int>()));
+					cc.camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
+					cc.camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
+					cc.camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
 
-					cam.SetPerspectiveFOV(cameraProps["PerspectiveFOV"].as<F32>());
-					cam.SetPerspectiveNearClip(cameraProps["PerspectiveNearClip"].as<F32>());
-					cam.SetPerspectiveFarClip(cameraProps["PerspectiveFarClip"].as<F32>());
+					cc.camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
+					cc.camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
+					cc.camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 
-					cam.SetOrthographicSize(cameraProps["OrthographicSize"].as<F32>());
-					cam.SetOrthographicNearClip(cameraProps["OrthographicNearClip"].as<F32>());
-					cam.SetOrthographicFarClip(cameraProps["OrthographicFarClip"].as<F32>());
-
-					cc.Primary = cameraComponent["Primary"].as<bool>();
-					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();*/
+					cc.primary = cameraComponent["Primary"].as<bool>();
+					cc.fixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
 				}
 
-				YAML::Node spriteRendererComponent = entity["SpriteRendererComponent"];
+				auto spriteRendererComponent = entity["SpriteRendererComponent"];
 				if (spriteRendererComponent)
 				{
-					SpriteRendererComponent& sc = deserializedEntity.AddComponent<SpriteRendererComponent>();
-					sc.color = spriteRendererComponent["Color"].as<glm::vec4>();
-					std::string texPath = spriteRendererComponent["Texture"].as<std::string>();
-					if (texPath == ".")
-						sc.texture = nullptr;
-					else
-						sc.texture = Texture2D::Create(texPath);
-					sc.tilingFactor = spriteRendererComponent["TilingFactor"].as<F32>();
+					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+					src.color = spriteRendererComponent["Color"].as<glm::vec4>();
 				}
 			}
 		}
@@ -287,7 +257,8 @@ namespace Dominion {
 
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
 	{
-		DM_CORE_ASSERT(false, "Not implemented");
+		// Not implemented
+		DM_CORE_ASSERT(false);
 		return false;
 	}
 

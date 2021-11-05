@@ -1,44 +1,42 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
-
-#include "Dominion/Renderer/OrthographicCamera.h"
 #include "Dominion/Core/Timestep.h"
 
-#include "Dominion/Events/WindowEvent.h"
+#include "Dominion/Events/ApplicationEvent.h"
 #include "Dominion/Events/MouseEvent.h"
+
+#include "Dominion/Renderer/OrthographicCamera.h"
 
 namespace Dominion {
 
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(F32 aspectRatio = 1.0f, bool rotation = false);
+		OrthographicCameraController(float aspectRatio, bool rotation = false);
 
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
-		void OnResize(F32 width, F32 height);
+		void OnResize(float width, float height);
 
-		OrthographicCamera& GetCamera() { return m_Camera; }
-		const OrthographicCamera& GetCamera() const { return m_Camera; }
+		OrthographicCamera& GetCamera() { return mCamera; }
+		const OrthographicCamera& GetCamera() const { return mCamera; }
 
-		F32 GetZoomLevel() const { return m_ZoomLevel; }
-		void SetZoomLevel(F32 level) { m_ZoomLevel = level; } // TODO: Not recalculate? Maybe recalculate. needs check
-
-		F32 GetWidth() const { return 2 * m_AspectRatio * m_ZoomLevel; }
-		F32 GetHeight() const { return 2 * m_ZoomLevel; }
+		float GetZoomLevel() const { return mZoomLevel; }
+		void SetZoomLevel(float level) { mZoomLevel = level; }
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnWindowResized(WindowResizedEvent& e);
+		bool OnWindowResized(WindowResizeEvent& e);
 	private:
-		F32 m_AspectRatio;
-		F32 m_ZoomLevel = 1.0f;
-		OrthographicCamera m_Camera;
+		float mAspectRatio;
+		float mZoomLevel = 1.0f;
+		OrthographicCamera mCamera;
 
-		bool m_Rotation;
+		bool mRotation;
 
-		F32 m_CameraTranslationSpeed = 5.0f, m_CameraRotationSpeed = 180.0f;
+		glm::vec3 mCameraPosition = { 0.0f, 0.0f, 0.0f };
+		float mCameraRotation = 0.0f; //In degrees, in the anti-clockwise direction
+		float mCameraTranslationSpeed = 5.0f, mCameraRotationSpeed = 180.0f;
 	};
 
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Dominion/Core/Base.h"
 #include "Dominion/Renderer/Framebuffer.h"
 
 namespace Dominion {
@@ -8,38 +7,31 @@ namespace Dominion {
 	class OpenGLFramebuffer : public Framebuffer
 	{
 	public:
-		OpenGLFramebuffer(const FramebufferDesc& desc);
-		virtual ~OpenGLFramebuffer() override;
+		OpenGLFramebuffer(const FramebufferSpecification& spec);
+		virtual ~OpenGLFramebuffer();
 
 		void Invalidate();
 
-		virtual void Bind() const override;
-		virtual void Unbind() const override;
+		virtual void Bind() override;
+		virtual void Unbind() override;
 
-		virtual void Resize(U32 width, U32 height) override;
+		virtual void Resize(uint32_t width, uint32_t height) override;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
-		virtual U32 GetColorAttachmentRendererID(U32 index = 0) const override;
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-		virtual const FramebufferDesc& GetDesc() const override;
+		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const override { DM_CORE_ASSERT(index < mColorAttachments.size()); return mColorAttachments[index]; }
+
+		virtual const FramebufferSpecification& GetSpecification() const override { return mSpecification; }
 	private:
-		void Delete();
-	private:
-		static void AttachColorTexture(U32 id, int samples, U32 format, U32 width, U32 height, U32 index);
-		static void AttachDepthTexture(U32 id, int samples, U32 format, U32 attachmentType, U32 width, U32 height);
+		uint32_t mRendererID = 0;
+		FramebufferSpecification mSpecification;
 
-		static bool IsDepthFormat(FramebufferTextureFormat format);
-		static void CreateTextures(bool multisampled, U32* outId, U32 count);
-		static U32 TextureTarget(bool multisampled);
-		static void BindTexture(bool multisampled, U32 id);
-	private:
-		U32 m_RendererID;
-		FramebufferDesc m_Desc;
+		std::vector<FramebufferTextureSpecification> mColorAttachmentSpecifications;
+		FramebufferTextureSpecification mDepthAttachmentSpecification = FramebufferTextureFormat::None;
 
-		std::vector<FramebufferTextureDesc> mColorAttachmentSpecs;
-		FramebufferTextureDesc mDepthAttachmentSpec = FramebufferTextureFormat::None;
-
-		std::vector<U32> mColorAttachments;
-		U32 mDepthAttachment;
+		std::vector<uint32_t> mColorAttachments;
+		uint32_t mDepthAttachment = 0;
 	};
 
 }

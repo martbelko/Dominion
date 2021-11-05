@@ -1,21 +1,27 @@
 #pragma once
 
-#include <Dominion.h>
+#include "Dominion.h"
 
 class Sandbox2D : public Dominion::Layer
 {
 public:
 	Sandbox2D();
-	virtual void OnAttach() override;
-	virtual void OnUpdate(const Dominion::Timestep& timestep) override;
-	virtual void OnEvent(Dominion::Event& e) override;
-private:
-	Dominion::Entity CreateSquareEntity(const glm::vec3 position);
+	virtual ~Sandbox2D() = default;
 
-	bool OnKeyPressed(Dominion::KeyPressedEvent& e);
+	virtual void OnAttach() override;
+	virtual void OnDetach() override;
+
+	void OnUpdate(Dominion::Timestep ts) override;
+	virtual void OnImGuiRender() override;
+	void OnEvent(Dominion::Event& e) override;
 private:
-	Dominion::Scene m_Scene{ "Default Scene" };
-	Dominion::Entity m_Square;
-	Dominion::Entity m_Camera;
-	Dominion::Entity m_Plane;
+	Dominion::OrthographicCameraController mCameraController;
+
+	// Temp
+	Dominion::Ref<Dominion::VertexArray> mSquareVA;
+	Dominion::Ref<Dominion::Shader> mFlatColorShader;
+
+	Dominion::Ref<Dominion::Texture2D> mCheckerboardTexture;
+
+	glm::vec4 mSquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

@@ -2,55 +2,57 @@
 #include "EditorCamera.h"
 
 #include "Dominion/Core/Input.h"
+#include "Dominion/Core/KeyCodes.h"
+#include "Dominion/Core/MouseCodes.h"
+
+#include <glfw/glfw3.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
 namespace Dominion {
 
-	EditorCamera::EditorCamera(F32 fov, F32 aspectRatio, F32 nearClip, F32 farClip)
-		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), m_ProjectionMatrix(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
+	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
+		: mFOV(fov), mAspectRatio(aspectRatio), mNearClip(nearClip), mFarClip(farClip), Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
 	{
-		auto mousePos = Input::GetMousePosition();
-		m_LastMousePosition = glm::vec2(mousePos.first, mousePos.second);
 		UpdateView();
 	}
 
 	void EditorCamera::UpdateProjection()
 	{
-		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+		mAspectRatio = mViewportWidth / mViewportHeight;
+		mProjection = glm::perspective(glm::radians(mFOV), mAspectRatio, mNearClip, mFarClip);
 	}
 
 	void EditorCamera::UpdateView()
 	{
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
-		m_Position = CalculatePosition();
+		mPosition = CalculatePosition();
 
 		glm::quat orientation = GetOrientation();
-		m_ViewMatrix = glm::translate(glm::mat4(1.0f), m_Position) * glm::toMat4(orientation);
-		m_ViewMatrix = glm::inverse(m_ViewMatrix);
+		mViewMatrix = glm::translate(glm::mat4(1.0f), mPosition) * glm::toMat4(orientation);
+		mViewMatrix = glm::inverse(mViewMatrix);
 	}
 
-	std::pair<F32, F32> EditorCamera::PanSpeed() const
+	std::pair<float, float> EditorCamera::PanSpeed() const
 	{
-		F32 x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
-		F32 xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
+		float x = std::min(mViewportWidth / 1000.0f, 2.4f); // max = 2.4f
+		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
-		F32 y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
-		F32 yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
+		float y = std::min(mViewportHeight / 1000.0f, 2.4f); // max = 2.4f
+		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
 		return { xFactor, yFactor };
 	}
 
-	F32 EditorCamera::RotationSpeed() const
+	float EditorCamera::RotationSpeed() const
 	{
 		return 0.8f;
 	}
 
-	F32 EditorCamera::ZoomSpeed() const
+	float EditorCamera::ZoomSpeed() const
 	{
-		float distance = m_Distance * 0.2f;
+		float distance = mDistance * 0.2f;
 		distance = std::max(distance, 0.0f);
 		float speed = distance * distance;
 		speed = std::min(speed, 100.0f); // max speed = 100
@@ -62,14 +64,14 @@ namespace Dominion {
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_LastMousePosition) * 0.003f;
-			m_LastMousePosition = mouse;
+			glm::vec2 delta = (mouse - mInitialMousePosition) * 0.003f;
+			mInitialMousePosition = mouse;
 
-			if (Input::IsMousePressed(Mouse::ButtonMiddle))
+			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
 				MousePan(delta);
-			else if (Input::IsMousePressed(Mouse::ButtonLeft))
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
 				MouseRotate(delta);
-			else if (Input::IsMousePressed(Mouse::ButtonRight))
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
 				MouseZoom(delta.y);
 		}
 
@@ -78,12 +80,13 @@ namespace Dominion {
 
 	void EditorCamera::OnEvent(Event& e)
 	{
-		e.Dispatch<MouseScrolledEvent>(DM_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<MouseScrolledEvent>(DM_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
 	}
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
 	{
-		F32 delta = e.GetYOffset() * 0.1f;
+		float delta = e.GetYOffset() * 0.1f;
 		MouseZoom(delta);
 		UpdateView();
 		return false;
@@ -92,24 +95,24 @@ namespace Dominion {
 	void EditorCamera::MousePan(const glm::vec2& delta)
 	{
 		auto [xSpeed, ySpeed] = PanSpeed();
-		m_FocalPoint += -GetRightDirection() * delta.x * xSpeed * m_Distance;
-		m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
+		mFocalPoint += -GetRightDirection() * delta.x * xSpeed * mDistance;
+		mFocalPoint += GetUpDirection() * delta.y * ySpeed * mDistance;
 	}
 
 	void EditorCamera::MouseRotate(const glm::vec2& delta)
 	{
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
-		m_Yaw += yawSign * delta.x * RotationSpeed();
-		m_Pitch += delta.y * RotationSpeed();
+		mYaw += yawSign * delta.x * RotationSpeed();
+		mPitch += delta.y * RotationSpeed();
 	}
 
-	void EditorCamera::MouseZoom(F32 delta)
+	void EditorCamera::MouseZoom(float delta)
 	{
-		m_Distance -= delta * 1.0f;
-		if (m_Distance < 1.0f)
+		mDistance -= delta * ZoomSpeed();
+		if (mDistance < 1.0f)
 		{
-			m_FocalPoint += GetForwardDirection();
-			m_Distance = 1.0f;
+			mFocalPoint += GetForwardDirection();
+			mDistance = 1.0f;
 		}
 	}
 
@@ -130,12 +133,12 @@ namespace Dominion {
 
 	glm::vec3 EditorCamera::CalculatePosition() const
 	{
-		return m_FocalPoint - GetForwardDirection() * m_Distance;
+		return mFocalPoint - GetForwardDirection() * mDistance;
 	}
 
 	glm::quat EditorCamera::GetOrientation() const
 	{
-		return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
+		return glm::quat(glm::vec3(-mPitch, -mYaw, 0.0f));
 	}
 
 }

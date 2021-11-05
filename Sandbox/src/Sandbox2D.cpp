@@ -1,153 +1,85 @@
 #include "Sandbox2D.h"
+#include <imgui/imgui.h>
 
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-static bool DoesIntersectTriangle(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2)
-{
-	constexpr float epsilon = 0.0000001f;
-	glm::vec3 edge1, edge2, h, s, q;
-	float a, f, u, v;
-	edge1 = vertex1 - vertex0;
-	edge2 = vertex2 - vertex0;
-	h = glm::cross(edge2, rayVector);
-	a = glm::dot(edge1, h);
-	if (a > -epsilon && a < epsilon)
-		return false;
-
-	f = 1.0f / a;
-	s = rayOrigin - vertex0;
-	u = f * glm::dot(s, h);
-	if (u < 0.0f || u > 1.0f)
-		return false;
-
-	q = glm::cross(edge1, s);
-	v = f * glm::dot(rayVector, q);
-	if (v < 0.0f || u + v > 1.0f)
-		return false;
-	float t = f * glm::dot(edge2, q);
-	if (t > epsilon)
-		return true;
-	else
-		return false;
-}
-
-static bool DoesIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayVector, const glm::vec3& quadPos, const glm::vec2& quadSize)
-{
-	float left = quadPos.x - quadSize.x / 2.0f;
-	float top = quadPos.y + quadSize.y / 2.0f;
-	float right = quadPos.x + quadSize.x / 2.0f;
-	float bottom = quadPos.y - quadSize.y / 2.0f;
-
-	glm::vec3 vertex0 = glm::vec3(left, bottom, quadPos.z);
-	glm::vec3 vertex1 = glm::vec3(right, top, quadPos.z);
-	glm::vec3 vertex2 = glm::vec3(left, top, quadPos.z);
-	glm::vec3 vertex3 = glm::vec3(right, bottom, quadPos.z);
-
-	return DoesIntersectTriangle(rayOrigin, rayVector, vertex0, vertex1, vertex2)
-		|| DoesIntersectTriangle(rayOrigin, rayVector, vertex0, vertex3, vertex1);
-}
+#include <glm/gtc/type_ptr.hpp>
 
 Sandbox2D::Sandbox2D()
-	: Dominion::Layer("Sandbox2D") {}
+	: Layer("Sandbox2D"), mCameraController(1280.0f / 720.0f), mSquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
+{
+}
 
 void Sandbox2D::OnAttach()
 {
-	const Dominion::Window& wnd = Dominion::Application::Get().GetWindow();
-	U32 wHeight = static_cast<U32>(wnd.GetHeight());
-	U32 wWidth = static_cast<U32>(wnd.GetWidth());
-	F32 ratio = static_cast<F32>(wWidth) / wHeight;
-	m_Scene.OnViewportResize(wWidth, wHeight);
+	DM_PROFILE_FUNCTION();
 
-	m_Camera = m_Scene.CreateEntity("Camera Entity");
+	mCheckerboardTexture = Dominion::Texture2D::Create("assets/textures/Checkerboard.png");
+}
+
+void Sandbox2D::OnDetach()
+{
+	DM_PROFILE_FUNCTION();
+}
+
+void Sandbox2D::OnUpdate(Dominion::Timestep ts)
+{
+	DM_PROFILE_FUNCTION();
+
+	// Update
+	mCameraController.OnUpdate(ts);
+
+	// Render
+	Dominion::Renderer2D::ResetStats();
 	{
-		auto& tc = m_Camera.AddComponent<Dominion::TransformComponent>();
-		m_Camera.AddComponent<Dominion::CameraComponent>();
+		DM_PROFILE_SCOPE("Renderer Prep");
+		Dominion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		Dominion::RenderCommand::Clear();
 	}
 
-	float xOffset = 0.0f;
-	for (float y = -3.0f + 0.1f + 0.5f; y < 8.0f; y += 1.05f)
 	{
-		for (float x = -4.0f + xOffset; x < 4.0f - xOffset; x += 1.05f)
+		static float rotation = 0.0f;
+		rotation += ts * 50.0f;
+
+		DM_PROFILE_SCOPE("Renderer Draw");
+		Dominion::Renderer2D::BeginScene(mCameraController.GetCamera());
+		Dominion::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, -45.0f, { 0.8f, 0.2f, 0.3f, 1.0f });
+		Dominion::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+		Dominion::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, mSquareColor);
+		Dominion::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, mCheckerboardTexture, 10.0f);
+		Dominion::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, mCheckerboardTexture, 20.0f);
+		Dominion::Renderer2D::EndScene();
+
+		Dominion::Renderer2D::BeginScene(mCameraController.GetCamera());
+		for (float y = -5.0f; y < 5.0f; y += 0.5f)
 		{
-			glm::vec3 pos{ x, y, 0.0f };
-			CreateSquareEntity(pos);
+			for (float x = -5.0f; x < 5.0f; x += 0.5f)
+			{
+				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
+				Dominion::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
+			}
 		}
-
-		xOffset += 0.5f;
-	}
-
-	m_Plane = m_Scene.CreateEntity("Plane");
-	{
-		auto& tc = m_Plane.AddComponent<Dominion::TransformComponent>();
-		tc.scale = glm::vec3(10.0f, 0.1f, 1.0f);
-		tc.position.y -= 3.0f;
-		auto& sc = m_Plane.AddComponent<Dominion::SpriteRendererComponent>();
-		sc.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		auto& bcc = m_Plane.AddComponent<Dominion::BoxCollider2DComponent>();
-		auto& rbc = m_Plane.AddComponent<Dominion::RigidBody2DComponent>();
-		rbc.EnableGravity(false);
-		rbc.SetMass(0.0f);
-		rbc.SetMassSpaceInertiaTensor(glm::vec3(0.0f, 0.0f, 0.0f));
-		rbc.SetSleepThreshold(0.1f);
-
-		/*class Script : public Dominion::ScriptableEntity
-		{
-		private:
-			void OnCollisionStart(const Dominion::Collision& collision) override
-			{
-			}
-
-			void OnCollisionStay(const Dominion::Collision& collision) override
-			{
-			}
-
-			void OnCollisionEnd(const Dominion::Collision& collision) override
-			{
-			}
-		};
-
-		auto& nsc = m_Plane.AddComponent<Dominion::NativeScriptComponent>();
-		nsc.Bind<Script>();*/
+		Dominion::Renderer2D::EndScene();
 	}
 }
 
-void Sandbox2D::OnUpdate(const Dominion::Timestep& timestep)
+void Sandbox2D::OnImGuiRender()
 {
-	m_Scene.OnUpdateRuntime(timestep);
+	DM_PROFILE_FUNCTION();
 
-	Dominion::RigidBody2DComponent& tc = m_Plane.GetComponent<Dominion::RigidBody2DComponent>();
-	glm::vec3 velocity = tc.GetLinearVelocity();
-	if (Dominion::Input::IsKeyPressed(Dominion::Key::A))
-		velocity.x -= 0.1f;
-	else if (Dominion::Input::IsKeyPressed(Dominion::Key::D))
-		velocity.x += 0.1f;
-	else
-		velocity.x = 0.0f;
+	ImGui::Begin("Settings");
 
-	tc.SetLinearVelocity(glm::vec3(velocity));
+	auto stats = Dominion::Renderer2D::GetStats();
+	ImGui::Text("Renderer2D Stats:");
+	ImGui::Text("Draw Calls: %d", stats.drawCalls);
+	ImGui::Text("Quads: %d", stats.quadCount);
+	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+	ImGui::ColorEdit4("Square Color", glm::value_ptr(mSquareColor));
+	ImGui::End();
 }
 
 void Sandbox2D::OnEvent(Dominion::Event& e)
 {
-	e.Dispatch<Dominion::KeyPressedEvent>(DM_BIND_EVENT_FN(Sandbox2D::OnKeyPressed));
-}
-
-Dominion::Entity Sandbox2D::CreateSquareEntity(const glm::vec3 position)
-{
-	Dominion::Entity square = m_Scene.CreateEntity();
-	auto& tc = square.AddComponent<Dominion::TransformComponent>();
-	tc.position = position;
-	square.AddComponent<Dominion::SpriteRendererComponent>();
-	square.AddComponent<Dominion::BoxCollider2DComponent>();
-	square.AddComponent<Dominion::RigidBody2DComponent>();
-
-	return square;
-}
-
-bool Sandbox2D::OnKeyPressed(Dominion::KeyPressedEvent& e)
-{
-	if (e.GetKeyCode() == Dominion::Key::Escape)
-		Dominion::Application::Get().GetWindow().Close();
-	return false;
+	mCameraController.OnEvent(e);
 }

@@ -2,41 +2,41 @@
 #include "Dominion/Core/Input.h"
 
 #include "Dominion/Core/Application.h"
-
 #include <GLFW/glfw3.h>
 
 namespace Dominion {
 
-	bool Input::IsKeyPressed(KeyCode key)
+	bool Input::IsKeyPressed(const KeyCode key)
 	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-		int state = glfwGetKey(window, key);
+		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool Input::IsMousePressed(MouseCode button)
+	bool Input::IsMouseButtonPressed(const MouseCode button)
 	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-		int state = glfwGetMouseButton(window, button);
+		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<float, float> Input::GetMousePosition()
+	glm::vec2 Input::GetMousePosition()
 	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		return std::make_pair<float>(static_cast<float>(xpos), static_cast<float>(ypos));
+
+		return { (float)xpos, (float)ypos };
 	}
 
 	float Input::GetMouseX()
 	{
-		return GetMousePosition().first;
+		return GetMousePosition().x;
 	}
 
 	float Input::GetMouseY()
 	{
-		return GetMousePosition().second;
+		return GetMousePosition().y;
 	}
 
 }
