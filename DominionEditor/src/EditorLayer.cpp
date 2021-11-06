@@ -472,9 +472,9 @@ namespace Dominion {
 
 	void EditorLayer::OpenScene()
 	{
-		std::string filepath = FileDialogs::OpenFile("Dominion Scene (*.dominion)\0*.dominion\0");
+		std::filesystem::path filepath = FileDialogs::OpenFile("Dominion Scene (*.dominion)\0*.dominion\0");
 		if (!filepath.empty())
-			OpenScene(filepath);
+			OpenScene(filepath.string());
 	}
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
@@ -497,11 +497,11 @@ namespace Dominion {
 
 	void EditorLayer::SaveSceneAs()
 	{
-		std::string filepath = FileDialogs::SaveFile("Dominion Scene (*.dominion)\0*.dominion\0");
+		std::filesystem::path filepath = FileDialogs::SaveFile("Dominion Scene (*.dominion)\0*.dominion\0");
 		if (!filepath.empty())
 		{
 			SceneSerializer serializer(mActiveScene);
-			serializer.Serialize(filepath);
+			serializer.Serialize(filepath.string());
 		}
 	}
 

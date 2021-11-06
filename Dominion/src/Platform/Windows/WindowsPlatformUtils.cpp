@@ -8,9 +8,11 @@
 
 #include "Dominion/Core/Application.h"
 
+#include <filesystem>
+
 namespace Dominion {
 
-	std::string FileDialogs::OpenFile(const char* filter)
+	std::filesystem::path FileDialogs::OpenFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -27,13 +29,13 @@ namespace Dominion {
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
 		if (GetOpenFileNameA(&ofn) == TRUE)
-			return ofn.lpstrFile;
+			return std::filesystem::path(ofn.lpstrFile);
 
-		return std::string();
+		return std::filesystem::path("");
 
 	}
 
-	std::string FileDialogs::SaveFile(const char* filter)
+	std::filesystem::path FileDialogs::SaveFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -53,9 +55,9 @@ namespace Dominion {
 		ofn.lpstrDefExt = strchr(filter, '\0') + 1;
 
 		if (GetSaveFileNameA(&ofn) == TRUE)
-			return ofn.lpstrFile;
+			return std::filesystem::path(ofn.lpstrFile);
 
-		return std::string();
+		return std::filesystem::path("");
 	}
 
 }

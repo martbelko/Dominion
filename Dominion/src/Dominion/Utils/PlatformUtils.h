@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 namespace Dominion {
 
@@ -8,8 +8,8 @@ namespace Dominion {
 	{
 	public:
 		// These return empty strings if cancelled
-		static std::string OpenFile(const char* filter);
-		static std::string SaveFile(const char* filter);
+		static std::filesystem::path OpenFile(const char* filter);
+		static std::filesystem::path SaveFile(const char* filter);
 	};
 
 }
