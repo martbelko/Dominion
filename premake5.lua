@@ -28,36 +28,48 @@ workspace "Dominion"
 		systemversion "latest"
 
 	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
 		defines
 		{
 			"DM_DEBUG"
 		}
-		runtime "Debug"
-		symbols "on"
 
 	filter "configurations:Release"
+		runtime "Release"
+		optimize "speed"
 		defines
 		{
 			"DM_RELEASE"
 		}
-		runtime "Release"
-		optimize "speed"
+		flags
+		{
+			"LinkTimeOptimization"
+		}
 
 	filter "configurations:Dist"
+		runtime "Release"
+		optimize "speed"
 		defines
 		{
 			"DM_DIST"
 		}
-		runtime "Release"
-		optimize "speed"
+		flags
+		{
+			"LinkTimeOptimization"
+		}
 
 	filter "configurations:PGO"
+		runtime "Release"
+		optimize "speed"
 		defines
 		{
 			"DM_PGO"
 		}
-		runtime "Release"
-		optimize "speed"
+		flags
+		{
+			"LinkTimeOptimization"
+		}
 
 	filter {}
 
