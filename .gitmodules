@@ -10,9 +10,6 @@
 [submodule "Dominion/vendor/ImGui"]
 	path = Dominion/vendor/ImGui
 	url = https://github.com/martbelko/imgui/
-[submodule "Dominion/vendor/assimp"]
-	path = Dominion/vendor/assimp
-	url = https://github.com/martbelko/assimp
 [submodule "Dominion/vendor/ImGuizmo"]
 	path = Dominion/vendor/ImGuizmo
 	url = https://github.com/martbelko/ImGuizmo
