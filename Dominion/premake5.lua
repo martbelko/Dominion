@@ -30,6 +30,7 @@ project "Dominion"
 	{
 		"src",
 		"vendor/spdlog/include",
+		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
@@ -43,6 +44,7 @@ project "Dominion"
 
 	links
 	{
+		"Box2D",
 		"GLFW",
 		"opengl32.lib",
 		"Glad",

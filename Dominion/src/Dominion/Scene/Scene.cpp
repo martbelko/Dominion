@@ -8,7 +8,31 @@
 
 #include "Entity.h"
 
+#include "box2D/b2_world.h"
+#include "box2D/b2_body.h"
+#include "box2D/b2_fixture.h"
+#include "box2D/b2_polygon_shape.h"
+
 namespace Dominion {
+
+	static b2BodyType DominionRigidbody2DTypeToBox2DBodyType(Rigidbody2DComponent::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+			case Dominion::Rigidbody2DComponent::BodyType::Static:
+				return b2_staticBody;
+				break;
+			case Dominion::Rigidbody2DComponent::BodyType::Dynamic:
+				return b2_dynamicBody;
+				break;
+			case Dominion::Rigidbody2DComponent::BodyType::Kinematic:
+				return b2_kinematicBody;
+				break;
+		}
+
+		DM_CORE_ASSERT(false, "Unknown Rigidbody2DType");
+		return b2_staticBody;
+	}
 
 	Scene::Scene()
 	{
@@ -32,6 +56,53 @@ namespace Dominion {
 		mRegistry.destroy(entity);
 	}
 
+	void Scene::OnRuntimeStart()
+	{
+		mPhysics2DWorld = new b2World({ 0.0f, -9.8f });
+		auto view = mRegistry.view<Rigidbody2DComponent>();
+		for (auto eid : view)
+		{
+			Entity entity = Entity(eid, this);
+			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+			b2BodyDef bodyDef;
+			bodyDef.type = DominionRigidbody2DTypeToBox2DBodyType(rb2d.bodyType);
+			bodyDef.position.Set(transform.translation.x, transform.translation.y);
+			bodyDef.angle = transform.rotation.z;
+			bodyDef.fixedRotation = rb2d.fixedRotation;
+
+			b2Body* physicsBody = mPhysics2DWorld->CreateBody(&bodyDef);
+			rb2d.runtimeBody = physicsBody;
+
+			if (entity.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(bc2d.size.x * transform.scale.x,
+					bc2d.size.y * transform.scale.y,
+					b2Vec2(bc2d.offset.x, bc2d.offset.y),
+					0.0f);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = bc2d.density;
+				fixtureDef.friction = bc2d.friction;
+				fixtureDef.restitution = bc2d.restitution;
+				fixtureDef.restitutionThreshold = bc2d.restitutionThreshold;
+
+				physicsBody->CreateFixture(&fixtureDef);
+			}
+		}
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+		delete mPhysics2DWorld;
+		mPhysics2DWorld = nullptr;
+	}
+
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
 		// Update scripts
@@ -48,6 +119,29 @@ namespace Dominion {
 
 				nsc.instance->OnUpdate(ts);
 			});
+		}
+
+		// Physics
+		{
+			// TODO: Expose these editor physics settings
+			int32_t velocityIterations = 5;
+			int32_t positionIterations = 5;
+
+			mPhysics2DWorld->Step(ts, velocityIterations, positionIterations);
+
+			auto view = mRegistry.view<Rigidbody2DComponent>();
+			for (auto eid : view)
+			{
+				Entity entity = Entity(eid, this);
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+				b2Body* body = static_cast<b2Body*>(rb2d.runtimeBody);
+				const auto& position = body->GetPosition();
+				transform.translation.x = position.x;
+				transform.translation.y = position.y;
+				transform.rotation.z = body->GetAngle();
+			}
 		}
 
 		// Render 2D
@@ -95,7 +189,6 @@ namespace Dominion {
 
 			Renderer2D::EndScene();
 		}
-
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
@@ -178,6 +271,16 @@ namespace Dominion {
 
 	template<>
 	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<Rigidbody2DComponent>(Entity entity, Rigidbody2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
 	{
 	}
 

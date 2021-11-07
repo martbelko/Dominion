@@ -229,32 +229,50 @@ namespace Dominion {
 
 		if (ImGui::BeginPopup("AddComponent"))
 		{
+			if (!mSelectionContext.HasComponent<CameraComponent>())
+			{
 				if (ImGui::MenuItem("Camera"))
 				{
-					if (!mSelectionContext.HasComponent<CameraComponent>())
-						mSelectionContext.AddComponent<CameraComponent>();
-					else
-						DM_CORE_WARN("This entity already has the Camera Component!");
+					mSelectionContext.AddComponent<CameraComponent>();
 					ImGui::CloseCurrentPopup();
 				}
+			}
 
+			if (!mSelectionContext.HasComponent<SpriteRendererComponent>())
+			{
 				if (ImGui::MenuItem("Sprite Renderer"))
 				{
-					if (!mSelectionContext.HasComponent<SpriteRendererComponent>())
-						mSelectionContext.AddComponent<SpriteRendererComponent>();
-					else
-						DM_CORE_WARN("This entity already has the Sprite Renderer Component!");
+					mSelectionContext.AddComponent<SpriteRendererComponent>();
 					ImGui::CloseCurrentPopup();
 				}
+			}
 
+			if (!mSelectionContext.HasComponent<CircleRendererComponent>())
+			{
 				if (ImGui::MenuItem("Circle Renderer"))
 				{
-					if (!mSelectionContext.HasComponent<CircleRendererComponent>())
-						mSelectionContext.AddComponent<CircleRendererComponent>();
-					else
-						DM_CORE_WARN("This entity already has the Sprite Renderer Component!");
+					mSelectionContext.AddComponent<CircleRendererComponent>();
 					ImGui::CloseCurrentPopup();
 				}
+			}
+
+			if (!mSelectionContext.HasComponent<Rigidbody2DComponent>())
+			{
+				if (ImGui::MenuItem("Rigidbody 2D"))
+				{
+					mSelectionContext.AddComponent<Rigidbody2DComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			if (!mSelectionContext.HasComponent<BoxCollider2DComponent>())
+			{
+				if (ImGui::MenuItem("Box Collider 2D"))
+				{
+					mSelectionContext.AddComponent<BoxCollider2DComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
 
 			ImGui::EndPopup();
 		}
@@ -280,7 +298,7 @@ namespace Dominion {
 			const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
 			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
 			{
-				for (int i = 0; i < 2; i++)
+				for (int i = 0; i < 2; ++i)
 				{
 					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
 					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
@@ -359,6 +377,40 @@ namespace Dominion {
 			ImGui::DragFloat("Fade", &component.fade, 0.00025f, 0.0f, 1.0f);
 		});
 
+		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](Rigidbody2DComponent& component)
+		{
+			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
+			const char* currentbodyTypeString = bodyTypeStrings[static_cast<int>(component.bodyType)];
+			if (ImGui::BeginCombo("Body Type", currentbodyTypeString))
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					bool isSelected = currentbodyTypeString == bodyTypeStrings[i];
+					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					{
+						currentbodyTypeString = bodyTypeStrings[i];
+						component.bodyType = static_cast<Rigidbody2DComponent::BodyType>(i);
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::Checkbox("Fixed Rotation", &component.fixedRotation);
+		});
+
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](BoxCollider2DComponent& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+		});
 	}
 
 }

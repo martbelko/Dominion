@@ -96,4 +96,37 @@ namespace Dominion {
 		}
 	};
 
+	// Physics
+
+	struct Rigidbody2DComponent
+	{
+		enum class BodyType
+		{
+			Static = 0,
+			Dynamic,
+			Kinematic
+		};
+
+		BodyType bodyType = BodyType::Static;
+		bool fixedRotation = false;
+
+		// Storage for runtime
+		void* runtimeBody = nullptr;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+		glm::vec2 size = glm::vec2(0.5f, 0.5f);
+
+		// TODO: move into physics material
+		float density = 1.0f;
+		float friction = 0.5f;
+		float restitution = 0.0f;
+		float restitutionThreshold = 0.5f;
+
+		// Storage for runtime
+		void* runtimeFixture = nullptr;
+	};
+
 }

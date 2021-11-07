@@ -79,6 +79,7 @@ workspace "Dominion"
 
 	group "Dependencies"
 		include "vendor/premake"
+		include "Dominion/vendor/Box2D"
 		include "Dominion/vendor/GLFW"
 		include "Dominion/vendor/Glad"
 		include "Dominion/vendor/ImGui"
