@@ -16,3 +16,6 @@
 [submodule "Dominion/vendor/yaml-cpp"]
 	path = Dominion/vendor/yaml-cpp
 	url = https://github.com/martbelko/yaml-cpp/
+[submodule "Dominion/vendor/Box2D"]
+	path = Dominion/vendor/Box2D
+	url = https://github.com/martbelko/box2d
