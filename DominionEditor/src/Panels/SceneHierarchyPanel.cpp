@@ -247,6 +247,15 @@ namespace Dominion {
 					ImGui::CloseCurrentPopup();
 				}
 
+				if (ImGui::MenuItem("Circle Renderer"))
+				{
+					if (!mSelectionContext.HasComponent<CircleRendererComponent>())
+						mSelectionContext.AddComponent<CircleRendererComponent>();
+					else
+						DM_CORE_WARN("This entity already has the Sprite Renderer Component!");
+					ImGui::CloseCurrentPopup();
+				}
+
 			ImGui::EndPopup();
 		}
 
@@ -341,6 +350,13 @@ namespace Dominion {
 			}
 
 			ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, 0.0f, 100.0f);
+		});
+
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](CircleRendererComponent& component)
+		{
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
+			ImGui::DragFloat("Thickness", &component.thickness, 0.025f, 0.0f, 1.0f);
+			ImGui::DragFloat("Fade", &component.fade, 0.00025f, 0.0f, 1.0f);
 		});
 
 	}

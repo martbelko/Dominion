@@ -149,6 +149,19 @@ namespace Dominion {
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<CircleRendererComponent>())
+		{
+			out << YAML::Key << "CircleRendererComponent";
+			out << YAML::BeginMap; // CircleRendererComponent
+
+			auto& spriteRendererComponent = entity.GetComponent<CircleRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.color;
+			out << YAML::Key << "Thickness" << YAML::Value << spriteRendererComponent.thickness;
+			out << YAML::Key << "Fade" << YAML::Value << spriteRendererComponent.fade;
+
+			out << YAML::EndMap; // CircleRendererComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -249,6 +262,15 @@ namespace Dominion {
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					src.color = spriteRendererComponent["Color"].as<glm::vec4>();
 				}
+
+				auto circleRendererComponent = entity["CircleRendererComponent"];
+				if (circleRendererComponent)
+				{
+					auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
+					crc.color = circleRendererComponent["Color"].as<glm::vec4>();
+					crc.thickness = circleRendererComponent["Thickness"].as<float>();
+					crc.fade = circleRendererComponent["Fade"].as<float>();
+				}
 			}
 		}
 
@@ -257,8 +279,8 @@ namespace Dominion {
 
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
 	{
-		// Not implemented
-		DM_CORE_ASSERT(false);
+		// TODO: Implement
+		DM_CORE_ASSERT(false, "Not implemented!");
 		return false;
 	}
 

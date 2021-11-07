@@ -55,6 +55,18 @@ namespace Dominion {
 			: color(color) {}
 	};
 
+	struct CircleRendererComponent
+	{
+		glm::vec4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float thickness = 1.0f;
+		float fade = 0.005f;
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+		CircleRendererComponent(const glm::vec4& color)
+			: color(color) {}
+	};
+
 	struct CameraComponent
 	{
 		SceneCamera camera;
