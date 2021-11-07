@@ -1,2 +1,2 @@
-* text eol=crlf
+*.cpp *.h *.hpp *.vert *.frag eol=crlf
 *.png binary
