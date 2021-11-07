@@ -514,6 +514,8 @@ namespace Dominion {
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
+			OnSceneStop();
+
 			mActiveScene = newScene;
 			mSceneFilepath = path;
 			mActiveScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
