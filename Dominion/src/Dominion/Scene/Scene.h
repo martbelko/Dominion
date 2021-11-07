@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Dominion/Core/Timestep.h"
+#include "Dominion/Core/UUID.h"
 #include "Dominion/Renderer/EditorCamera.h"
 
 #include "entt.hpp"
@@ -15,9 +16,16 @@ namespace Dominion {
 	{
 	public:
 		Scene();
-		~Scene();
+		Scene(const Scene& scene);
+		Scene(Scene&& scene) = delete; // TODO: Implement
 
-		Entity CreateEntity(const std::string& name = std::string());
+		Scene& operator=(const Scene& scene);
+		Scene& operator=(Scene&& scene) = delete; // TODO: Implement
+
+		~Scene();
+	public:
+		Entity CreateEntity(const std::string& name = "");
+		Entity CreateEntity(UUID uuid, const std::string& name = "");
 		void DestroyEntity(Entity entity);
 
 		void OnRuntimeStart();

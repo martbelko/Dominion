@@ -140,7 +140,7 @@ namespace Dominion {
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << "12837192831273"; // TODO: Entity ID goes here
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -296,16 +296,16 @@ namespace Dominion {
 		{
 			for (auto entity : entities)
 			{
-				uint64_t uuid = entity["Entity"].as<uint64_t>(); // TODO
+				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
 				if (tagComponent)
 					name = tagComponent["Tag"].as<std::string>();
 
-				DM_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+				DM_CORE_TRACE("Deserialized entity with UUID = {0}, name = {1}", uuid, name);
 
-				Entity deserializedEntity = mScene->CreateEntity(name);
+				Entity deserializedEntity = mScene->CreateEntity(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)

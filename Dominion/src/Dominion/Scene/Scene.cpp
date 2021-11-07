@@ -3,10 +3,10 @@
 
 #include "Components.h"
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Entity.h"
+#include "ScriptableEntity.h"
 
 #include <glm/glm.hpp>
-
-#include "Entity.h"
 
 #include "box2D/b2_world.h"
 #include "box2D/b2_body.h"
@@ -19,15 +19,9 @@ namespace Dominion {
 	{
 		switch (bodyType)
 		{
-			case Dominion::Rigidbody2DComponent::BodyType::Static:
-				return b2_staticBody;
-				break;
-			case Dominion::Rigidbody2DComponent::BodyType::Dynamic:
-				return b2_dynamicBody;
-				break;
-			case Dominion::Rigidbody2DComponent::BodyType::Kinematic:
-				return b2_kinematicBody;
-				break;
+			case Rigidbody2DComponent::BodyType::Static: return b2_staticBody;
+			case Rigidbody2DComponent::BodyType::Dynamic: return b2_dynamicBody;
+			case Rigidbody2DComponent::BodyType::Kinematic: return b2_kinematicBody;
 		}
 
 		DM_CORE_ASSERT(false, "Unknown Rigidbody2DType");
@@ -38,13 +32,30 @@ namespace Dominion {
 	{
 	}
 
+	Scene::Scene(const Scene& scene)
+	{
+		DM_CORE_ASSERT(false, "Not implemented");
+	}
+
+	Scene& Scene::operator=(const Scene& scene)
+	{
+		DM_CORE_ASSERT(false, "Not implemented");
+		return *this;
+	}
+
 	Scene::~Scene()
 	{
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntity(UUID(), name);
+	}
+
+	Entity Scene::CreateEntity(UUID uuid, const std::string& name)
+	{
 		Entity entity = { mRegistry.create(), this };
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.tag = name.empty() ? "Entity" : name;
@@ -250,6 +261,11 @@ namespace Dominion {
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
 		static_assert(false);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
 	}
 
 	template<>

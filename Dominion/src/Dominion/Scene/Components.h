@@ -7,10 +7,18 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
 #include "Dominion/Renderer/Texture.h"
+#include "Dominion/Core/UUID.h"
 
 namespace Dominion {
+
+	// Forward declarations
+	class ScriptableEntity;
+
+	struct IDComponent
+	{
+		UUID uuid;
+	};
 
 	struct TagComponent
 	{

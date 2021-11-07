@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Scene.h"
-
 #include "entt.hpp"
+
+#include "Dominion/Scene/Components.h"
+
+#include "Scene.h"
 
 namespace Dominion {
 
@@ -45,6 +47,8 @@ namespace Dominion {
 		operator bool() const { return mEntityHandle != entt::null; }
 		operator entt::entity() const { return mEntityHandle; }
 		operator uint32_t() const { return (uint32_t)mEntityHandle; }
+
+		UUID GetUUID() { return GetComponent<IDComponent>().uuid; }
 
 		bool operator==(const Entity& other) const
 		{
