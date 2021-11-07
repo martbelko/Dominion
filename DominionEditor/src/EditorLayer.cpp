@@ -233,6 +233,21 @@ namespace Dominion {
 				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 					OpenScene();
 
+				if (mSceneFilepath.empty())
+				{
+					ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+					ImGui::BeginDisabled();
+				}
+
+				if (ImGui::MenuItem("Save", "Ctrl+S"))
+					SaveSceneAs(mSceneFilepath);
+
+				if (mSceneFilepath.empty())
+				{
+					ImGui::EndDisabled();
+					ImGui::PopStyleVar();
+				}
+
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 					SaveSceneAs();
 
@@ -272,7 +287,6 @@ namespace Dominion {
 
 		mViewportFocused = ImGui::IsWindowFocused();
 		mViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!mViewportFocused && !mViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -371,6 +385,7 @@ namespace Dominion {
 			else if (mSceneState == SceneState::Play)
 				OnSceneStop();
 		}
+
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();
@@ -378,12 +393,15 @@ namespace Dominion {
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-		mCameraController.OnEvent(e);
-		mEditorCamera.OnEvent(e);
-
 		EventDispatcher dispatcher(e);
+		if (mViewportFocused || mViewportHovered)
+		{
+			mCameraController.OnEvent(e);
+			mEditorCamera.OnEvent(e);
+			dispatcher.Dispatch<MouseButtonPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+		}
+
 		dispatcher.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -413,8 +431,13 @@ namespace Dominion {
 			}
 			case Key::S:
 			{
-				if (control && shift)
-					SaveSceneAs();
+				if (control)
+				{
+					if (shift || mSceneFilepath.empty())
+						SaveSceneAs();
+					else
+						SaveSceneAs(mSceneFilepath);
+				}
 
 				break;
 			}
@@ -451,6 +474,8 @@ namespace Dominion {
 				break;
 			}
 		}
+
+		return false;
 	}
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
@@ -490,6 +515,7 @@ namespace Dominion {
 		if (serializer.Deserialize(path.string()))
 		{
 			mActiveScene = newScene;
+			mSceneFilepath = path;
 			mActiveScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
 			mSceneHierarchyPanel.SetContext(mActiveScene);
 		}
@@ -500,9 +526,16 @@ namespace Dominion {
 		std::filesystem::path filepath = FileDialogs::SaveFile("Dominion Scene (*.dominion)\0*.dominion\0");
 		if (!filepath.empty())
 		{
-			SceneSerializer serializer(mActiveScene);
-			serializer.Serialize(filepath.string());
+			mSceneFilepath = filepath;
+			SaveSceneAs(filepath);
 		}
+	}
+
+	void EditorLayer::SaveSceneAs(const std::filesystem::path& filepath)
+	{
+		DM_ASSERT(!filepath.empty(), "Filepath was empty");
+		SceneSerializer serializer(mActiveScene);
+		serializer.Serialize(filepath.string());
 	}
 
 	void EditorLayer::OnScenePlay()

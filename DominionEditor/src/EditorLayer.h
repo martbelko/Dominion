@@ -28,6 +28,7 @@ namespace Dominion {
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
+		void SaveSceneAs(const std::filesystem::path& filepath);
 
 		void OnScenePlay();
 		void OnSceneStop();
@@ -43,6 +44,8 @@ namespace Dominion {
 		Ref<Framebuffer> mFramebuffer;
 
 		Ref<Scene> mActiveScene;
+		std::filesystem::path mSceneFilepath = "";
+
 		Entity mSquareEntity;
 		Entity mCameraEntity;
 		Entity mSecondCamera;

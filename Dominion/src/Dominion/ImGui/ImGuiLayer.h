@@ -25,7 +25,7 @@ namespace Dominion {
 
 		void SetDarkThemeColors();
 	private:
-		bool mBlockEvents = true;
+		bool mBlockEvents = false;
 	};
 
 }
