@@ -233,19 +233,22 @@ namespace Dominion {
 				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 					OpenScene();
 
-				if (mSceneFilepath.empty())
 				{
-					ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-					ImGui::BeginDisabled();
-				}
+					bool canBeSimpleSaved = mSceneFilepath.empty();
+					if (!canBeSimpleSaved)
+					{
+						ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+						ImGui::BeginDisabled();
+					}
 
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
-					SaveSceneAs(mSceneFilepath);
+					if (ImGui::MenuItem("Save", "Ctrl+S"))
+						SaveSceneAs(mSceneFilepath);
 
-				if (mSceneFilepath.empty())
-				{
-					ImGui::EndDisabled();
-					ImGui::PopStyleVar();
+					if (!canBeSimpleSaved)
+					{
+						ImGui::EndDisabled();
+						ImGui::PopStyleVar();
+					}
 				}
 
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
