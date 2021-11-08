@@ -47,58 +47,6 @@ namespace Dominion {
 		}
 
 		mEditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-	#if 0
-		// Entity
-		auto square = mActiveScene->CreateEntity("Green Square");
-		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
-
-		auto redSquare = mActiveScene->CreateEntity("Red Square");
-		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-
-		mSquareEntity = square;
-
-		mCameraEntity = mActiveScene->CreateEntity("Camera A");
-		mCameraEntity.AddComponent<CameraComponent>();
-
-		mSecondCamera = mActiveScene->CreateEntity("Camera B");
-		auto& cc = mSecondCamera.AddComponent<CameraComponent>();
-		cc.primary = false;
-
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			virtual void OnCreate() override
-			{
-				auto& translation = GetComponent<TransformComponent>().translation;
-				translation.x = rand() % 10 - 5.0f;
-			}
-
-			virtual void OnDestroy() override
-			{
-			}
-
-			virtual void OnUpdate(Timestep ts) override
-			{
-				auto& translation = GetComponent<TransformComponent>().translation;
-
-				float speed = 5.0f;
-
-				if (Input::IsKeyPressed(Key::A))
-					translation.x -= speed * ts;
-				if (Input::IsKeyPressed(Key::D))
-					translation.x += speed * ts;
-				if (Input::IsKeyPressed(Key::W))
-					translation.y += speed * ts;
-				if (Input::IsKeyPressed(Key::S))
-					translation.y -= speed * ts;
-			}
-		};
-
-		mCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-		mSecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-	#endif
-
 		mSceneHierarchyPanel.SetContext(mActiveScene);
 	}
 
@@ -415,7 +363,11 @@ namespace Dominion {
 		{
 			Entity selectedEntity = mSceneHierarchyPanel.GetSelectedEntity();
 			if (selectedEntity)
-				mEditorScene->DuplicateEntity(selectedEntity);
+			{
+				Command* command = new DuplicateEntityCommand(selectedEntity);
+				command->Do();
+				mCommandStack.PushCommand(command);
+			}
 		}
 	}
 
@@ -430,6 +382,26 @@ namespace Dominion {
 
 		switch (e.GetKeyCode())
 		{
+			case Key::Z:
+			{
+				if (control)
+				{
+					Command* command = mCommandStack.GetLastCommand();
+					command->Undo();
+				}
+
+				break;
+			}
+			case Key::Y:
+			{
+				if (control)
+				{
+					Command* command = mCommandStack.GetNextCommand();
+					command->Do();
+				}
+
+				break;
+			}
 			case Key::D:
 			{
 				if (control)

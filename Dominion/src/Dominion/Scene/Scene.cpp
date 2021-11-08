@@ -277,7 +277,7 @@ namespace Dominion {
 		}
 	}
 
-	void Scene::DuplicateEntity(Entity entity)
+	Entity Scene::DuplicateEntity(Entity entity)
 	{
 		Entity newEntity = CreateEntity(entity.Name());
 
@@ -287,6 +287,8 @@ namespace Dominion {
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+
+		return newEntity;
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()

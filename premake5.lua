@@ -43,6 +43,7 @@ workspace "Dominion"
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "speed"
+		inlining "Auto"
 		defines
 		{
 			"DM_RELEASE"
@@ -55,6 +56,7 @@ workspace "Dominion"
 	filter "configurations:Dist"
 		runtime "Release"
 		optimize "speed"
+		inlining "Auto"
 		defines
 		{
 			"DM_DIST"
@@ -67,6 +69,7 @@ workspace "Dominion"
 	filter "configurations:PGO"
 		runtime "Release"
 		optimize "speed"
+		inlining "Auto"
 		defines
 		{
 			"DM_PGO"

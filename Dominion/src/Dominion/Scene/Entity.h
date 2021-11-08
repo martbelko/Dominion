@@ -70,6 +70,9 @@ namespace Dominion {
 		operator entt::entity() const { return mEntityHandle; }
 		operator uint32_t() const { return (uint32_t)mEntityHandle; }
 
+		Scene* GetScene() { return mScene; }
+		const Scene* GetScene() const { return mScene; }
+
 		UUID GetUUID() { return GetComponent<IDComponent>().uuid; }
 		std::string& Name() { return GetComponent<TagComponent>().tag; }
 		TransformComponent& Transform() { return GetComponent<TransformComponent>(); }

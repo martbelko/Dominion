@@ -1,10 +1,13 @@
 #pragma once
 
-#include "Dominion.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "CommandStack.h"
 
+#include "Dominion.h"
 #include "Dominion/Renderer/EditorCamera.h"
+
+#include <vector>
 
 namespace Dominion {
 
@@ -84,6 +87,9 @@ namespace Dominion {
 
 		// Editor resources
 		Ref<Texture2D> mIconPlay, mIconStop, mIconPause;
+
+		// Commands
+		CommandStack mCommandStack;
 	};
 
 }
