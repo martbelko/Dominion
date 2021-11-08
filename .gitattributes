@@ -1,2 +1,7 @@
-*.cpp *.h *.hpp *.vert *.frag eol=crlf
+**.cpp eol=lf
+**.h eol=lf
+**.hpp eol=lf
+**.frag eol=lf
+**.vert eol=lf
+
 *.png binary
