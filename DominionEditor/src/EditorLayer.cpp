@@ -14,7 +14,7 @@
 
 namespace Dominion {
 
-	extern const std::filesystem::path gAssetPath;
+	extern const std::filesystem::path gAssetPath; // TODO: Move to project
 
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), mCameraController(1280.0f / 720.0f), mSquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
@@ -522,7 +522,7 @@ namespace Dominion {
 
 	void EditorLayer::OpenScene()
 	{
-		std::filesystem::path filepath = FileDialogs::OpenFile("Dominion Scene (*.dominion)\0*.dominion\0");
+		std::filesystem::path filepath = FileDialogs::OpenFile("Dominion Scene (*.dscene)\0*.dscene\0");
 		if (!filepath.empty())
 			OpenScene(filepath.string());
 	}
@@ -532,7 +532,7 @@ namespace Dominion {
 		if (mSceneState != SceneState::Edit)
 			OnSceneStop();
 
-		if (path.extension().string() != ".dominion")
+		if (path.extension().string() != ".dscene")
 		{
 			DM_WARN("Could not load {0} - not a scene file", path.filename().string());
 			return;
@@ -561,7 +561,7 @@ namespace Dominion {
 
 	void EditorLayer::SaveSceneAs()
 	{
-		std::filesystem::path filepath = FileDialogs::SaveFile("Dominion Scene (*.dominion)\0*.dominion\0");
+		std::filesystem::path filepath = FileDialogs::SaveFile("Dominion Scene (*.dscene)\0*.dscene\0");
 		if (!filepath.empty())
 		{
 			SerializeScene(mEditorScene, filepath);
