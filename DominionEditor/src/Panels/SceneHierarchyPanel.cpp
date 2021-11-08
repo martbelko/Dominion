@@ -6,7 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Dominion/Scene/Components.h"
-#include <cstring>
+
+#define _CRT_SECURE_NO_WARNINGS
 
 namespace Dominion {
 
