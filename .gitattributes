@@ -8,6 +8,10 @@
 *.vert text eol=lf
 *.frag text eol=lf
 
+*.lua text eol=lf
+
+*.dscene text eol=lf
+
 *.ttf text eol=crlf
 
 *.png binary
