@@ -20,6 +20,8 @@ namespace Dominion {
 		void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
 		void OnEvent(Event& e) override;
+
+		void OnDuplicateEntityCommand();
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -27,8 +29,10 @@ namespace Dominion {
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
 		void SaveSceneAs();
-		void SaveSceneAs(const std::filesystem::path& filepath);
+
+		static void SerializeScene(Ref<Scene>& scene, const std::filesystem::path& filepath);
 
 		void OnScenePlay();
 		void OnSceneStop();
@@ -43,8 +47,8 @@ namespace Dominion {
 		Ref<Shader> mFlatColorShader;
 		Ref<Framebuffer> mFramebuffer;
 
-		Ref<Scene> mActiveScene;
-		std::filesystem::path mSceneFilepath = "";
+		Ref<Scene> mActiveScene, mEditorScene;
+		std::filesystem::path mEditorSceneFilepath = std::filesystem::path();
 
 		Entity mSquareEntity;
 		Entity mCameraEntity;

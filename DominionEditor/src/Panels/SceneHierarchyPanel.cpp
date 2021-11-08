@@ -26,25 +26,26 @@ namespace Dominion {
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-
-		mContext->mRegistry.each([&](auto entityID)
+		if (mContext)
 		{
-			Entity entity{ entityID , mContext.get() };
-			DrawEntityNode(entity);
-		});
+			mContext->mRegistry.each([&](auto entityID)
+			{
+					Entity entity{ entityID , mContext.get() };
+					DrawEntityNode(entity);
+			});
 
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			mSelectionContext = {};
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				mSelectionContext = {};
 
-		// Right-click on blank space
-		if (ImGui::BeginPopupContextWindow(0, 1, false))
-		{
-			if (ImGui::MenuItem("Create Empty Entity"))
-				mContext->CreateEntity("Empty Entity");
+			// Right-click on blank space
+			if (ImGui::BeginPopupContextWindow(0, 1, false))
+			{
+				if (ImGui::MenuItem("Create Empty Entity"))
+					mContext->CreateEntity("Empty Entity");
 
-			ImGui::EndPopup();
+				ImGui::EndPopup();
+			}
 		}
-
 		ImGui::End();
 
 		ImGui::Begin("Properties");
@@ -74,10 +75,13 @@ namespace Dominion {
 		}
 
 		bool entityDeleted = false;
+		bool entityDuplicated = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				entityDeleted = true;
+			else if (ImGui::MenuItem("Duplicate Entity"))
+				entityDuplicated = true;
 
 			ImGui::EndPopup();
 		}

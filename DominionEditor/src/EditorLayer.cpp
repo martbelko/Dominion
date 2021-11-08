@@ -35,7 +35,8 @@ namespace Dominion {
 		fbSpec.height = 720;
 		mFramebuffer = Framebuffer::Create(fbSpec);
 
-		mActiveScene = CreateRef<Scene>();
+		mEditorScene = CreateRef<Scene>();
+		mActiveScene = mEditorScene;
 
 		auto commandLineArgs = Application::Get().GetCommandLineArgs();
 		if (commandLineArgs.count > 1)
@@ -234,7 +235,7 @@ namespace Dominion {
 					OpenScene();
 
 				{
-					bool canBeSimpleSaved = mSceneFilepath.empty();
+					bool canBeSimpleSaved = mEditorSceneFilepath.empty();
 					if (!canBeSimpleSaved)
 					{
 						ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
@@ -242,7 +243,7 @@ namespace Dominion {
 					}
 
 					if (ImGui::MenuItem("Save", "Ctrl+S"))
-						SaveSceneAs(mSceneFilepath);
+						SaveSceneAs();
 
 					if (!canBeSimpleSaved)
 					{
@@ -407,6 +408,17 @@ namespace Dominion {
 		dispatcher.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 	}
 
+
+	void EditorLayer::OnDuplicateEntityCommand()
+	{
+		if (mSceneState == SceneState::Edit)
+		{
+			Entity selectedEntity = mSceneHierarchyPanel.GetSelectedEntity();
+			if (selectedEntity)
+				mEditorScene->DuplicateEntity(selectedEntity);
+		}
+	}
+
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
 	{
 		// Shortcuts
@@ -418,6 +430,13 @@ namespace Dominion {
 
 		switch (e.GetKeyCode())
 		{
+			case Key::D:
+			{
+				if (control)
+					OnDuplicateEntityCommand();
+
+				break;
+			}
 			case Key::N:
 			{
 				if (control)
@@ -436,10 +455,10 @@ namespace Dominion {
 			{
 				if (control)
 				{
-					if (shift || mSceneFilepath.empty())
+					if (shift)
 						SaveSceneAs();
 					else
-						SaveSceneAs(mSceneFilepath);
+						SaveScene();
 				}
 
 				break;
@@ -493,9 +512,12 @@ namespace Dominion {
 
 	void EditorLayer::NewScene()
 	{
-		mActiveScene = CreateRef<Scene>();
-		mActiveScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
-		mSceneHierarchyPanel.SetContext(mActiveScene);
+		mEditorScene = CreateRef<Scene>();
+		mEditorScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
+		mSceneHierarchyPanel.SetContext(mEditorScene);
+
+		mActiveScene = mEditorScene;
+		mEditorSceneFilepath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene()
@@ -507,6 +529,9 @@ namespace Dominion {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		if (mSceneState != SceneState::Edit)
+			OnSceneStop();
+
 		if (path.extension().string() != ".dominion")
 		{
 			DM_WARN("Could not load {0} - not a scene file", path.filename().string());
@@ -517,13 +542,21 @@ namespace Dominion {
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			OnSceneStop();
+			mEditorScene = newScene;
+			mEditorSceneFilepath = path;
+			mEditorScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
+			mSceneHierarchyPanel.SetContext(mEditorScene);
 
-			mActiveScene = newScene;
-			mSceneFilepath = path;
-			mActiveScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
-			mSceneHierarchyPanel.SetContext(mActiveScene);
+			mActiveScene = mEditorScene;
 		}
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		if (mEditorSceneFilepath.empty())
+			SaveSceneAs();
+		else
+			SerializeScene(mEditorScene, mEditorSceneFilepath);
 	}
 
 	void EditorLayer::SaveSceneAs()
@@ -531,28 +564,33 @@ namespace Dominion {
 		std::filesystem::path filepath = FileDialogs::SaveFile("Dominion Scene (*.dominion)\0*.dominion\0");
 		if (!filepath.empty())
 		{
-			mSceneFilepath = filepath;
-			SaveSceneAs(filepath);
+			SerializeScene(mEditorScene, filepath);
+			mEditorSceneFilepath = filepath;
 		}
 	}
 
-	void EditorLayer::SaveSceneAs(const std::filesystem::path& filepath)
+	void EditorLayer::SerializeScene(Ref<Scene>& scene, const std::filesystem::path& filepath)
 	{
-		DM_ASSERT(!filepath.empty(), "Filepath was empty");
-		SceneSerializer serializer(mActiveScene);
+		SceneSerializer serializer(scene);
 		serializer.Serialize(filepath.string());
 	}
 
 	void EditorLayer::OnScenePlay()
 	{
-		mSceneState = SceneState::Play;
+		mActiveScene = CreateRef<Scene>(*mEditorScene);
 		mActiveScene->OnRuntimeStart();
+		mSceneState = SceneState::Play;
+
+		mSceneHierarchyPanel.SetContext(mActiveScene);
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
-		mSceneState = SceneState::Edit;
 		mActiveScene->OnRuntimeStop();
+		mActiveScene = mEditorScene;
+		mSceneState = SceneState::Edit;
+
+		mSceneHierarchyPanel.SetContext(mEditorScene);
 	}
 
 }

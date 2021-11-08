@@ -24,6 +24,28 @@ namespace Dominion {
 			return component;
 		}
 
+		template<typename T, typename... Args>
+		T& AddOrGetComponent(Args&&... args)
+		{
+			if (HasComponent<T>())
+				return GetComponent<T>();
+
+			T& component = mScene->mRegistry.emplace<T>(mEntityHandle, std::forward<Args>(args)...);
+			mScene->OnComponentAdded<T>(*this, component);
+			return component;
+		}
+
+		template<typename T, typename... Args>
+		T& AddOrReplaceComponent(Args&&... args)
+		{
+			if (HasComponent<T>())
+				return GetComponent<T>() = T(std::forward<Args>(args)...);
+
+			T& component = mScene->mRegistry.emplace<T>(mEntityHandle, std::forward<Args>(args)...);
+			mScene->OnComponentAdded<T>(*this, component);
+			return component;
+		}
+
 		template<typename T>
 		T& GetComponent()
 		{
@@ -49,6 +71,8 @@ namespace Dominion {
 		operator uint32_t() const { return (uint32_t)mEntityHandle; }
 
 		UUID GetUUID() { return GetComponent<IDComponent>().uuid; }
+		std::string& Name() { return GetComponent<TagComponent>().tag; }
+		TransformComponent& Transform() { return GetComponent<TransformComponent>(); }
 
 		bool operator==(const Entity& other) const
 		{

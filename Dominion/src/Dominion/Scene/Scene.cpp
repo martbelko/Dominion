@@ -32,9 +32,41 @@ namespace Dominion {
 	{
 	}
 
-	Scene::Scene(const Scene& scene)
+	template<typename Component>
+	static void CopyComponentIfExists(entt::registry& dst, entt::entity dstEntity, entt::registry& src, entt::entity srcEntity)
 	{
-		DM_CORE_ASSERT(false, "Not implemented");
+		if (src.has<Component>(srcEntity))
+			dst.emplace_or_replace<Component>(dstEntity, src.get<Component>(srcEntity));
+	}
+
+	template<typename Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+	}
+
+	Scene::Scene(Scene& other)
+	{
+		mViewportWidth = other.mViewportWidth;
+		mViewportHeight = other.mViewportHeight;
+
+		auto idView = other.mRegistry.view<IDComponent>();
+		for (auto eid : idView)
+		{
+			Entity entity = Entity(eid, &other);
+
+			UUID uuid = entity.GetUUID();
+			const auto& name = entity.GetComponent<TagComponent>().tag;
+
+			Entity newEntity = CreateEntity(uuid, name);
+			CopyComponentIfExists<TransformComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<CameraComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<SpriteRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<CircleRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<Rigidbody2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<BoxCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
+		}
 	}
 
 	Scene& Scene::operator=(const Scene& scene)
@@ -56,9 +88,8 @@ namespace Dominion {
 	{
 		Entity entity = { mRegistry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
+		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
 		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>();
-		tag.tag = name.empty() ? "Entity" : name;
 		return entity;
 	}
 
@@ -70,6 +101,7 @@ namespace Dominion {
 	void Scene::OnRuntimeStart()
 	{
 		mPhysics2DWorld = new b2World({ 0.0f, -9.8f });
+
 		auto view = mRegistry.view<Rigidbody2DComponent>();
 		for (auto eid : view)
 		{
@@ -243,6 +275,18 @@ namespace Dominion {
 			if (!cameraComponent.fixedAspectRatio)
 				cameraComponent.camera.SetViewportSize(width, height);
 		}
+	}
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.Name());
+
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()

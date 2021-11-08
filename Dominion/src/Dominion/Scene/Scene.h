@@ -16,11 +16,11 @@ namespace Dominion {
 	{
 	public:
 		Scene();
-		Scene(const Scene& scene);
-		Scene(Scene&& scene) = delete; // TODO: Implement
+		Scene(Scene& other);
+		Scene(Scene&& other) = delete; // TODO: Implement
 
-		Scene& operator=(const Scene& scene);
-		Scene& operator=(Scene&& scene) = delete; // TODO: Implement
+		Scene& operator=(const Scene& other);
+		Scene& operator=(Scene&& other) = delete; // TODO: Implement
 
 		~Scene();
 	public:
@@ -34,6 +34,8 @@ namespace Dominion {
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
+
+		void DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
 	private:
