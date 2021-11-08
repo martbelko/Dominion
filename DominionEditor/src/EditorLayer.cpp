@@ -400,7 +400,7 @@ namespace Dominion {
 						deletedEntity = dec->GetCreatedEntity();
 					}
 
-					if (deletedEntity)
+					if (deletedEntity && mSceneHierarchyPanel.GetSelectedEntity() == deletedEntity)
 						mSceneHierarchyPanel.SetSelectedEntity(Entity());
 
 					command->Undo();
