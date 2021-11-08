@@ -48,6 +48,7 @@ namespace Dominion {
 
 		mEditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		mSceneHierarchyPanel.SetContext(mActiveScene);
+		mSceneHierarchyPanel.SetCommandStack(mCommandStack);
 	}
 
 	void EditorLayer::OnDetach()
@@ -387,6 +388,21 @@ namespace Dominion {
 				if (control)
 				{
 					Command* command = mCommandStack.GetLastCommand();
+					Entity deletedEntity;
+					if (command->GetCommandType() == CommandType::AddEntity)
+					{
+						AddEntityCommand* adc = static_cast<AddEntityCommand*>(command);
+						deletedEntity = adc->GetCreatedEntity();
+					}
+					else if (command->GetCommandType() == CommandType::DuplicateEntity)
+					{
+						DuplicateEntityCommand* dec = static_cast<DuplicateEntityCommand*>(command);
+						deletedEntity = dec->GetCreatedEntity();
+					}
+
+					if (deletedEntity)
+						mSceneHierarchyPanel.SetSelectedEntity(Entity());
+
 					command->Undo();
 				}
 

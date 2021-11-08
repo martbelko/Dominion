@@ -20,4 +20,19 @@ namespace Dominion {
 		mDstEntity = Entity();
 	}
 
+	AddEntityCommand::AddEntityCommand(Ref<Scene>& scene, const std::string& name, UUID uuid)
+		: mScene(scene), mUUID(uuid), mName(name)
+	{
+	}
+
+	void AddEntityCommand::Do()
+	{
+		mEntity = mScene->CreateEntity(mUUID, mName);
+	}
+
+	void AddEntityCommand::Undo()
+	{
+		mEntity.GetScene()->DestroyEntity(mEntity);
+	}
+
 }

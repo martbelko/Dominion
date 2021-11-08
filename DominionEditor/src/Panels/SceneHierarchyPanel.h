@@ -4,15 +4,18 @@
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/Entity.h"
 
+#include "CommandStack.h"
+
 namespace Dominion {
 
 	class SceneHierarchyPanel
 	{
 	public:
 		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(const Ref<Scene>& scene);
+		SceneHierarchyPanel(const Ref<Scene>& scene, CommandStack& commandStack);
 
 		void SetContext(const Ref<Scene>& scene);
+		void SetCommandStack(CommandStack& commandStack);
 
 		void OnImGuiRender();
 
@@ -24,6 +27,7 @@ namespace Dominion {
 	private:
 		Ref<Scene> mContext;
 		Entity mSelectionContext;
+		CommandStack* mCommandStack = nullptr;
 	};
 
 }

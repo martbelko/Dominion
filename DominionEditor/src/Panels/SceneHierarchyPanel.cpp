@@ -7,13 +7,14 @@
 
 #include "Dominion/Scene/Components.h"
 
-#define _CRT_SECURE_NO_WARNINGS
+#include "Commands.h"
 
 namespace Dominion {
 
 	extern const std::filesystem::path gAssetPath;
 
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
+	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context, CommandStack& commandStack)
+		: mCommandStack(&commandStack)
 	{
 		SetContext(context);
 	}
@@ -22,6 +23,11 @@ namespace Dominion {
 	{
 		mContext = context;
 		mSelectionContext = {};
+	}
+
+	void SceneHierarchyPanel::SetCommandStack(CommandStack& commandStack)
+	{
+		mCommandStack = &commandStack;
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -42,7 +48,12 @@ namespace Dominion {
 			if (ImGui::BeginPopupContextWindow(0, 1, false))
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
-					mContext->CreateEntity("Empty Entity");
+				{
+					Command* command = new AddEntityCommand(mContext, "Empty Entity");
+					command->Do();
+					mCommandStack->PushCommand(command);
+					// mContext->CreateEntity("Empty Entity");
+				}
 
 				ImGui::EndPopup();
 			}
