@@ -1,7 +1,14 @@
-**.cpp eol=lf
-**.h eol=lf
-**.hpp eol=lf
-**.frag eol=lf
-**.vert eol=lf
+* text=auto
+
+*.c text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+
+*.vert text eol=lf
+*.frag text eol=lf
+
+*.ttf text eol=crlf
 
 *.png binary
+*.jpg binary
