@@ -12,7 +12,7 @@ namespace Dominion {
 	{
 	public:
 		EditorLayer();
-		virtual ~EditorLayer() = default;
+		virtual ~EditorLayer() override = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
@@ -73,7 +73,8 @@ namespace Dominion {
 		enum class SceneState
 		{
 			Edit = 0,
-			Play
+			Play,
+			Pause
 		};
 		SceneState mSceneState = SceneState::Edit;
 
@@ -82,7 +83,7 @@ namespace Dominion {
 		ContentBrowserPanel mContentBrowserPanel;
 
 		// Editor resources
-		Ref<Texture2D> mIconPlay, mIconStop;
+		Ref<Texture2D> mIconPlay, mIconStop, mIconPause;
 	};
 
 }
