@@ -12,7 +12,6 @@
 
 *.dscene text eol=lf
 
-*.ttf text eol=crlf
-
 *.png binary
 *.jpg binary
+*.ttf binary
