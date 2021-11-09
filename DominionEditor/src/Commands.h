@@ -3,6 +3,8 @@
 #include <Dominion/Core/UUID.h>
 #include <Dominion/Scene/Entity.h>
 
+#include <tuple>
+
 namespace Dominion {
 
 	enum class CommandType
@@ -54,14 +56,33 @@ namespace Dominion {
 		Entity mEntity;
 	};
 
+	template<typename Component>
 	class AddComponentCommand final : public Command
 	{
 	public:
-		// TODO: Implement
-		virtual void Do() override {}
-		virtual void Undo() override {}
+		template<typename... Args>
+		AddComponentCommand(Entity entity, Args&&... args)
+			: mEntity(entity), mComponentCopy(args...)
+		{
+		}
+
+		// TODO: Rule of 5
+
+		virtual void Do() override
+		{
+			mEntity.AddComponent<Component>(mComponentCopy);
+		}
+
+		virtual void Undo() override
+		{
+			mComponentCopy = mEntity.GetComponent<Component>();
+			mEntity.RemoveComponent<Component>();
+		}
 
 		virtual CommandType GetCommandType() const { return CommandType::AddComponent; }
+	private:
+		Entity mEntity;
+		Component mComponentCopy;
 	};
 
 	class DuplicateEntityCommand : public Command

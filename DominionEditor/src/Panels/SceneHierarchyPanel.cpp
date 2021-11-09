@@ -249,7 +249,9 @@ namespace Dominion {
 			{
 				if (ImGui::MenuItem("Camera"))
 				{
-					mSelectionContext.AddComponent<CameraComponent>();
+					Command* command = new AddComponentCommand<CameraComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -258,7 +260,9 @@ namespace Dominion {
 			{
 				if (ImGui::MenuItem("Sprite Renderer"))
 				{
-					mSelectionContext.AddComponent<SpriteRendererComponent>();
+					Command* command = new AddComponentCommand<SpriteRendererComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -267,7 +271,9 @@ namespace Dominion {
 			{
 				if (ImGui::MenuItem("Circle Renderer"))
 				{
-					mSelectionContext.AddComponent<CircleRendererComponent>();
+					Command* command = new AddComponentCommand<CircleRendererComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -276,7 +282,9 @@ namespace Dominion {
 			{
 				if (ImGui::MenuItem("Rigidbody 2D"))
 				{
-					mSelectionContext.AddComponent<Rigidbody2DComponent>();
+					Command* command = new AddComponentCommand<Rigidbody2DComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -285,7 +293,9 @@ namespace Dominion {
 			{
 				if (ImGui::MenuItem("Box Collider 2D"))
 				{
-					mSelectionContext.AddComponent<BoxCollider2DComponent>();
+					Command* command = new AddComponentCommand<BoxCollider2DComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
 					ImGui::CloseCurrentPopup();
 				}
 			}
