@@ -35,6 +35,15 @@ namespace Dominion {
 		int entityID;
 	};
 
+	struct LineVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+
+		// Editor-only
+		int entityID;
+	};
+
 	struct Renderer2DData
 	{
 		static constexpr uint32_t MAX_QUADS = 20000;
@@ -51,6 +60,10 @@ namespace Dominion {
 		Ref<VertexBuffer> circleVertexBuffer;
 		Ref<Shader> circleShader;
 
+		Ref<VertexArray> lineVertexArray;
+		Ref<VertexBuffer> lineVertexBuffer;
+		Ref<Shader> lineShader;
+
 		uint32_t quadIndexCount = 0;
 		QuadVertex* quadVertexBufferBase = nullptr;
 		QuadVertex* quadVertexBufferPtr = nullptr;
@@ -58,6 +71,10 @@ namespace Dominion {
 		uint32_t circleIndexCount = 0;
 		CircleVertex* circleVertexBufferBase = nullptr;
 		CircleVertex* circleVertexBufferPtr = nullptr;
+
+		uint32_t lineVertexCount = 0;
+		LineVertex* lineVertexBufferBase = nullptr;
+		LineVertex* lineVertexBufferPtr = nullptr;
 
 		std::array<Ref<Texture2D>, MAX_TEXTURE_SLOTS> textureSlots;
 		uint32_t textureSlotIndex = 1; // 0 = white texture
@@ -80,21 +97,20 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
+		// Quads
 		sData.quadVertexArray = VertexArray::Create();
 
 		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_VERTICES * sizeof(QuadVertex));
 		sData.quadVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position"     },
-			{ ShaderDataType::Float4, "a_Color"        },
-			{ ShaderDataType::Float2, "a_TexCoord"     },
-			{ ShaderDataType::Float,  "a_TexIndex"     },
-			{ ShaderDataType::Float,  "a_TilingFactor" },
-			{ ShaderDataType::Int,    "a_EntityID"     }
+			{ ShaderDataType::Float3, "aPosition"     },
+			{ ShaderDataType::Float4, "aColor"        },
+			{ ShaderDataType::Float2, "aTexCoord"     },
+			{ ShaderDataType::Float,  "aTexIndex"     },
+			{ ShaderDataType::Float,  "aTilingFactor" },
+			{ ShaderDataType::Int,    "aEntityID"     }
 		});
 		sData.quadVertexArray->AddVertexBuffer(sData.quadVertexBuffer);
-
 		sData.quadVertexBufferBase = new QuadVertex[sData.MAX_VERTICES];
-
 		uint32_t* quadIndices = new uint32_t[sData.MAX_INDICES];
 
 		uint32_t offset = 0;
@@ -120,16 +136,28 @@ namespace Dominion {
 
 		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_VERTICES * sizeof(CircleVertex));
 		sData.circleVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_WorldPosition" },
-			{ ShaderDataType::Float3, "a_LocalPosition" },
-			{ ShaderDataType::Float4, "a_Color" },
-			{ ShaderDataType::Float,  "a_Thickness" },
-			{ ShaderDataType::Float,  "a_Fade" },
-			{ ShaderDataType::Int,    "a_EntityID" }
+			{ ShaderDataType::Float3, "aWorldPosition" },
+			{ ShaderDataType::Float3, "aLocalPosition" },
+			{ ShaderDataType::Float4, "aColor" },
+			{ ShaderDataType::Float,  "aThickness" },
+			{ ShaderDataType::Float,  "aFade" },
+			{ ShaderDataType::Int,    "aEntityID" }
 		});
 		sData.circleVertexArray->AddVertexBuffer(sData.circleVertexBuffer);
 		sData.circleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
 		sData.circleVertexBufferBase = new CircleVertex[sData.MAX_VERTICES];
+
+		// Lines
+		sData.lineVertexArray = VertexArray::Create();
+
+		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_VERTICES * sizeof(LineVertex));
+		sData.lineVertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "aPosition" },
+			{ ShaderDataType::Float4, "aColor" },
+			{ ShaderDataType::Int,    "aEntityID" }
+		});
+		sData.lineVertexArray->AddVertexBuffer(sData.lineVertexBuffer);
+		sData.lineVertexBufferBase = new LineVertex[sData.MAX_VERTICES];
 
 		sData.whiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
@@ -141,6 +169,7 @@ namespace Dominion {
 
 		sData.quadShader = Shader::Create("assets/shaders/Renderer2DQuad.vert", "assets/shaders/Renderer2DQuad.frag");
 		sData.circleShader = Shader::Create("assets/shaders/Renderer2DCircle.vert", "assets/shaders/Renderer2DCircle.frag");
+		sData.lineShader = Shader::Create("assets/shaders/Renderer2DLine.vert", "assets/shaders/Renderer2DLine.frag");
 
 		// Set first texture slot to 0
 		sData.textureSlots[0] = sData.whiteTexture;
@@ -205,6 +234,9 @@ namespace Dominion {
 		sData.circleIndexCount = 0;
 		sData.circleVertexBufferPtr = sData.circleVertexBufferBase;
 
+		sData.lineVertexCount = 0;
+		sData.lineVertexBufferPtr = sData.lineVertexBufferBase;
+
 		sData.textureSlotIndex = 1;
 	}
 
@@ -231,6 +263,16 @@ namespace Dominion {
 
 			sData.circleShader->Bind();
 			RenderCommand::DrawIndexed(sData.circleVertexArray, sData.circleIndexCount);
+			++sData.stats.drawCalls;
+		}
+
+		if (sData.lineVertexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)sData.lineVertexBufferPtr - (uint8_t*)sData.lineVertexBufferBase);
+			sData.lineVertexBuffer->SetData(sData.lineVertexBufferBase, dataSize);
+
+			sData.lineShader->Bind();
+			RenderCommand::Draw(sData.lineVertexArray, sData.lineVertexCount);
 			++sData.stats.drawCalls;
 		}
 	}
@@ -409,6 +451,50 @@ namespace Dominion {
 			DrawQuad(transform, src.texture, src.tilingFactor, src.color, entityID);
 		else
 			DrawQuad(transform, src.color, entityID);
+	}
+
+	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+	{
+		if (sData.lineVertexCount >= Renderer2DData::MAX_INDICES)
+			NextBatch();
+
+		sData.lineVertexBufferPtr->position = p0;
+		sData.lineVertexBufferPtr->color = color;
+		sData.lineVertexBufferPtr->entityID = entityID;
+		++sData.lineVertexBufferPtr;
+
+		sData.lineVertexBufferPtr->position = p1;
+		sData.lineVertexBufferPtr->color = color;
+		sData.lineVertexBufferPtr->entityID = entityID;
+		++sData.lineVertexBufferPtr;
+
+		sData.lineVertexCount += 2;
+
+		++sData.stats.lineCount;
+	}
+
+	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
+	{
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+		DrawRect(transform, color, entityID);
+	}
+
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
+	{
+		glm::vec4 vertices[4];
+		for (size_t i = 0; i < 4; ++i)
+			vertices[i] = transform * sData.quadVertexPositions[i];
+
+		// TODO: Refactor when added Topology
+		DrawLine(vertices[0], vertices[1], color, entityID);
+		DrawLine(vertices[1], vertices[2], color, entityID);
+		DrawLine(vertices[2], vertices[3], color, entityID);
+		DrawLine(vertices[3], vertices[0], color, entityID);
+	}
+
+	void Renderer2D::SetLineWidth(float lineWidth)
+	{
+		RenderCommand::SetLineWidth(lineWidth);
 	}
 
 	void Renderer2D::ResetStats()

@@ -27,6 +27,16 @@ namespace Dominion {
 			sRendererAPI->Clear();
 		}
 
+		static void SetLineWidth(float lineWidth)
+		{
+			sRendererAPI->SetLineWidth(lineWidth);
+		}
+
+		static void Draw(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+		{
+			sRendererAPI->Draw(vertexArray, vertexCount);
+		}
+
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
 		{
 			sRendererAPI->DrawIndexed(vertexArray, count);
