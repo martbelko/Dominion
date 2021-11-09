@@ -28,12 +28,18 @@ namespace Dominion {
 		mCheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 		mIconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
 		mIconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		mIconNoPrimaryCameraFound = Texture2D::Create("Resources/Icons/NoPrimaryCameraFound.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.width = 1280;
 		fbSpec.height = 720;
 		mFramebuffer = Framebuffer::Create(fbSpec);
+
+		fbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+		fbSpec.width = 100;
+		fbSpec.height = 100;
+		mCameraFramebuffer = Framebuffer::Create(fbSpec);
 
 		mEditorScene = CreateRef<Scene>();
 		mActiveScene = mEditorScene;
@@ -68,7 +74,13 @@ namespace Dominion {
 			mFramebuffer->Resize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
 			mCameraController.OnResize(mViewportSize.x, mViewportSize.y);
 			mEditorCamera.SetViewportSize(mViewportSize.x, mViewportSize.y);
-			mActiveScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
+		}
+
+		if (FramebufferSpecification spec = mCameraFramebuffer->GetSpecification();
+			mCameraViewViewportSize.x > 0.0f && mCameraViewViewportSize.y > 0.0f &&
+			(spec.width != mCameraViewViewportSize.x || spec.height != mCameraViewViewportSize.y))
+		{
+			mCameraFramebuffer->Resize((uint32_t)mCameraViewViewportSize.x, (uint32_t)mCameraViewViewportSize.y);
 		}
 
 		// Render
@@ -88,8 +100,22 @@ namespace Dominion {
 					mCameraController.OnUpdate(ts);
 
 				mEditorCamera.OnUpdate(ts);
+				mEditorScene->OnUpdateEditor(ts, mEditorCamera);
 
-				mActiveScene->OnUpdateEditor(ts, mEditorCamera);
+				mCameraFramebuffer->Bind();
+				RenderCommand::Clear();
+
+				Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
+				if (primaryCameraEntity && mCameraViewViewportSize.x > 0 && mCameraViewViewportSize.y > 0)
+				{
+					TransformComponent& tc = primaryCameraEntity.Transform();
+					CameraComponent& cc = primaryCameraEntity.GetComponent<CameraComponent>();
+					cc.camera.SetViewportSize(mCameraViewViewportSize.x, mCameraViewViewportSize.y);;
+					mEditorScene->OnUpdateEditor(ts, cc.camera, tc.GetTransform());
+				}
+
+				mFramebuffer->Bind();
+
 				break;
 			}
 			case SceneState::Play:
@@ -256,6 +282,46 @@ namespace Dominion {
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		if (ImGui::Begin("Primary Camera Preview"))
+		{
+			Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
+			if (primaryCameraEntity)
+			{
+				std::string title = "Primary camera entity name: " + primaryCameraEntity.Name();
+				ImGui::Text(title.c_str());
+
+				ImVec2 cameraViewWindowSize = ImGui::GetContentRegionAvail();
+				mCameraViewViewportSize = { cameraViewWindowSize.x, cameraViewWindowSize.y };
+				mCameraFramebuffer->Bind();
+				uint64_t cameraTextureID = mCameraFramebuffer->GetColorAttachmentRendererID();
+				ImGui::Image(reinterpret_cast<void*>(cameraTextureID), ImVec2{ mCameraViewViewportSize.x, mCameraViewViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+				mCameraFramebuffer->Unbind();
+			}
+			else
+			{
+				auto TextCentered = [&](std::string text) -> void
+				{
+					auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+					auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+					auto viewportOffset = ImGui::GetWindowPos();
+					glm::vec2 bounds[2];
+					bounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+					bounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+					glm::vec2 windowSize = { viewportMaxRegion.x - viewportMinRegion.x, viewportMaxRegion.y - viewportMinRegion.y };
+
+					auto textSize = ImGui::CalcTextSize(text.c_str());
+					auto x = (windowSize.x - textSize.x) * 0.5f;
+					auto y = (windowSize.y - textSize.y) * 0.5f;
+
+					ImGui::SetCursorScreenPos({ bounds[0].x + x, bounds[0].y + y });
+					ImGui::Text(text.c_str());
+				};
+
+				TextCentered("No Primary Camera Found");
+			}
+		}
+		ImGui::End();
 
 		// Gizmos
 		Entity selectedEntity = mSceneHierarchyPanel.GetSelectedEntity();
@@ -566,6 +632,8 @@ namespace Dominion {
 	void EditorLayer::OnScenePlay()
 	{
 		mActiveScene = CreateRef<Scene>(*mEditorScene);
+		const FramebufferSpecification& spec = mFramebuffer->GetSpecification();
+		mActiveScene->OnViewportResize(spec.width, spec.height);
 		mActiveScene->OnRuntimeStart();
 		mSceneState = SceneState::Play;
 

@@ -49,13 +49,10 @@ namespace Dominion {
 		Ref<VertexArray> mSquareVA;
 		Ref<Shader> mFlatColorShader;
 		Ref<Framebuffer> mFramebuffer;
+		Ref<Framebuffer> mCameraFramebuffer;
 
 		Ref<Scene> mActiveScene, mEditorScene;
 		std::filesystem::path mEditorSceneFilepath = std::filesystem::path();
-
-		Entity mSquareEntity;
-		Entity mCameraEntity;
-		Entity mSecondCamera;
 
 		Entity mHoveredEntity;
 
@@ -68,6 +65,8 @@ namespace Dominion {
 		bool mViewportFocused = false, mViewportHovered = false;
 		glm::vec2 mViewportSize = { 0.0f, 0.0f };
 		glm::vec2 mViewportBounds[2];
+
+		glm::vec2 mCameraViewViewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 mSquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
@@ -87,6 +86,7 @@ namespace Dominion {
 
 		// Editor resources
 		Ref<Texture2D> mIconPlay, mIconStop, mIconPause;
+		Ref<Texture2D> mIconNoPrimaryCameraFound;
 
 		// Commands
 		CommandStack mCommandStack;

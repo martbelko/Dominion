@@ -237,28 +237,15 @@ namespace Dominion {
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
+		Render();
+		Renderer2D::EndScene();
+	}
 
-		// Draw sprites
-		{
-			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-			}
-		}
-
-		// Draw circles
-		{
-			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
-			}
-		}
-
+	void Scene::OnUpdateEditor(Timestep ts, const Camera& camera, const glm::mat4& transform)
+	{
+		Renderer2D::BeginScene(camera, transform);
+		Render();
 		Renderer2D::EndScene();
 	}
 
@@ -301,6 +288,31 @@ namespace Dominion {
 				return Entity{entity, this};
 		}
 		return {};
+	}
+
+
+	void Scene::Render()
+	{
+		// Draw sprites
+		{
+			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+
+		// Draw circles
+		{
+			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
+			}
+		}
 	}
 
 	template<typename T>
