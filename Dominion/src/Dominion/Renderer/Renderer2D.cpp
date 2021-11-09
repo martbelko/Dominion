@@ -475,8 +475,16 @@ namespace Dominion {
 
 	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
 	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
-		DrawRect(transform, color, entityID);
+		glm::vec3 v0 = glm::vec3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
+		glm::vec3 v1 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
+		glm::vec3 v2 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+		glm::vec3 v3 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+
+		// TODO: Refactor with topology
+		DrawLine(v0, v1, color, entityID);
+		DrawLine(v1, v2, color, entityID);
+		DrawLine(v2, v3, color, entityID);
+		DrawLine(v3, v0, color, entityID);
 	}
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
