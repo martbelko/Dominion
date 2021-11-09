@@ -71,7 +71,7 @@ namespace Dominion {
 			mViewportSize.x > 0.0f && mViewportSize.y > 0.0f && // zero sized framebuffer is invalid
 			(spec.width != mViewportSize.x || spec.height != mViewportSize.y))
 		{
-			mFramebuffer->Resize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
+			mFramebuffer->Resize(static_cast<uint32_t>(mViewportSize.x), static_cast<uint32_t>(mViewportSize.y));
 			mCameraController.OnResize(mViewportSize.x, mViewportSize.y);
 			mEditorCamera.SetViewportSize(mViewportSize.x, mViewportSize.y);
 		}
@@ -80,7 +80,7 @@ namespace Dominion {
 			mCameraViewViewportSize.x > 0.0f && mCameraViewViewportSize.y > 0.0f &&
 			(spec.width != mCameraViewViewportSize.x || spec.height != mCameraViewViewportSize.y))
 		{
-			mCameraFramebuffer->Resize((uint32_t)mCameraViewViewportSize.x, (uint32_t)mCameraViewViewportSize.y);
+			mCameraFramebuffer->Resize(static_cast<uint32_t>(mCameraViewViewportSize.x), static_cast<uint32_t>(mCameraViewViewportSize.y));
 		}
 
 		// Render
@@ -251,12 +251,14 @@ namespace Dominion {
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Draw Calls: %d", stats.drawCalls);
 		ImGui::Text("Quads: %d", stats.quadCount);
+		ImGui::Text("Circles: %d", stats.circleCount);
+		ImGui::Text("Lines: %d", stats.lineCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
 		ImGui::End();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport");
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -271,7 +273,7 @@ namespace Dominion {
 		mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 		uint64_t textureID = mFramebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ mViewportSize.x, mViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(mViewportSize.x, mViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -288,7 +290,7 @@ namespace Dominion {
 			Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
 			if (primaryCameraEntity)
 			{
-				std::string title = "Primary camera entity name: " + primaryCameraEntity.Name();
+				std::string title = "Primary Camera Entity Name: " + primaryCameraEntity.Name();
 				ImGui::Text(title.c_str());
 
 				ImVec2 cameraViewWindowSize = ImGui::GetContentRegionAvail();
