@@ -252,7 +252,7 @@ namespace Dominion {
 				sData.textureSlots[i]->Bind(i);
 
 			sData.quadShader->Bind();
-			RenderCommand::DrawIndexed(sData.quadVertexArray, sData.quadIndexCount);
+			RenderCommand::DrawIndexed(Topology::TRIANGLES, sData.quadVertexArray, sData.quadIndexCount);
 			++sData.stats.drawCalls;
 		}
 
@@ -262,7 +262,7 @@ namespace Dominion {
 			sData.circleVertexBuffer->SetData(sData.circleVertexBufferBase, dataSize);
 
 			sData.circleShader->Bind();
-			RenderCommand::DrawIndexed(sData.circleVertexArray, sData.circleIndexCount);
+			RenderCommand::DrawIndexed(Topology::TRIANGLES, sData.circleVertexArray, sData.circleIndexCount);
 			++sData.stats.drawCalls;
 		}
 
@@ -272,7 +272,7 @@ namespace Dominion {
 			sData.lineVertexBuffer->SetData(sData.lineVertexBufferBase, dataSize);
 
 			sData.lineShader->Bind();
-			RenderCommand::Draw(sData.lineVertexArray, sData.lineVertexCount);
+			RenderCommand::Draw(Topology::LINES, sData.lineVertexArray, sData.lineVertexCount);
 			++sData.stats.drawCalls;
 		}
 	}

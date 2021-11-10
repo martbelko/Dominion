@@ -32,14 +32,14 @@ namespace Dominion {
 			sRendererAPI->SetLineWidth(lineWidth);
 		}
 
-		static void Draw(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+		static void Draw(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 		{
-			sRendererAPI->Draw(vertexArray, vertexCount);
+			sRendererAPI->Draw(topology, vertexArray, vertexCount);
 		}
 
-		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
+		static void DrawIndexed(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t count = 0)
 		{
-			sRendererAPI->DrawIndexed(vertexArray, count);
+			sRendererAPI->DrawIndexed(topology, vertexArray, count);
 		}
 	private:
 		static Scope<RendererAPI> sRendererAPI;

@@ -5,7 +5,7 @@
 
 namespace Dominion {
 
-	void OpenGLMessageCallback(
+	static void OpenGLMessageCallback(
 		unsigned source,
 		unsigned type,
 		unsigned id,
@@ -23,6 +23,28 @@ namespace Dominion {
 		}
 
 		DM_CORE_ASSERT(false, "Unknown severity level!");
+	}
+
+	static GLenum DominionTopologyToGLTopology(Topology topology)
+	{
+		switch (topology)
+		{
+			case Topology::POINTS: return GL_POINTS;
+			case Topology::LINE_STRIP: return GL_LINE_STRIP;
+			case Topology::LINE_LOOP: return GL_LINE_LOOP;
+			case Topology::LINES: return GL_LINES;
+			case Topology::LINE_STRIP_ADJACENCY: return GL_LINE_STRIP_ADJACENCY;
+			case Topology::LINES_ADJACENCY: return GL_LINES_ADJACENCY;
+			case Topology::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+			case Topology::TRIANGLE_FAN: return GL_TRIANGLE_FAN;
+			case Topology::TRIANGLES: return GL_TRIANGLES;
+			case Topology::TRIANGLE_STRIP_ADJACENCY: return GL_TRIANGLE_STRIP_ADJACENCY;
+			case Topology::TRIANGLES_ADJACENCY: return GL_TRIANGLES_ADJACENCY;
+			case Topology::PATCHES: return GL_PATCHES;
+		}
+
+		DM_ASSERT(false, "Unknown topology");
+		return 0;
 	}
 
 	void OpenGLRendererAPI::Init()
@@ -64,17 +86,17 @@ namespace Dominion {
 		glLineWidth(lineWidth);
 	}
 
-	void OpenGLRendererAPI::Draw(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	void OpenGLRendererAPI::Draw(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 	{
 		vertexArray->Bind();
-		glDrawArrays(GL_LINES, 0, vertexCount);
+		glDrawArrays(DominionTopologyToGLTopology(topology), 0, vertexCount);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
+	void OpenGLRendererAPI::DrawIndexed(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		vertexArray->Bind();
-		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(DominionTopologyToGLTopology(topology), count, GL_UNSIGNED_INT, nullptr);
 	}
 
 }

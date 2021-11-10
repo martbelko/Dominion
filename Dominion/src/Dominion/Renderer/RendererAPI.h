@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Dominion/Renderer/VertexArray.h"
+#include "Dominion/Renderer/Topology.h"
 
 namespace Dominion {
 
@@ -23,8 +24,8 @@ namespace Dominion {
 
 		virtual void SetLineWidth(float lineWidth) = 0;
 
-		virtual void Draw(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
+		virtual void Draw(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
+		virtual void DrawIndexed(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
 
 		static API GetAPI() { return sAPI; }
 		static Scope<RendererAPI> Create();

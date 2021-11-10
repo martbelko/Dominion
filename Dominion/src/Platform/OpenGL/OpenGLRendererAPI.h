@@ -15,8 +15,8 @@ namespace Dominion {
 
 		virtual void SetLineWidth(float lineWidth) override;
 
-		virtual void Draw(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
+		virtual void Draw(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
+		virtual void DrawIndexed(Topology topology, const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
 	};
 
 }
