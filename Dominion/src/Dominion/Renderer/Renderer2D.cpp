@@ -44,12 +44,27 @@ namespace Dominion {
 		int entityID;
 	};
 
+	static constexpr size_t QUAD_VERTEX_COUNT = 4;
+	static constexpr size_t QUAD_INDEX_COUNT = 6;
+
+	static constexpr size_t CIRCLE_VERTEX_COUNT = 4;
+	static constexpr size_t CIRCLE_INDEX_COUNT = 6;
+
+	static constexpr size_t LINE_VERTEX_COUNT = 2;
+
 	struct Renderer2DData
 	{
 		static constexpr uint32_t MAX_QUADS = 20000;
-		static constexpr uint32_t MAX_VERTICES = MAX_QUADS * 4;
-		static constexpr uint32_t MAX_INDICES = MAX_QUADS * 6;
-		static constexpr uint32_t MAX_TEXTURE_SLOTS = 32; // TODO: RenderCaps
+		static constexpr uint32_t MAX_QUAD_VERTICES = MAX_QUADS * QUAD_VERTEX_COUNT;
+		static constexpr uint32_t MAX_QUAD_INDICES = MAX_QUADS * QUAD_INDEX_COUNT;
+		static constexpr uint32_t MAX_QUAD_TEXTURE_SLOTS = 32; // TODO: RenderCaps
+
+		static constexpr uint32_t MAX_CIRCLES = 1000;
+		static constexpr uint32_t MAX_CIRCLE_VERTICES = MAX_CIRCLES * CIRCLE_VERTEX_COUNT;
+		static constexpr uint32_t MAX_CIRCLE_INDICES = MAX_CIRCLES * CIRCLE_INDEX_COUNT;
+
+		static constexpr uint32_t MAX_LINES = 1000;
+		static constexpr uint32_t MAX_LINE_VERTICES = MAX_LINES * LINE_VERTEX_COUNT;
 
 		Ref<VertexArray> quadVertexArray;
 		Ref<VertexBuffer> quadVertexBuffer;
@@ -76,10 +91,10 @@ namespace Dominion {
 		LineVertex* lineVertexBufferBase = nullptr;
 		LineVertex* lineVertexBufferPtr = nullptr;
 
-		std::array<Ref<Texture2D>, MAX_TEXTURE_SLOTS> textureSlots;
+		std::array<Ref<Texture2D>, MAX_QUAD_TEXTURE_SLOTS> textureSlots;
 		uint32_t textureSlotIndex = 1; // 0 = white texture
 
-		glm::vec4 quadVertexPositions[4];
+		glm::vec4 quadVertexPositions[QUAD_VERTEX_COUNT];
 
 		Renderer2D::Statistics stats;
 
@@ -97,10 +112,15 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		// Quads
-		sData.quadVertexArray = VertexArray::Create();
-
-		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_VERTICES * sizeof(QuadVertex));
+		// ==== Quads ====
+		// Init
+		sData.quadVertexBufferBase = new QuadVertex[sData.MAX_QUAD_VERTICES];
+		sData.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+		sData.quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+		sData.quadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
+		sData.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+		// VertexBuffer
+		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_QUAD_VERTICES * sizeof(QuadVertex));
 		sData.quadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aPosition"     },
 			{ ShaderDataType::Float4, "aColor"        },
@@ -109,12 +129,10 @@ namespace Dominion {
 			{ ShaderDataType::Float,  "aTilingFactor" },
 			{ ShaderDataType::Int,    "aEntityID"     }
 		});
-		sData.quadVertexArray->AddVertexBuffer(sData.quadVertexBuffer);
-		sData.quadVertexBufferBase = new QuadVertex[sData.MAX_VERTICES];
-		uint32_t* quadIndices = new uint32_t[sData.MAX_INDICES];
-
+		// IndexBuffer
+		uint32_t* quadIndices = new uint32_t[sData.MAX_QUAD_INDICES];
 		uint32_t offset = 0;
-		for (uint32_t i = 0; i < sData.MAX_INDICES; i += 6)
+		for (uint32_t i = 0; i < sData.MAX_QUAD_INDICES; i += QUAD_INDEX_COUNT)
 		{
 			quadIndices[i + 0] = offset + 0;
 			quadIndices[i + 1] = offset + 1;
@@ -124,17 +142,30 @@ namespace Dominion {
 			quadIndices[i + 4] = offset + 3;
 			quadIndices[i + 5] = offset + 0;
 
-			offset += 4;
+			offset += QUAD_VERTEX_COUNT;
 		}
-
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, sData.MAX_INDICES);
-		sData.quadVertexArray->SetIndexBuffer(quadIB);
+		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, sData.MAX_QUAD_INDICES);
 		delete[] quadIndices;
+		// VertexArray
+		sData.quadVertexArray = VertexArray::Create();
+		sData.quadVertexArray->AddVertexBuffer(sData.quadVertexBuffer);
+		sData.quadVertexArray->SetIndexBuffer(quadIB);
+		// Textures
+		sData.whiteTexture = Texture2D::Create(1, 1);
+		uint32_t whiteTextureData = 0xffffffff;
+		sData.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		// Set first texture slot to 0
+		sData.textureSlots[0] = sData.whiteTexture;
+		// Texture samplers
+		int32_t samplers[sData.MAX_QUAD_TEXTURE_SLOTS];
+		for (uint32_t i = 0; i < sData.MAX_QUAD_TEXTURE_SLOTS; ++i)
+			samplers[i] = i;
 
-		// Circles
-		sData.circleVertexArray = VertexArray::Create();
-
-		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_VERTICES * sizeof(CircleVertex));
+		// ==== Circles ====
+		// Init
+		sData.circleVertexBufferBase = new CircleVertex[sData.MAX_CIRCLE_VERTICES];
+		// VertexBuffer
+		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex));
 		sData.circleVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aWorldPosition" },
 			{ ShaderDataType::Float3, "aLocalPosition" },
@@ -143,42 +174,48 @@ namespace Dominion {
 			{ ShaderDataType::Float,  "aFade" },
 			{ ShaderDataType::Int,    "aEntityID" }
 		});
+		// IndexBuffer
+		uint32_t* circleIndices = new uint32_t[sData.MAX_CIRCLE_INDICES];
+		offset = 0;
+		for (uint32_t i = 0; i < sData.MAX_CIRCLE_INDICES; i += CIRCLE_INDEX_COUNT)
+		{
+			circleIndices[i + 0] = offset + 0;
+			circleIndices[i + 1] = offset + 1;
+			circleIndices[i + 2] = offset + 2;
+
+			circleIndices[i + 3] = offset + 2;
+			circleIndices[i + 4] = offset + 3;
+			circleIndices[i + 5] = offset + 0;
+
+			offset += CIRCLE_VERTEX_COUNT;
+		}
+		Ref<IndexBuffer> circleIB = IndexBuffer::Create(circleIndices, sData.MAX_CIRCLE_INDICES); // Use quad indices
+		delete[] circleIndices;
+		// VertexArraz
+		sData.circleVertexArray = VertexArray::Create();
 		sData.circleVertexArray->AddVertexBuffer(sData.circleVertexBuffer);
-		sData.circleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
-		sData.circleVertexBufferBase = new CircleVertex[sData.MAX_VERTICES];
+		sData.circleVertexArray->SetIndexBuffer(circleIB);
 
-		// Lines
-		sData.lineVertexArray = VertexArray::Create();
-
-		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_VERTICES * sizeof(LineVertex));
+		// ==== Lines ====
+		// Init
+		sData.lineVertexBufferBase = new LineVertex[sData.MAX_LINE_VERTICES];
+		// VertexBuffer
+		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_LINE_VERTICES * sizeof(LineVertex));
 		sData.lineVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aPosition" },
 			{ ShaderDataType::Float4, "aColor" },
 			{ ShaderDataType::Int,    "aEntityID" }
 		});
+		// VertexArray
+		sData.lineVertexArray = VertexArray::Create();
 		sData.lineVertexArray->AddVertexBuffer(sData.lineVertexBuffer);
-		sData.lineVertexBufferBase = new LineVertex[sData.MAX_VERTICES];
 
-		sData.whiteTexture = Texture2D::Create(1, 1);
-		uint32_t whiteTextureData = 0xffffffff;
-		sData.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-
-		int32_t samplers[sData.MAX_TEXTURE_SLOTS];
-		for (uint32_t i = 0; i < sData.MAX_TEXTURE_SLOTS; ++i)
-			samplers[i] = i;
-
+		// ==== Shaders
 		sData.quadShader = Shader::Create("assets/shaders/Renderer2DQuad.vert", "assets/shaders/Renderer2DQuad.frag");
 		sData.circleShader = Shader::Create("assets/shaders/Renderer2DCircle.vert", "assets/shaders/Renderer2DCircle.frag");
 		sData.lineShader = Shader::Create("assets/shaders/Renderer2DLine.vert", "assets/shaders/Renderer2DLine.frag");
 
-		// Set first texture slot to 0
-		sData.textureSlots[0] = sData.whiteTexture;
-
-		sData.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-		sData.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-		sData.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
-		sData.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
-
+		// ==== Camera uniform buffer
 		sData.cameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 	}
 
@@ -226,21 +263,7 @@ namespace Dominion {
 		Flush();
 	}
 
-	void Renderer2D::StartBatch()
-	{
-		sData.quadIndexCount = 0;
-		sData.quadVertexBufferPtr = sData.quadVertexBufferBase;
-
-		sData.circleIndexCount = 0;
-		sData.circleVertexBufferPtr = sData.circleVertexBufferBase;
-
-		sData.lineVertexCount = 0;
-		sData.lineVertexBufferPtr = sData.lineVertexBufferBase;
-
-		sData.textureSlotIndex = 1;
-	}
-
-	void Renderer2D::Flush()
+	void Renderer2D::FlushQuads()
 	{
 		if (sData.quadIndexCount)
 		{
@@ -255,7 +278,10 @@ namespace Dominion {
 			RenderCommand::DrawIndexed(Topology::TRIANGLES, sData.quadVertexArray, sData.quadIndexCount);
 			++sData.stats.drawCalls;
 		}
+	}
 
+	void Renderer2D::FlushCircles()
+	{
 		if (sData.circleIndexCount)
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t*)sData.circleVertexBufferPtr - (uint8_t*)sData.circleVertexBufferBase);
@@ -265,7 +291,10 @@ namespace Dominion {
 			RenderCommand::DrawIndexed(Topology::TRIANGLES, sData.circleVertexArray, sData.circleIndexCount);
 			++sData.stats.drawCalls;
 		}
+	}
 
+	void Renderer2D::FlushLines()
+	{
 		if (sData.lineVertexCount)
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t*)sData.lineVertexBufferPtr - (uint8_t*)sData.lineVertexBufferBase);
@@ -277,10 +306,65 @@ namespace Dominion {
 		}
 	}
 
+	void Renderer2D::StartBatch()
+	{
+		StartQuadsBatch();
+		StartCirclesBatch();
+		StartLinesBatch();
+	}
+
+	void Renderer2D::Flush()
+	{
+		FlushQuads();
+		FlushCircles();
+		FlushLines();
+	}
+
 	void Renderer2D::NextBatch()
 	{
 		Flush();
 		StartBatch();
+	}
+
+
+	void Renderer2D::StartQuadsBatch()
+	{
+		sData.quadIndexCount = 0;
+		sData.quadVertexBufferPtr = sData.quadVertexBufferBase;
+		sData.textureSlotIndex = 1;
+	}
+
+
+	void Renderer2D::StartCirclesBatch()
+	{
+		sData.circleIndexCount = 0;
+		sData.circleVertexBufferPtr = sData.circleVertexBufferBase;
+	}
+
+
+	void Renderer2D::StartLinesBatch()
+	{
+		sData.lineVertexCount = 0;
+		sData.lineVertexBufferPtr = sData.lineVertexBufferBase;
+	}
+
+	void Renderer2D::NextQuadsBatch()
+	{
+		FlushQuads();
+		StartQuadsBatch();
+	}
+
+	void Renderer2D::NextCirclesBatch()
+	{
+		FlushCircles();
+		StartCirclesBatch();
+	}
+
+
+	void Renderer2D::NextLinesBatch()
+	{
+		FlushLines();
+		StartLinesBatch();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -317,15 +401,14 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		constexpr size_t quadVertexCount = 4;
 		const float textureIndex = 0.0f; // White Texture
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 		const float tilingFactor = 1.0f;
 
-		if (sData.quadIndexCount >= Renderer2DData::MAX_INDICES)
-			NextBatch();
+		if (sData.quadIndexCount >= Renderer2DData::MAX_QUAD_INDICES)
+			NextQuadsBatch();
 
-		for (size_t i = 0; i < quadVertexCount; ++i)
+		for (size_t i = 0; i < QUAD_VERTEX_COUNT; ++i)
 		{
 			sData.quadVertexBufferPtr->position = transform * sData.quadVertexPositions[i];
 			sData.quadVertexBufferPtr->color = color;
@@ -336,7 +419,7 @@ namespace Dominion {
 			++sData.quadVertexBufferPtr;
 		}
 
-		sData.quadIndexCount += 6;
+		sData.quadIndexCount += QUAD_INDEX_COUNT;
 
 		++sData.stats.quadCount;
 	}
@@ -345,11 +428,10 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		constexpr size_t quadVertexCount = 4;
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
-		if (sData.quadIndexCount >= Renderer2DData::MAX_INDICES)
-			NextBatch();
+		if (sData.quadIndexCount >= Renderer2DData::MAX_QUAD_INDICES)
+			NextQuadsBatch();
 
 		float textureIndex = 0.0f;
 		for (uint32_t i = 1; i < sData.textureSlotIndex; ++i)
@@ -363,15 +445,15 @@ namespace Dominion {
 
 		if (textureIndex == 0.0f)
 		{
-			if (sData.textureSlotIndex >= Renderer2DData::MAX_TEXTURE_SLOTS)
-				NextBatch();
+			if (sData.textureSlotIndex >= Renderer2DData::MAX_QUAD_TEXTURE_SLOTS)
+				NextQuadsBatch();
 
 			textureIndex = static_cast<float>(sData.textureSlotIndex);
 			sData.textureSlots[sData.textureSlotIndex] = texture;
 			++sData.textureSlotIndex;
 		}
 
-		for (size_t i = 0; i < quadVertexCount; ++i)
+		for (size_t i = 0; i < QUAD_VERTEX_COUNT; ++i)
 		{
 			sData.quadVertexBufferPtr->position = transform * sData.quadVertexPositions[i];
 			sData.quadVertexBufferPtr->color = tintColor;
@@ -382,7 +464,7 @@ namespace Dominion {
 			++sData.quadVertexBufferPtr;
 		}
 
-		sData.quadIndexCount += 6;
+		sData.quadIndexCount += QUAD_INDEX_COUNT;
 
 		++sData.stats.quadCount;
 	}
@@ -391,13 +473,10 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		constexpr size_t circleVertexCount = 4;
+		if (sData.circleIndexCount >= Renderer2DData::MAX_CIRCLE_INDICES)
+			NextCirclesBatch();
 
-		// TODO: Implement for circles
-// 		if (sData.quadIndexCount >= Renderer2DData::MAX_INDICES)
-// 			NextBatch();
-
-		for (size_t i = 0; i < circleVertexCount; ++i)
+		for (size_t i = 0; i < CIRCLE_VERTEX_COUNT; ++i)
 		{
 			sData.circleVertexBufferPtr->worldPosition = transform * sData.quadVertexPositions[i];
 			sData.circleVertexBufferPtr->localPosition = sData.quadVertexPositions[i] * 2.0f;
@@ -408,7 +487,7 @@ namespace Dominion {
 			++sData.circleVertexBufferPtr;
 		}
 
-		sData.circleIndexCount += 6;
+		sData.circleIndexCount += CIRCLE_INDEX_COUNT;
 
 		++sData.stats.circleCount;
 	}
@@ -455,8 +534,8 @@ namespace Dominion {
 
 	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
 	{
-		if (sData.lineVertexCount >= Renderer2DData::MAX_INDICES)
-			NextBatch();
+		if (sData.lineVertexCount >= Renderer2DData::MAX_QUAD_INDICES)
+			NextLinesBatch();
 
 		sData.lineVertexBufferPtr->position = p0;
 		sData.lineVertexBufferPtr->color = color;
@@ -468,7 +547,7 @@ namespace Dominion {
 		sData.lineVertexBufferPtr->entityID = entityID;
 		++sData.lineVertexBufferPtr;
 
-		sData.lineVertexCount += 2;
+		sData.lineVertexCount += LINE_VERTEX_COUNT;
 
 		++sData.stats.lineCount;
 	}

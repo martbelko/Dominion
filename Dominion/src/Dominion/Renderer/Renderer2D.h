@@ -53,7 +53,7 @@ namespace Dominion {
 			uint32_t drawCalls = 0;
 			uint32_t quadCount = 0;
 			uint32_t circleCount = 0;
-			uint32_t lineCount;
+			uint32_t lineCount = 0;
 
 			uint32_t GetTotalVertexCount() const { return quadCount * 4; }
 			uint32_t GetTotalIndexCount() const { return quadCount * 6; }
@@ -63,6 +63,18 @@ namespace Dominion {
 	private:
 		static void StartBatch();
 		static void NextBatch();
+
+		static void StartQuadsBatch();
+		static void StartCirclesBatch();
+		static void StartLinesBatch();
+
+		static void NextQuadsBatch();
+		static void NextCirclesBatch();
+		static void NextLinesBatch();
+
+		static void FlushQuads();
+		static void FlushCircles();
+		static void FlushLines();
 	};
 
 }
