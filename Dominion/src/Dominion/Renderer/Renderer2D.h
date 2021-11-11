@@ -65,8 +65,8 @@ namespace Dominion {
 			uint32_t circleCount = 0;
 			uint32_t lineCount = 0;
 
-			uint32_t GetTotalVertexCount() const { return quadCount * 4; } // TODO: Fix
-			uint32_t GetTotalIndexCount() const { return quadCount * 6; } // TODO: Fix
+			uint32_t GetTotalVertexCount() const;
+			uint32_t GetTotalIndexCount() const;
 		};
 		static void ResetStats();
 		static Statistics GetStats();

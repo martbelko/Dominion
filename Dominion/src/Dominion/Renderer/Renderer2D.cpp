@@ -632,4 +632,17 @@ namespace Dominion {
 		return sData.stats;
 	}
 
+	uint32_t Renderer2D::Statistics::GetTotalVertexCount() const
+	{
+		return quadCount * QUAD_VERTEX_COUNT +
+			circleCount * CIRCLE_VERTEX_COUNT +
+			lineCount * LINE_VERTEX_COUNT;
+	}
+
+	uint32_t Renderer2D::Statistics::GetTotalIndexCount() const
+	{
+		return quadCount * QUAD_INDEX_COUNT +
+			circleCount * CIRCLE_INDEX_COUNT;
+	}
+
 }
