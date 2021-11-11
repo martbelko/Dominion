@@ -326,7 +326,6 @@ namespace Dominion {
 		StartBatch();
 	}
 
-
 	void Renderer2D::StartQuadsBatch()
 	{
 		sData.quadIndexCount = 0;
@@ -334,13 +333,11 @@ namespace Dominion {
 		sData.textureSlotIndex = 1;
 	}
 
-
 	void Renderer2D::StartCirclesBatch()
 	{
 		sData.circleIndexCount = 0;
 		sData.circleVertexBufferPtr = sData.circleVertexBufferBase;
 	}
-
 
 	void Renderer2D::StartLinesBatch()
 	{
@@ -359,7 +356,6 @@ namespace Dominion {
 		FlushCircles();
 		StartCirclesBatch();
 	}
-
 
 	void Renderer2D::NextLinesBatch()
 	{
@@ -534,7 +530,7 @@ namespace Dominion {
 
 	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
 	{
-		if (sData.lineVertexCount >= Renderer2DData::MAX_QUAD_INDICES)
+		if (sData.lineVertexCount >= Renderer2DData::MAX_LINE_VERTICES)
 			NextLinesBatch();
 
 		sData.lineVertexBufferPtr->position = p0;
