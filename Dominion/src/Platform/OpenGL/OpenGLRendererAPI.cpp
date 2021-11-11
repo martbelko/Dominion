@@ -47,6 +47,19 @@ namespace Dominion {
 		return 0;
 	}
 
+	static GLbitfield DominionRenderTargetToGLRenderTarget(RenderTarget target)
+	{
+		GLbitfield mask = 0;
+		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::DEPTH))
+			mask |= GL_DEPTH_BUFFER_BIT;
+		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::STENCIL))
+			mask |= GL_STENCIL_BUFFER_BIT;
+		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::COLOR))
+			mask |= GL_COLOR_BUFFER_BIT;
+
+		return mask;
+	}
+
 	void OpenGLRendererAPI::Init()
 	{
 		DM_PROFILE_FUNCTION();
@@ -76,9 +89,9 @@ namespace Dominion {
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGLRendererAPI::Clear()
+	void OpenGLRendererAPI::Clear(RenderTarget target)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(DominionRenderTargetToGLRenderTarget(target));
 	}
 
 	void OpenGLRendererAPI::SetLineWidth(float lineWidth)
