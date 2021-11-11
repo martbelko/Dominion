@@ -298,6 +298,17 @@ namespace Dominion {
 				}
 			}
 
+			if (!mSelectionContext.HasComponent<CircleCollider2DComponent>())
+			{
+				if (ImGui::MenuItem("Circle Collider 2D"))
+				{
+					Command* command = new AddComponentCommand<CircleCollider2DComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			ImGui::EndPopup();
 		}
 
@@ -430,6 +441,16 @@ namespace Dominion {
 		{
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
 			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](CircleCollider2DComponent& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+			ImGui::DragFloat("Radius", &component.radius);
 			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);

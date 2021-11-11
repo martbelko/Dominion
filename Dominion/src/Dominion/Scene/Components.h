@@ -137,4 +137,19 @@ namespace Dominion {
 		void* runtimeFixture = nullptr;
 	};
 
+	struct CircleCollider2DComponent
+	{
+		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+		float radius = 0.5f;
+
+		// TODO: move into physics material
+		float density = 1.0f;
+		float friction = 0.5f;
+		float restitution = 0.0f;
+		float restitutionThreshold = 0.5f;
+
+		// Storage for runtime
+		void* runtimeFixture = nullptr;
+	};
+
 }

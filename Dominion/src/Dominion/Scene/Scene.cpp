@@ -13,6 +13,7 @@
 #include "box2D/b2_body.h"
 #include "box2D/b2_fixture.h"
 #include "box2D/b2_polygon_shape.h"
+#include "box2D/b2_circle_shape.h"
 
 namespace Dominion {
 
@@ -67,6 +68,7 @@ namespace Dominion {
 			CopyComponentIfExists<CircleRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<Rigidbody2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<BoxCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<CircleCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
 		}
 	}
 
@@ -124,10 +126,7 @@ namespace Dominion {
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.size.x * transform.scale.x,
-					bc2d.size.y * transform.scale.y,
-					b2Vec2(bc2d.offset.x, bc2d.offset.y),
-					0.0f);
+				boxShape.SetAsBox(bc2d.size.x * transform.scale.x, bc2d.size.y * transform.scale.y, b2Vec2(bc2d.offset.x, bc2d.offset.y), 0.0f);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -135,6 +134,24 @@ namespace Dominion {
 				fixtureDef.friction = bc2d.friction;
 				fixtureDef.restitution = bc2d.restitution;
 				fixtureDef.restitutionThreshold = bc2d.restitutionThreshold;
+
+				physicsBody->CreateFixture(&fixtureDef);
+			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_radius = cc2d.radius;
+				circleShape.m_p.Set(cc2d.offset.x, cc2d.offset.y);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = cc2d.density;
+				fixtureDef.friction = cc2d.friction;
+				fixtureDef.restitution = cc2d.restitution;
+				fixtureDef.restitutionThreshold = cc2d.restitutionThreshold;
 
 				physicsBody->CreateFixture(&fixtureDef);
 			}
@@ -189,48 +206,14 @@ namespace Dominion {
 		}
 
 		// Render 2D
-		Camera* mainCamera = nullptr;
-		glm::mat4 cameraTransform;
+		Entity mainCameraEntity = GetPrimaryCameraEntity();
+		if (mainCameraEntity)
 		{
-			auto view = mRegistry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+			TransformComponent& tc = mainCameraEntity.GetComponent<TransformComponent>();
+			CameraComponent& cc = mainCameraEntity.GetComponent<CameraComponent>();
 
-				if (camera.primary)
-				{
-					mainCamera = &camera.camera;
-					cameraTransform = transform.GetTransform();
-					break;
-				}
-			}
-		}
-
-		if (mainCamera)
-		{
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-			// Draw sprites
-			{
-				auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-				for (auto entity : group)
-				{
-					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-				}
-			}
-
-			// Draw circles
-			{
-				auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
-				for (auto entity : view)
-				{
-					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-					Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
-				}
-			}
-
+			Renderer2D::BeginScene(cc.camera, tc.GetTransform());
+			Render();
 			Renderer2D::EndScene();
 		}
 	}
@@ -275,6 +258,7 @@ namespace Dominion {
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 
 		return newEntity;
 	}
@@ -354,6 +338,11 @@ namespace Dominion {
 
 	template<>
 	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
 	}
 
