@@ -243,6 +243,22 @@ namespace Dominion {
 			out << YAML::EndMap; // BoxCollider2DComponent
 		}
 
+		if (entity.HasComponent<CircleCollider2DComponent>())
+		{
+			out << YAML::Key << "CircleCollider2DComponent";
+			out << YAML::BeginMap; // CircleCollider2DComponent
+
+			auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+			out << YAML::Key << "Offset" << YAML::Value << cc2d.offset;
+			out << YAML::Key << "Radius" << YAML::Value << cc2d.radius;
+			out << YAML::Key << "Density" << YAML::Value << cc2d.density;
+			out << YAML::Key << "Friction" << YAML::Value << cc2d.friction;
+			out << YAML::Key << "Restitution" << YAML::Value << cc2d.restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2d.restitutionThreshold;
+
+			out << YAML::EndMap; // CircleCollider2DComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -371,6 +387,18 @@ namespace Dominion {
 					bc2d.friction = boxCollider2DComponent["Friction"].as<float>();
 					bc2d.restitution = boxCollider2DComponent["Restitution"].as<float>();
 					bc2d.restitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
+				}
+
+				auto circleCollider2DComponent = entity["circleCollider2DComponent"];
+				if (circleCollider2DComponent)
+				{
+					CircleCollider2DComponent& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
+					cc2d.offset = boxCollider2DComponent["Offset"].as<glm::vec2>();
+					cc2d.radius = boxCollider2DComponent["Radius"].as<float>();
+					cc2d.density = boxCollider2DComponent["Density"].as<float>();
+					cc2d.friction = boxCollider2DComponent["Friction"].as<float>();
+					cc2d.restitution = boxCollider2DComponent["Restitution"].as<float>();
+					cc2d.restitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
 				}
 			}
 		}
