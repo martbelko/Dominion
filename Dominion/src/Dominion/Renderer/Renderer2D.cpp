@@ -465,29 +465,6 @@ namespace Dominion {
 		++sData.stats.quadCount;
 	}
 
-	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID)
-	{
-		DM_PROFILE_FUNCTION();
-
-		if (sData.circleIndexCount >= Renderer2DData::MAX_CIRCLE_INDICES)
-			NextCirclesBatch();
-
-		for (size_t i = 0; i < CIRCLE_VERTEX_COUNT; ++i)
-		{
-			sData.circleVertexBufferPtr->worldPosition = transform * sData.quadVertexPositions[i];
-			sData.circleVertexBufferPtr->localPosition = sData.quadVertexPositions[i] * 2.0f;
-			sData.circleVertexBufferPtr->color = color;
-			sData.circleVertexBufferPtr->thickness = thickness;
-			sData.circleVertexBufferPtr->fade = fade;
-			sData.circleVertexBufferPtr->entityID = entityID;
-			++sData.circleVertexBufferPtr;
-		}
-
-		sData.circleIndexCount += CIRCLE_INDEX_COUNT;
-
-		++sData.stats.circleCount;
-	}
-
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
 	{
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
@@ -528,6 +505,57 @@ namespace Dominion {
 			DrawQuad(transform, src.color, entityID);
 	}
 
+	void Renderer2D::DrawCircle(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float thickness, float fade, int entityID)
+	{
+		DrawCircle(glm::vec3(position, 0.0), size, color, thickness, fade, entityID);
+	}
+
+	void Renderer2D::DrawCircle(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float thickness, float fade, int entityID)
+	{
+		DM_PROFILE_FUNCTION();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+		DrawCircle(transform, color, thickness, fade, entityID);
+	}
+
+	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID)
+	{
+		DM_PROFILE_FUNCTION();
+
+		if (sData.circleIndexCount >= Renderer2DData::MAX_CIRCLE_INDICES)
+			NextCirclesBatch();
+
+		for (size_t i = 0; i < CIRCLE_VERTEX_COUNT; ++i)
+		{
+			sData.circleVertexBufferPtr->worldPosition = transform * sData.quadVertexPositions[i];
+			sData.circleVertexBufferPtr->localPosition = sData.quadVertexPositions[i] * 2.0f;
+			sData.circleVertexBufferPtr->color = color;
+			sData.circleVertexBufferPtr->thickness = thickness;
+			sData.circleVertexBufferPtr->fade = fade;
+			sData.circleVertexBufferPtr->entityID = entityID;
+			++sData.circleVertexBufferPtr;
+		}
+
+		sData.circleIndexCount += CIRCLE_INDEX_COUNT;
+
+		++sData.stats.circleCount;
+	}
+
+	void Renderer2D::DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color, int entityID)
+	{
+		DrawLine(glm::vec3(p0, 0.0f), glm::vec3(p1, 0.0f), color, entityID);
+	}
+
+	void Renderer2D::DrawLine(const glm::vec2& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+	{
+		DrawLine(glm::vec3(p0, 0.0f), p1, color, entityID);
+	}
+
+	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec2& p1, const glm::vec4& color, int entityID)
+	{
+		DrawLine(p0, glm::vec3(p1, 0.0f), color, entityID);
+	}
+
 	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
 	{
 		if (sData.lineVertexCount >= Renderer2DData::MAX_LINE_VERTICES)
@@ -548,23 +576,37 @@ namespace Dominion {
 		++sData.stats.lineCount;
 	}
 
+	void Renderer2D::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, int entityID)
+	{
+		DrawRect(glm::vec3(position, 0.0f), size, color, entityID);
+	}
+
 	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
 	{
-		glm::vec3 v0 = glm::vec3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
-		glm::vec3 v1 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
-		glm::vec3 v2 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
-		glm::vec3 v3 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+		DM_PROFILE_FUNCTION();
 
-		// TODO: Refactor with topology
-		DrawLine(v0, v1, color, entityID);
-		DrawLine(v1, v2, color, entityID);
-		DrawLine(v2, v3, color, entityID);
-		DrawLine(v3, v0, color, entityID);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+		DrawRect(transform, color, entityID);
+	}
+
+	void Renderer2D::DrawRotatedRect(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, int entityID)
+	{
+		DrawRotatedRect(glm::vec3(position, 0.0f), size, rotation, color, entityID);
+	}
+
+	void Renderer2D::DrawRotatedRect(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, int entityID)
+	{
+		DM_PROFILE_FUNCTION();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		DrawRect(transform, color, entityID);
 	}
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
-		glm::vec4 vertices[4];
+		glm::vec3 vertices[4];
 		for (size_t i = 0; i < 4; ++i)
 			vertices[i] = transform * sData.quadVertexPositions[i];
 
