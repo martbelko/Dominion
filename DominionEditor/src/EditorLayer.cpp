@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/SceneSerializer.h"
 
 #include "Dominion/Utils/PlatformUtils.h"
@@ -17,7 +18,7 @@ namespace Dominion {
 	extern const std::filesystem::path gAssetPath; // TODO: Move to project
 
 	EditorLayer::EditorLayer()
-		: Layer("EditorLayer"), mCameraController(1280.0f / 720.0f), mSquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
+		: Layer("EditorLayer"), mCameraController(1280.0f / 720.0f)
 	{
 	}
 
@@ -103,7 +104,7 @@ namespace Dominion {
 				mEditorScene->OnUpdateEditor(ts, mEditorCamera);
 
 				mCameraFramebuffer->Bind();
-				RenderCommand::Clear();
+				RenderCommand::Clear(RenderTarget::COLOR);
 
 				Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
 				if (primaryCameraEntity && mCameraViewViewportSize.x > 0 && mCameraViewViewportSize.y > 0)
@@ -125,7 +126,13 @@ namespace Dominion {
 			}
 		}
 
-		auto[mx, my] = ImGui::GetMousePos();
+		if (mShowPhysicsColliders)
+		{
+			RenderDebug();
+
+		}
+
+		auto [mx, my] = ImGui::GetMousePos();
 		mx -= mViewportBounds[0].x;
 		my -= mViewportBounds[0].y;
 		glm::vec2 viewportSize = mViewportBounds[1] - mViewportBounds[0];
@@ -230,6 +237,7 @@ namespace Dominion {
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 					SaveSceneAs();
 
+				ImGui::Separator();
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
 			}
@@ -256,6 +264,13 @@ namespace Dominion {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
+		ImGui::End();
+
+		// Setting
+		ImGui::Begin("Settings");
+		{
+			ImGui::Checkbox("Show physics colliders", &mShowPhysicsColliders);
+		}
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -440,6 +455,52 @@ namespace Dominion {
 		}
 	}
 
+
+	void EditorLayer::RenderDebug()
+	{
+		// Debug rendering
+		if (mSceneState == SceneState::Edit)
+			Renderer2D::BeginScene(mEditorCamera);
+		else
+		{
+			Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
+			if (!primaryCameraEntity)
+				return;
+
+			Camera& camera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
+			glm::mat4 transform = primaryCameraEntity.Transform().GetTransform();
+			Renderer2D::BeginScene(camera, transform);
+		}
+
+		RenderCommand::Clear(RenderTarget::DEPTH);
+		// Draw box2d colliders
+		{
+			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+			for (auto eid : view)
+			{
+				auto [transform, boxCollider2d] = view.get<TransformComponent, BoxCollider2DComponent>(eid);
+				glm::vec2 position = glm::vec2(transform.translation) + boxCollider2d.offset;
+				glm::vec2 size = glm::vec2(2.0f * boxCollider2d.size.x * transform.scale.x, 2 * boxCollider2d.size.y * transform.scale.y);
+				float rotation = transform.rotation.z;
+				Renderer2D::DrawRotatedRect(position, size, rotation, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), static_cast<int>(eid));
+			}
+		}
+
+		// Draw circle colliders
+		{
+			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+			for (auto eid : view)
+			{
+				auto [transform, circleCollider2d] = view.get<TransformComponent, CircleCollider2DComponent>(eid);
+				glm::vec2 position = glm::vec2(transform.translation) + circleCollider2d.offset;
+				glm::vec2 size = glm::vec2(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius);
+				Renderer2D::DrawCircle(position, size, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.1f, 0.0f, (int)eid);
+			}
+		}
+
+		Renderer2D::EndScene();
+	}
+
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
 	{
 		// Shortcuts
@@ -519,37 +580,43 @@ namespace Dominion {
 
 				break;
 			}
+		}
 
-			// Gizmos
-			case Key::Q:
+		if (mViewportFocused || mViewportHovered)
+		{
+			switch (e.GetKeyCode())
 			{
-				if (!ImGuizmo::IsUsing())
-					mGizmoType = -1;
-				break;
-			}
-			case Key::U:
-			{
-				if (!ImGuizmo::IsUsing())
-					mGizmoType = ImGuizmo::OPERATION::UNIVERSAL;
-				break;
-			}
-			case Key::W:
-			{
-				if (!ImGuizmo::IsUsing())
-					mGizmoType = ImGuizmo::OPERATION::TRANSLATE;
-				break;
-			}
-			case Key::E:
-			{
-				if (!ImGuizmo::IsUsing())
-					mGizmoType = ImGuizmo::OPERATION::ROTATE;
-				break;
-			}
-			case Key::R:
-			{
-				if (!ImGuizmo::IsUsing())
-					mGizmoType = ImGuizmo::OPERATION::SCALE;
-				break;
+				// Gizmos
+				case Key::Q:
+				{
+					if (!ImGuizmo::IsUsing())
+						mGizmoType = -1;
+					break;
+				}
+				case Key::U:
+				{
+					if (!ImGuizmo::IsUsing())
+						mGizmoType = ImGuizmo::OPERATION::UNIVERSAL;
+					break;
+				}
+				case Key::W:
+				{
+					if (!ImGuizmo::IsUsing())
+						mGizmoType = ImGuizmo::OPERATION::TRANSLATE;
+					break;
+				}
+				case Key::E:
+				{
+					if (!ImGuizmo::IsUsing())
+						mGizmoType = ImGuizmo::OPERATION::ROTATE;
+					break;
+				}
+				case Key::R:
+				{
+					if (!ImGuizmo::IsUsing())
+						mGizmoType = ImGuizmo::OPERATION::SCALE;
+					break;
+				}
 			}
 		}
 

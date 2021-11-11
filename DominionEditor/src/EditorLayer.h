@@ -26,6 +26,8 @@ namespace Dominion {
 
 		void OnDuplicateEntityCommand();
 	private:
+		void RenderDebug();
+
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
@@ -68,8 +70,6 @@ namespace Dominion {
 
 		glm::vec2 mCameraViewViewportSize = { 0.0f, 0.0f };
 
-		glm::vec4 mSquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
-
 		int mGizmoType = -1;
 
 		enum class SceneState
@@ -90,6 +90,9 @@ namespace Dominion {
 
 		// Commands
 		CommandStack mCommandStack;
+
+		// Settings
+		bool mShowPhysicsColliders;
 	};
 
 }
