@@ -22,9 +22,9 @@ namespace Dominion {
 			sRendererAPI->SetClearColor(color);
 		}
 
-		static void Clear()
+		static void Clear(RenderTarget target = RenderTarget::COLOR)
 		{
-			sRendererAPI->Clear();
+			sRendererAPI->Clear(target);
 		}
 
 		static void SetLineWidth(float lineWidth)
