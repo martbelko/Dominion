@@ -39,6 +39,12 @@ namespace Dominion {
 		Entity DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
+
+		template<typename... Component>
+		auto GetAllEntitiesWith()
+		{
+			return mRegistry.view<Component...>();
+		}
 	private:
 		void Render();
 
