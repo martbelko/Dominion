@@ -88,7 +88,8 @@ namespace Dominion {
 		Renderer2D::ResetStats();
 		mFramebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-		RenderCommand::Clear();
+		RenderCommand::Clear(RenderTarget::COLOR);
+		RenderCommand::Clear(RenderTarget::DEPTH);
 
 		// Clear our entity ID attachment to -1
 		mFramebuffer->ClearAttachment(1, -1);
@@ -127,10 +128,7 @@ namespace Dominion {
 		}
 
 		if (mShowPhysicsColliders)
-		{
 			RenderDebug();
-
-		}
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= mViewportBounds[0].x;
@@ -479,10 +477,14 @@ namespace Dominion {
 			for (auto eid : view)
 			{
 				auto [transform, boxCollider2d] = view.get<TransformComponent, BoxCollider2DComponent>(eid);
-				glm::vec2 position = glm::vec2(transform.translation) + boxCollider2d.offset;
-				glm::vec2 size = glm::vec2(2.0f * boxCollider2d.size.x * transform.scale.x, 2 * boxCollider2d.size.y * transform.scale.y);
-				float rotation = transform.rotation.z;
-				Renderer2D::DrawRotatedRect(position, size, rotation, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), static_cast<int>(eid));
+				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z))) *
+					glm::scale(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.scale), 1.0f));
+				glm::mat4 finalMatrix = transformMatrix *
+					glm::translate(glm::mat4(1.0f), glm::vec3(boxCollider2d.offset, 0.0f)) *
+					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * boxCollider2d.size.x, 2.0f * boxCollider2d.size.y, 1.0f));
+
+				Renderer2D::DrawRect(finalMatrix, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), static_cast<int>(eid));
 			}
 		}
 

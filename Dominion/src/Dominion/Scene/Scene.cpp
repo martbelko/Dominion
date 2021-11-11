@@ -126,7 +126,13 @@ namespace Dominion {
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.size.x * transform.scale.x, bc2d.size.y * transform.scale.y, b2Vec2(bc2d.offset.x, bc2d.offset.y), 0.0f);
+				glm::vec2 size = glm::vec2(bc2d.size.x * transform.scale.x, bc2d.size.y * transform.scale.y);
+				glm::vec2 vertices[4];
+				vertices[0] = glm::vec2(-size.x + bc2d.offset.x, -size.y + bc2d.offset.y);
+				vertices[1] = glm::vec2(size.x + bc2d.offset.x, -size.y + bc2d.offset.y);
+				vertices[2] = glm::vec2(size.x + bc2d.offset.x, size.y + bc2d.offset.y);
+				vertices[3] = glm::vec2(-size.x + bc2d.offset.x, size.y + bc2d.offset.y);
+				boxShape.Set(reinterpret_cast<b2Vec2*>(&vertices), 4);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
