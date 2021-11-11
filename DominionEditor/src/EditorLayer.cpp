@@ -29,7 +29,6 @@ namespace Dominion {
 		mCheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 		mIconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
 		mIconStop = Texture2D::Create("Resources/Icons/StopButton.png");
-		mIconNoPrimaryCameraFound = Texture2D::Create("Resources/Icons/NoPrimaryCameraFound.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -492,9 +491,13 @@ namespace Dominion {
 			for (auto eid : view)
 			{
 				auto [transform, circleCollider2d] = view.get<TransformComponent, CircleCollider2DComponent>(eid);
-				glm::vec2 position = glm::vec2(transform.translation) + circleCollider2d.offset;
-				glm::vec2 size = glm::vec2(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius);
-				Renderer2D::DrawCircle(position, size, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.1f, 0.0f, (int)eid);
+				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z))) *
+					glm::scale(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.scale), 1.0f));
+				glm::mat4 finalMatrix = transformMatrix *
+					glm::translate(glm::mat4(1.0f), glm::vec3(circleCollider2d.offset, 0.0f)) *
+					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius, 1.0f));
+				Renderer2D::DrawCircle(finalMatrix, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.05f, 0.0f, (int)eid);
 			}
 		}
 
