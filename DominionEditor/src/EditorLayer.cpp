@@ -215,7 +215,7 @@ namespace Dominion {
 					OpenScene();
 
 				{
-					bool canBeSimpleSaved = mEditorSceneFilepath.empty();
+					bool canBeSimpleSaved = !mEditorSceneFilepath.empty();
 					if (!canBeSimpleSaved)
 					{
 						ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
@@ -438,7 +438,6 @@ namespace Dominion {
 		dispatcher.Dispatch<KeyPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 	}
 
-
 	void EditorLayer::OnDuplicateEntityCommand()
 	{
 		if (mSceneState == SceneState::Edit)
@@ -452,7 +451,6 @@ namespace Dominion {
 			}
 		}
 	}
-
 
 	void EditorLayer::RenderDebug()
 	{
