@@ -644,6 +644,7 @@ namespace Dominion {
 
 		mActiveScene = mEditorScene;
 		mEditorSceneFilepath = std::filesystem::path();
+		mCommandStack = CommandStack();
 	}
 
 	void EditorLayer::OpenScene()
@@ -675,6 +676,8 @@ namespace Dominion {
 
 			mActiveScene = mEditorScene;
 		}
+
+		mCommandStack = CommandStack();
 	}
 
 	void EditorLayer::SaveScene()
