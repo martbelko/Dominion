@@ -503,7 +503,7 @@ namespace Dominion {
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius, 1.0f));
 
 				Renderer2D::DrawCircle((positiveCamera ? positiveOffset : negativeOffset) * finalMatrix,
-					mSettinsPanel.Get2DPhysicsCollidersColor(), 0.05f, 0.0f, (int)eid);
+					mSettinsPanel.Get2DPhysicsCollidersColor(), 0.0125f * mSettinsPanel.GetDebugLineThickness(), 0.0f, (int)eid);
 			}
 		}
 
