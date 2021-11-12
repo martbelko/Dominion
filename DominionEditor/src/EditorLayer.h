@@ -19,6 +19,7 @@ namespace Dominion {
 	public:
 		EditorLayer();
 		virtual ~EditorLayer() override = default;
+		// TODO: Rule of 5
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
