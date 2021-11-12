@@ -6,6 +6,8 @@
 #include "Dominion/Renderer/UniformBuffer.h"
 #include "Dominion/Renderer/RenderCommand.h"
 
+#include "Dominion/Math/Math.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -26,7 +28,8 @@ namespace Dominion {
 	struct CircleVertex
 	{
 		glm::vec3 worldPosition;
-		glm::vec3 localPosition;
+		glm::vec2 worldScale;
+		glm::vec2 localPosition;
 		glm::vec4 color;
 		float thickness;
 		float fade;
@@ -168,7 +171,8 @@ namespace Dominion {
 		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex));
 		sData.circleVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aWorldPosition" },
-			{ ShaderDataType::Float3, "aLocalPosition" },
+			{ ShaderDataType::Float2, "aWorldScale" },
+			{ ShaderDataType::Float2, "aLocalPosition" },
 			{ ShaderDataType::Float4, "aColor" },
 			{ ShaderDataType::Float,  "aThickness" },
 			{ ShaderDataType::Float,  "aFade" },
@@ -525,9 +529,13 @@ namespace Dominion {
 		if (sData.circleIndexCount >= Renderer2DData::MAX_CIRCLE_INDICES)
 			NextCirclesBatch();
 
+		glm::vec3 scale;
+		Math::DecomposeTransformScale(transform, scale);
+
 		for (size_t i = 0; i < CIRCLE_VERTEX_COUNT; ++i)
 		{
 			sData.circleVertexBufferPtr->worldPosition = transform * sData.quadVertexPositions[i];
+			sData.circleVertexBufferPtr->worldScale = scale;
 			sData.circleVertexBufferPtr->localPosition = sData.quadVertexPositions[i] * 2.0f;
 			sData.circleVertexBufferPtr->color = color;
 			sData.circleVertexBufferPtr->thickness = thickness;
