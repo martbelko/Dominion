@@ -222,7 +222,10 @@ namespace Dominion {
 					}
 
 					if (ImGui::MenuItem("Save", "Ctrl+S"))
-						SaveSceneAs();
+					{
+						DM_ASSERT(!mEditorSceneFilepath.empty(), "Editor scene filepath was empty");
+						SaveScene();
+					}
 
 					if (!canBeSimpleSaved)
 					{
@@ -267,6 +270,8 @@ namespace Dominion {
 		ImGui::Begin("Settings");
 		{
 			ImGui::Checkbox("Show physics colliders", &mShowPhysicsColliders);
+			ImGui::DragFloat("Debug Line Thickness", &mDebugLineThickness, 0.01f, 0.001f, 10.0f);
+			ImGui::ColorEdit4("Debug Line Color", glm::value_ptr(m2DPhysicsCollidersColor));
 		}
 		ImGui::End();
 
@@ -454,20 +459,30 @@ namespace Dominion {
 	void EditorLayer::RenderDebug()
 	{
 		// Debug rendering
+		float cameraDistance;
 		if (mSceneState == SceneState::Edit)
+		{
 			Renderer2D::BeginScene(mEditorCamera);
+			cameraDistance = mEditorCamera.GetDistance();
+		}
 		else
 		{
 			Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
 			if (!primaryCameraEntity)
 				return;
 
-			Camera& camera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
+			SceneCamera& camera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
+			TransformComponent& tc = primaryCameraEntity.GetComponent<TransformComponent>();
 			glm::mat4 transform = primaryCameraEntity.Transform().GetTransform();
 			Renderer2D::BeginScene(camera, transform);
+			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				cameraDistance = 1.0f;
+			else
+				cameraDistance = tc.translation.z;
 		}
 
 		RenderCommand::Clear(RenderTarget::DEPTH);
+		Renderer2D::SetLineWidth(mDebugLineThickness);
 		// Draw box2d colliders
 		{
 			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
@@ -481,7 +496,7 @@ namespace Dominion {
 					glm::translate(glm::mat4(1.0f), glm::vec3(boxCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * boxCollider2d.size.x, 2.0f * boxCollider2d.size.y, 1.0f));
 
-				Renderer2D::DrawRect(finalMatrix, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), static_cast<int>(eid));
+				Renderer2D::DrawRect(finalMatrix, m2DPhysicsCollidersColor, static_cast<int>(eid));
 			}
 		}
 
@@ -492,12 +507,12 @@ namespace Dominion {
 			{
 				auto [transform, circleCollider2d] = view.get<TransformComponent, CircleCollider2DComponent>(eid);
 				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
-					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z))) *
-					glm::scale(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.scale), 1.0f));
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z)));
 				glm::mat4 finalMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(circleCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius, 1.0f));
-				Renderer2D::DrawCircle(finalMatrix, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.05f, 0.0f, (int)eid);
+				Renderer2D::DrawCircle(finalMatrix, m2DPhysicsCollidersColor,
+					0.002f * mDebugLineThickness * cameraDistance / circleCollider2d.radius, 0.0f, (int)eid);
 			}
 		}
 

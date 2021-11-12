@@ -92,7 +92,9 @@ namespace Dominion {
 		CommandStack mCommandStack;
 
 		// Settings
-		bool mShowPhysicsColliders;
+		bool mShowPhysicsColliders = true;
+		float mDebugLineThickness = 2.0f;
+		glm::vec4 m2DPhysicsCollidersColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	};
 
 }
