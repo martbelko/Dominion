@@ -17,6 +17,11 @@ namespace Dominion {
 			sRendererAPI->SetViewport(x, y, width, height);
 		}
 
+		static void GetViewport(uint32_t& x, uint32_t& y, uint32_t& width, uint32_t& height)
+		{
+			sRendererAPI->GetViewport(x, y, width, height);
+		}
+
 		static void SetClearColor(const glm::vec4& color)
 		{
 			sRendererAPI->SetClearColor(color);
