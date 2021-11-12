@@ -10,8 +10,14 @@ namespace Dominion {
 	{
 	public:
 		CommandStack();
-		// TODO: Rule of 5
+		CommandStack(const CommandStack&) = delete; // Block copying
+		CommandStack(CommandStack&&) = default;
 
+		CommandStack& operator=(const CommandStack&) = delete; // Block copying
+		CommandStack& operator=(CommandStack&&) = default;
+
+		~CommandStack();
+	public:
 		void PushCommand(Command* command);
 
 		Command* GetNextCommand();

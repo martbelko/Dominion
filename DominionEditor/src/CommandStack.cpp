@@ -8,6 +8,12 @@ namespace Dominion {
 		mCommands.push_back(new NullCommand());
 	}
 
+	CommandStack::~CommandStack()
+	{
+		for (Command* command : mCommands)
+			delete command;
+	}
+
 	void CommandStack::PushCommand(Command* command)
 	{
 		if (mCurrentIndex == mCommands.size() - 1)
@@ -17,7 +23,9 @@ namespace Dominion {
 		}
 		else
 		{
-			// TODO: Delete rest of invalid commands
+			for (size_t i = mCurrentIndex + 1; i < mCommands.size(); ++i)
+				delete mCommands[i];
+
 			mCommands.resize(mCurrentIndex + 1);
 			mCommands.push_back(command);
 			++mCurrentIndex;

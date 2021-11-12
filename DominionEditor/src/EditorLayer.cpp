@@ -656,14 +656,14 @@ namespace Dominion {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
-		if (mSceneState != SceneState::Edit)
-			OnSceneStop();
-
 		if (path.extension().string() != ".dscene")
 		{
 			DM_WARN("Could not load {0} - not a scene file", path.filename().string());
 			return;
 		}
+
+		if (mSceneState != SceneState::Edit)
+			OnSceneStop();
 
 		Ref<Scene> newScene = CreateRef<Scene>();
 		SceneSerializer serializer(newScene);
@@ -675,9 +675,8 @@ namespace Dominion {
 			mSceneHierarchyPanel.SetContext(mEditorScene);
 
 			mActiveScene = mEditorScene;
+			mCommandStack = CommandStack();
 		}
-
-		mCommandStack = CommandStack();
 	}
 
 	void EditorLayer::SaveScene()
