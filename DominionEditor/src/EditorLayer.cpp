@@ -1,4 +1,5 @@
 #include "EditorLayer.h"
+
 #include <imgui/imgui.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -126,7 +127,7 @@ namespace Dominion {
 			}
 		}
 
-		if (mShowPhysicsColliders)
+		if (mSettinsPanel.ShowPhysicsColliders())
 			RenderDebug();
 
 		auto [mx, my] = ImGui::GetMousePos();
@@ -266,14 +267,7 @@ namespace Dominion {
 
 		ImGui::End();
 
-		// Setting
-		ImGui::Begin("Settings");
-		{
-			ImGui::Checkbox("Show physics colliders", &mShowPhysicsColliders);
-			ImGui::DragFloat("Debug Line Thickness", &mDebugLineThickness, 0.01f, 0.001f, 10.0f);
-			ImGui::ColorEdit4("Debug Line Color", glm::value_ptr(m2DPhysicsCollidersColor));
-		}
-		ImGui::End();
+		mSettinsPanel.OnImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport");
@@ -482,7 +476,7 @@ namespace Dominion {
 		}
 
 		RenderCommand::Clear(RenderTarget::DEPTH);
-		Renderer2D::SetLineWidth(mDebugLineThickness);
+		Renderer2D::SetLineWidth(mSettinsPanel.GetDebugLineThickness());
 		// Draw box2d colliders
 		{
 			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
@@ -496,7 +490,7 @@ namespace Dominion {
 					glm::translate(glm::mat4(1.0f), glm::vec3(boxCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * boxCollider2d.size.x, 2.0f * boxCollider2d.size.y, 1.0f));
 
-				Renderer2D::DrawRect(finalMatrix, m2DPhysicsCollidersColor, static_cast<int>(eid));
+				Renderer2D::DrawRect(finalMatrix, mSettinsPanel.Get2DPhysicsCollidersColor(), static_cast<int>(eid));
 			}
 		}
 
@@ -511,8 +505,8 @@ namespace Dominion {
 				glm::mat4 finalMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(circleCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius, 1.0f));
-				Renderer2D::DrawCircle(finalMatrix, m2DPhysicsCollidersColor,
-					0.002f * mDebugLineThickness * cameraDistance / circleCollider2d.radius, 0.0f, (int)eid);
+				Renderer2D::DrawCircle(finalMatrix, mSettinsPanel.Get2DPhysicsCollidersColor(),
+					0.001f * mSettinsPanel.GetDebugLineThickness() * cameraDistance / circleCollider2d.radius, 0.0f, (int)eid);
 			}
 		}
 

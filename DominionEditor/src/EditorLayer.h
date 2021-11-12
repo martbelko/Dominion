@@ -2,6 +2,7 @@
 
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/SettingsPanel.h"
 #include "CommandStack.h"
 
 #include "Dominion.h"
@@ -83,6 +84,7 @@ namespace Dominion {
 		// Panels
 		SceneHierarchyPanel mSceneHierarchyPanel;
 		ContentBrowserPanel mContentBrowserPanel;
+		SettingsPanel mSettinsPanel;
 
 		// Editor resources
 		Ref<Texture2D> mIconPlay, mIconStop, mIconPause;
@@ -90,11 +92,6 @@ namespace Dominion {
 
 		// Commands
 		CommandStack mCommandStack;
-
-		// Settings
-		bool mShowPhysicsColliders = true;
-		float mDebugLineThickness = 2.0f;
-		glm::vec4 m2DPhysicsCollidersColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	};
 
 }
