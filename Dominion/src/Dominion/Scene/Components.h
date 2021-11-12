@@ -15,6 +15,8 @@ namespace Dominion {
 	// Forward declarations
 	class ScriptableEntity;
 
+	// TODO: Rule of 5 for ALL components
+
 	struct IDComponent
 	{
 		UUID uuid;
