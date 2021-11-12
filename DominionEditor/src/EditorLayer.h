@@ -30,7 +30,9 @@ namespace Dominion {
 
 		void OnDuplicateEntityCommand();
 	private:
-		void RenderDebug();
+		void RenderDebug(const EditorCamera& editorCamera);
+		void RenderDebug(const SceneCamera& sceneCamera, const glm::mat4& transform);
+		void RenderDebugInternal(bool positiveCamera);
 
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
