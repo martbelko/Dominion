@@ -389,16 +389,16 @@ namespace Dominion {
 					bc2d.restitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
 				}
 
-				auto circleCollider2DComponent = entity["circleCollider2DComponent"];
+				auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
 				if (circleCollider2DComponent)
 				{
 					CircleCollider2DComponent& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
-					cc2d.offset = boxCollider2DComponent["Offset"].as<glm::vec2>();
-					cc2d.radius = boxCollider2DComponent["Radius"].as<float>();
-					cc2d.density = boxCollider2DComponent["Density"].as<float>();
-					cc2d.friction = boxCollider2DComponent["Friction"].as<float>();
-					cc2d.restitution = boxCollider2DComponent["Restitution"].as<float>();
-					cc2d.restitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
+					cc2d.offset = circleCollider2DComponent["Offset"].as<glm::vec2>();
+					cc2d.radius = circleCollider2DComponent["Radius"].as<float>();
+					cc2d.density = circleCollider2DComponent["Density"].as<float>();
+					cc2d.friction = circleCollider2DComponent["Friction"].as<float>();
+					cc2d.restitution = circleCollider2DComponent["Restitution"].as<float>();
+					cc2d.restitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
 				}
 			}
 		}
