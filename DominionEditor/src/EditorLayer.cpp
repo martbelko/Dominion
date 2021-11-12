@@ -91,7 +91,7 @@ namespace Dominion {
 		RenderCommand::Clear(RenderTarget::COLOR);
 		RenderCommand::Clear(RenderTarget::DEPTH);
 
-		// Clear our entity ID attachment to -1
+		// Clear entity ID attachment to -1
 		mFramebuffer->ClearAttachment(1, -1);
 
 		switch (mSceneState)
@@ -296,7 +296,7 @@ namespace Dominion {
 			}
 			else
 			{
-				auto TextCentered = [&](std::string text) -> void
+				auto TextCentered = [&](const std::string& text) -> void
 				{
 					auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 					auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
