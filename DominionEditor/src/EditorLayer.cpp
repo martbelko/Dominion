@@ -246,27 +246,10 @@ namespace Dominion {
 			ImGui::EndMenuBar();
 		}
 
+		// Render all panels
 		mSceneHierarchyPanel.OnImGuiRender();
 		mContentBrowserPanel.OnImGuiRender();
-
-		ImGui::Begin("Stats");
-
-		std::string name = "None";
-		if (mHoveredEntity)
-			name = mHoveredEntity.GetComponent<TagComponent>().tag;
-		ImGui::Text("Hovered Entity: %s", name.c_str());
-
-		auto stats = Renderer2D::GetStats();
-		ImGui::Text("Renderer2D Stats:");
-		ImGui::Text("Draw Calls: %d", stats.drawCalls);
-		ImGui::Text("Quads: %d", stats.quadCount);
-		ImGui::Text("Circles: %d", stats.circleCount);
-		ImGui::Text("Lines: %d", stats.lineCount);
-		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-		ImGui::End();
-
+		mPerformancePanel.OnImGuiRender();
 		mSettinsPanel.OnImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));

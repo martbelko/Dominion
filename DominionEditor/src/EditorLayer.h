@@ -3,6 +3,8 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/SettingsPanel.h"
+#include "Panels/PerformancePanel.h"
+
 #include "CommandStack.h"
 
 #include "Dominion.h"
@@ -85,10 +87,10 @@ namespace Dominion {
 		SceneHierarchyPanel mSceneHierarchyPanel;
 		ContentBrowserPanel mContentBrowserPanel;
 		SettingsPanel mSettinsPanel;
+		PerformancePanel mPerformancePanel;
 
 		// Editor resources
 		Ref<Texture2D> mIconPlay, mIconStop, mIconPause;
-		Ref<Texture2D> mIconNoPrimaryCameraFound;
 
 		// Commands
 		CommandStack mCommandStack;
