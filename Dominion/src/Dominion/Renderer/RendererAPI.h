@@ -7,12 +7,17 @@
 
 namespace Dominion {
 
-	enum class RenderTarget
+	enum class RenderTarget : uint32_t
 	{
 		DEPTH = BIT(0),
 		STENCIL = BIT(1),
 		COLOR = BIT(2)
 	};
+
+	static RenderTarget operator|(RenderTarget a, RenderTarget b)
+	{
+		return static_cast<RenderTarget>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+	}
 
 	class RendererAPI
 	{

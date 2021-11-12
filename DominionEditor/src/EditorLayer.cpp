@@ -88,8 +88,7 @@ namespace Dominion {
 		Renderer2D::ResetStats();
 		mFramebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-		RenderCommand::Clear(RenderTarget::COLOR);
-		RenderCommand::Clear(RenderTarget::DEPTH);
+		RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
 
 		// Clear entity ID attachment to -1
 		mFramebuffer->ClearAttachment(1, -1);
