@@ -133,7 +133,7 @@ namespace Dominion {
 			{
 				mActiveScene->OnUpdateRuntime(ts);
 				Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
-				DM_CORE_ASSERT(primaryCameraEntity, "No primary camera has been found");
+				DM_ASSERT(primaryCameraEntity, "No primary camera has been found");
 				mActiveScene->Render(primaryCameraEntity.GetComponent<CameraComponent>().camera, primaryCameraEntity.Transform().GetTransform());
 				if (mSettinsPanel.ShowPhysicsColliders())
 				{
@@ -151,7 +151,7 @@ namespace Dominion {
 			case SceneState::Pause:
 			{
 				Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
-				DM_CORE_ASSERT(primaryCameraEntity, "No primary camera has been found");
+				DM_ASSERT(primaryCameraEntity, "No primary camera has been found");
 
 				const SceneCamera& sceneCamera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
 				glm::mat4 cameraTransform = primaryCameraEntity.Transform().GetTransform();
