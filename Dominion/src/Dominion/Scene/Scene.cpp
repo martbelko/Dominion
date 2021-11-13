@@ -3,6 +3,7 @@
 
 #include "Components.h"
 #include "Entity.h"
+#include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
 #include "Dominion/Renderer/Renderer2D.h"
@@ -212,31 +213,23 @@ namespace Dominion {
 		}
 
 		// Render 2D
-		Entity mainCameraEntity = GetPrimaryCameraEntity();
+		/*Entity mainCameraEntity = GetPrimaryCameraEntity();
 		if (mainCameraEntity)
 		{
 			TransformComponent& tc = mainCameraEntity.GetComponent<TransformComponent>();
 			CameraComponent& cc = mainCameraEntity.GetComponent<CameraComponent>();
 
-			Renderer2D::BeginScene(cc.camera, tc.GetTransform());
-			Render();
-			Renderer2D::EndScene();
-		}
+			Render(cc.camera, tc.GetTransform());
+		}*/
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
-		Render();
-		Renderer2D::EndScene();
 	}
 
 
 	void Scene::OnUpdateEditor(Timestep ts, const Camera& camera, const glm::mat4& transform)
 	{
-		Renderer2D::BeginScene(camera, transform);
-		Render();
-		Renderer2D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -281,7 +274,44 @@ namespace Dominion {
 		return {};
 	}
 
-	void Scene::Render()
+	/*void Scene::Render()
+	{
+		// Draw sprites
+		{
+			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, static_cast<int>(entity));
+			}
+		}
+
+		// Draw circles
+		{
+			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
+			}
+		}
+	}*/
+
+	void Scene::Render(const EditorCamera& editorCamera)
+	{
+		Renderer2D::BeginScene(editorCamera);
+		RenderInternal();
+		Renderer2D::EndScene();
+	}
+
+	void Scene::Render(const Camera& camera, const glm::mat4& cameraTransform)
+	{
+		Renderer2D::BeginScene(camera, cameraTransform);
+		RenderInternal();
+		Renderer2D::EndScene();
+	}
+
+	void Scene::RenderInternal()
 	{
 		// Draw sprites
 		{

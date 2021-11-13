@@ -46,6 +46,8 @@ namespace Dominion {
 		static void SerializeScene(Ref<Scene>& scene, const std::filesystem::path& filepath);
 
 		void OnScenePlay();
+		void OnScenePause();
+		void OnSceneUnpause();
 		void OnSceneStop();
 
 		// UI Panels
@@ -93,7 +95,9 @@ namespace Dominion {
 		PerformancePanel mPerformancePanel;
 
 		// Editor resources
-		Ref<Texture2D> mIconPlay, mIconStop, mIconPause;
+		Ref<Texture2D> mIconPlay;
+		Ref<Texture2D> mIconStop;
+		Ref<Texture2D> mIconPause;
 
 		// Commands
 		CommandStack mCommandStack;

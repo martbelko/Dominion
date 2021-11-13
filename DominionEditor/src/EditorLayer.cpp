@@ -30,6 +30,7 @@ namespace Dominion {
 		mCheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 		mIconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
 		mIconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		mIconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -102,32 +103,37 @@ namespace Dominion {
 
 				mEditorCamera.OnUpdate(ts);
 				mEditorScene->OnUpdateEditor(ts, mEditorCamera);
-				RenderDebug(mEditorCamera);
 
-				mCameraFramebuffer->Bind();
-				RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
+				mEditorScene->Render(mEditorCamera);
+				RenderDebug(mEditorCamera);
 
 				Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
 				if (primaryCameraEntity && mCameraViewViewportSize.x > 0 && mCameraViewViewportSize.y > 0)
 				{
+					mCameraFramebuffer->Bind();
+					RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
+
 					TransformComponent& tc = primaryCameraEntity.Transform();
 					CameraComponent& cc = primaryCameraEntity.GetComponent<CameraComponent>();
 					cc.camera.SetViewportSize(mCameraViewViewportSize.x, mCameraViewViewportSize.y);;
-					mEditorScene->OnUpdateEditor(ts, cc.camera, tc.GetTransform());
+					mEditorScene->Render(cc.camera, tc.GetTransform());
 					if (mSettinsPanel.ShowPhysicsColliders())
 					{
-						mEditorScene->OnUpdateEditor(ts, cc.camera, tc.GetTransform());
+						mEditorScene->Render(cc.camera, tc.GetTransform());
 						RenderDebug(cc.camera, tc.GetTransform());
 					}
-				}
 
-				mFramebuffer->Bind();
+					mFramebuffer->Bind();
+				}
 
 				break;
 			}
 			case SceneState::Play:
 			{
 				mActiveScene->OnUpdateRuntime(ts);
+				Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
+				DM_CORE_ASSERT(primaryCameraEntity, "No primary camera has been found");
+				mActiveScene->Render(primaryCameraEntity.GetComponent<CameraComponent>().camera, primaryCameraEntity.Transform().GetTransform());
 				if (mSettinsPanel.ShowPhysicsColliders())
 				{
 					Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
@@ -138,6 +144,19 @@ namespace Dominion {
 						RenderDebug(sceneCamera, transform);
 					}
 				}
+
+				break;
+			}
+			case SceneState::Pause:
+			{
+				Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
+				DM_CORE_ASSERT(primaryCameraEntity, "No primary camera has been found");
+
+				const SceneCamera& sceneCamera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
+				glm::mat4 cameraTransform = primaryCameraEntity.Transform().GetTransform();
+				mActiveScene->Render(sceneCamera, cameraTransform);
+				if (mSettinsPanel.ShowPhysicsColliders())
+					RenderDebug(sceneCamera, cameraTransform);
 
 				break;
 			}
@@ -404,14 +423,43 @@ namespace Dominion {
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		Ref<Texture2D> icon = mSceneState == SceneState::Edit ? mIconPlay : mIconStop;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+		if (mSceneState == SceneState::Edit)
 		{
-			if (mSceneState == SceneState::Edit)
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)mIconPlay->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
 				OnScenePlay();
-			else if (mSceneState == SceneState::Play)
+			}
+		}
+		else if (mSceneState == SceneState::Play)
+		{
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (2.0f * size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)mIconPause->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				OnScenePause();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::ImageButton((ImTextureID)mIconStop->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
 				OnSceneStop();
+			}
+		}
+		else if (mSceneState == SceneState::Pause)
+		{
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (2.0f * size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)mIconPlay->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				OnSceneUnpause();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::ImageButton((ImTextureID)mIconStop->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				OnSceneStop();
+			}
 		}
 
 		ImGui::PopStyleVar(2);
@@ -718,6 +766,16 @@ namespace Dominion {
 		mSceneState = SceneState::Play;
 
 		mSceneHierarchyPanel.SetContext(mActiveScene);
+	}
+
+	void EditorLayer::OnScenePause()
+	{
+		mSceneState = SceneState::Pause;
+	}
+
+	void EditorLayer::OnSceneUnpause()
+	{
+		mSceneState = SceneState::Play;
 	}
 
 	void EditorLayer::OnSceneStop()

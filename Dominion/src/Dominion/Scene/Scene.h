@@ -36,6 +36,9 @@ namespace Dominion {
 		void OnUpdateEditor(Timestep ts, const Camera& camera, const glm::mat4& transform);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		void Render(const EditorCamera& editorCamera);
+		void Render(const Camera& camera, const glm::mat4& cameraTransform);
+
 		Entity DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
@@ -46,7 +49,7 @@ namespace Dominion {
 			return mRegistry.view<Component...>();
 		}
 	private:
-		void Render();
+		void RenderInternal();
 
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
