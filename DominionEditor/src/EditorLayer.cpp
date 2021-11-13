@@ -31,6 +31,7 @@ namespace Dominion {
 		mIconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
 		mIconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 		mIconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
+		mIconReload = Texture2D::Create("Resources/Icons/ReloadButton.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -425,40 +426,60 @@ namespace Dominion {
 		float size = ImGui::GetWindowHeight() - 4.0f;
 		if (mSceneState == SceneState::Edit)
 		{
-			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-			if (ImGui::ImageButton((ImTextureID)mIconPlay->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			constexpr float iconCount = 1.0f;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (iconCount * size * 0.5f));
+
+			if (ImGui::ImageButton((ImTextureID)mIconPlay->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
 			{
 				OnScenePlay();
 			}
 		}
 		else if (mSceneState == SceneState::Play)
 		{
-			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (2.0f * size * 0.5f));
-			if (ImGui::ImageButton((ImTextureID)mIconPause->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			constexpr float iconCount = 3.0f;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (iconCount * size * 0.5f));
+
+			if (ImGui::ImageButton((ImTextureID)mIconPause->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
 			{
 				OnScenePause();
 			}
 
 			ImGui::SameLine();
 
-			if (ImGui::ImageButton((ImTextureID)mIconStop->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			if (ImGui::ImageButton((ImTextureID)mIconStop->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
 			{
 				OnSceneStop();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::ImageButton((ImTextureID)mIconReload->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
+			{
+				OnSceneReload();
 			}
 		}
 		else if (mSceneState == SceneState::Pause)
 		{
-			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (2.0f * size * 0.5f));
-			if (ImGui::ImageButton((ImTextureID)mIconPlay->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			constexpr float iconCount = 3.0f;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (iconCount * size * 0.5f));
+
+			if (ImGui::ImageButton((ImTextureID)mIconPlay->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
 			{
 				OnSceneUnpause();
 			}
 
 			ImGui::SameLine();
 
-			if (ImGui::ImageButton((ImTextureID)mIconStop->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			if (ImGui::ImageButton((ImTextureID)mIconStop->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
 			{
 				OnSceneStop();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::ImageButton((ImTextureID)mIconReload->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0))
+			{
+				OnSceneReload();
 			}
 		}
 
@@ -785,6 +806,12 @@ namespace Dominion {
 		mSceneState = SceneState::Edit;
 
 		mSceneHierarchyPanel.SetContext(mEditorScene);
+	}
+
+	void EditorLayer::OnSceneReload()
+	{
+		OnSceneStop();
+		OnScenePlay();
 	}
 
 }

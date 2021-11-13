@@ -49,6 +49,7 @@ namespace Dominion {
 		void OnScenePause();
 		void OnSceneUnpause();
 		void OnSceneStop();
+		void OnSceneReload();
 
 		// UI Panels
 		void UI_Toolbar();
@@ -98,6 +99,7 @@ namespace Dominion {
 		Ref<Texture2D> mIconPlay;
 		Ref<Texture2D> mIconStop;
 		Ref<Texture2D> mIconPause;
+		Ref<Texture2D> mIconReload;
 
 		// Commands
 		CommandStack mCommandStack;
