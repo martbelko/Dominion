@@ -24,9 +24,9 @@ namespace Dominion {
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 
-		void OnUpdate(Timestep ts) override;
+		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
-		void OnEvent(Event& e) override;
+		virtual void OnEvent(Event& e) override;
 
 		void OnDuplicateEntityCommand();
 	private:
