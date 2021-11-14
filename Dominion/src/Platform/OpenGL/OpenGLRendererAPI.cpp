@@ -86,7 +86,12 @@ namespace Dominion {
 
 	void OpenGLRendererAPI::GetViewport(uint32_t& x, uint32_t& y, uint32_t& width, uint32_t& height)
 	{
-		glViewport(x, y, width, height);
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		x = viewport[0];
+		y = viewport[1];
+		width = viewport[2];
+		height = viewport[3];
 	}
 
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
