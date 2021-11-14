@@ -2,7 +2,9 @@
 
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Core/UUID.h"
+
 #include "Dominion/Renderer/EditorCamera.h"
+#include "Dominion/Renderer/FontRenderer.h"
 
 #include "entt.hpp"
 

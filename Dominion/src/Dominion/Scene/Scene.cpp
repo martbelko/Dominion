@@ -18,6 +18,8 @@
 
 namespace Dominion {
 
+	FontRenderer mFontRenderer;
+
 	static b2BodyType DominionRigidbody2DTypeToBox2DBodyType(Rigidbody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
@@ -33,6 +35,7 @@ namespace Dominion {
 
 	Scene::Scene()
 	{
+		mFontRenderer.LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 	}
 
 	template<typename Component>
@@ -300,15 +303,17 @@ namespace Dominion {
 	void Scene::Render(const EditorCamera& editorCamera)
 	{
 		Renderer2D::BeginScene(editorCamera);
-		RenderInternal();
+		//RenderInternal();
 		Renderer2D::EndScene();
+		mFontRenderer.RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	}
 
 	void Scene::Render(const Camera& camera, const glm::mat4& cameraTransform)
 	{
 		Renderer2D::BeginScene(camera, cameraTransform);
-		RenderInternal();
+		//RenderInternal();
 		Renderer2D::EndScene();
+		mFontRenderer.RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	}
 
 	void Scene::RenderInternal()
