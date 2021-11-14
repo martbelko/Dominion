@@ -39,7 +39,7 @@ namespace Dominion {
 	class AddEntityCommand final : public Command
 	{
 	public:
-		AddEntityCommand(Ref<Scene>& scene, const std::string& name, UUID uuid = UUID());
+		AddEntityCommand(const Ref<Scene>& scene, const std::string& name, UUID uuid = UUID());
 		// TODO: Rule of 5
 
 		virtual void Do() override;

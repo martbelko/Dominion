@@ -23,7 +23,7 @@ namespace Dominion {
 		mDstEntity = Entity();
 	}
 
-	AddEntityCommand::AddEntityCommand(Ref<Scene>& scene, const std::string& name, UUID uuid)
+	AddEntityCommand::AddEntityCommand(const Ref<Scene>& scene, const std::string& name, UUID uuid)
 		: mScene(scene), mUUID(uuid), mName(name)
 	{
 		DM_ASSERT(mScene, "Scene was nullptr");
