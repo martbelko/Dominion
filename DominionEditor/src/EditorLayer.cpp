@@ -134,6 +134,7 @@ namespace Dominion {
 				mActiveScene->OnUpdateRuntime(ts);
 				Entity primaryCameraEntity = mActiveScene->GetPrimaryCameraEntity();
 				DM_ASSERT(primaryCameraEntity, "No primary camera has been found");
+
 				mActiveScene->Render(primaryCameraEntity.GetComponent<CameraComponent>().camera, primaryCameraEntity.Transform().GetTransform());
 				if (mSettinsPanel.ShowPhysicsColliders())
 				{
