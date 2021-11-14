@@ -13,6 +13,7 @@ IncludeDir["entt"] = "%{wks.location}/Dominion/vendor/entt/include"
 IncludeDir["shaderc"] = "%{wks.location}/Dominion/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/Dominion/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
+IncludeDir["FreeType"] = "%{wks.location}/Dominion/vendor/FreeType/include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"

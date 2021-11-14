@@ -82,8 +82,8 @@ workspace "Dominion"
 	filter {}
 
 	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-	targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
 	group "Dependencies"
 		include "vendor/premake"
@@ -92,6 +92,7 @@ workspace "Dominion"
 		include "Dominion/vendor/Glad"
 		include "Dominion/vendor/ImGui"
 		include "Dominion/vendor/yaml-cpp"
+		include "Dominion/vendor/FreeType"
 	group ""
 
 	include "Dominion"

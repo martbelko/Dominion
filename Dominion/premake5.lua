@@ -39,7 +39,8 @@ project "Dominion"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.FreeType}"
 	}
 
 	links
@@ -49,7 +50,8 @@ project "Dominion"
 		"opengl32.lib",
 		"Glad",
 		"ImGui",
-		"yaml-cpp"
+		"yaml-cpp",
+		"FreeType"
 	}
 
 	filter "files:vendor/ImGuizmo/**.cpp"
