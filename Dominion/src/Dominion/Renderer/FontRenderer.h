@@ -15,6 +15,7 @@ namespace Dominion {
 	{
 	public:
 		FontRenderer();
+		~FontRenderer();
 		// TODO: Rule of 5
 	public:
 		void LoadFont(const std::filesystem::path& fontPath);

@@ -15,11 +15,10 @@ namespace Dominion {
 	struct Character
 	{
 		Ref<Texture2D> texture;
-		glm::ivec2 size;       // Size of glyph
-		glm::ivec2 bearing;    // Offset from baseline to left/top of glyph
-		uint32_t advance;    // Offset to advance to next glyph
+		glm::ivec2 size; // Size of glyph
+		glm::ivec2 bearing; // Offset from baseline to left/top of glyph
+		uint32_t advance; // Offset to advance to next glyph
 	};
-
 	std::unordered_map<char, Character> Characters;
 
 	FT_Library mFontLibrary;
@@ -34,6 +33,11 @@ namespace Dominion {
 		mFontRendererUniformBuffer = UniformBuffer::Create(sizeof(FontRendererData), 1);
 	}
 
+	FontRenderer::~FontRenderer()
+	{
+		FT_Done_FreeType(mFontLibrary);
+	}
+
 	void FontRenderer::LoadFont(const std::filesystem::path& fontPath)
 	{
 		mShader = Shader::Create("assets/shaders/Font.vert", "assets/shaders/Font.frag");
@@ -43,12 +47,12 @@ namespace Dominion {
 		FT_Set_Pixel_Sizes(face, 0, 48);
 
 		// load first 128 characters of ASCII set
-		for (unsigned char c = 0; c < 128; ++c)
+		for (uint32_t c = 0; c < 128; ++c)
 		{
 			// Load character glyph
 			if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 			{
-				DM_CORE_ERROR("ERROR::FREETYTPE: Failed to load Glyph");
+				DM_CORE_ERROR("FreeType error: Failed to load Glyph {0}", c);
 				continue;
 			}
 
@@ -63,11 +67,11 @@ namespace Dominion {
 			spec.dataFormat = DataFormat::R;
 			spec.internalFormat = InternalFormat::R8;
 
-			Ref<Texture2D> tex = Texture2D::Create(spec);
-			tex->SetData(face->glyph->bitmap.buffer, spec.height * spec.width);
+			Ref<Texture2D> texture = Texture2D::Create(spec);
+			texture->SetData(face->glyph->bitmap.buffer, spec.height * spec.width);
 			// now store character for later use
 			Character character = {
-				tex,
+				texture,
 				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 				static_cast<uint32_t>(face->glyph->advance.x)
@@ -76,11 +80,11 @@ namespace Dominion {
 		}
 
 		FT_Done_Face(face);
-		FT_Done_FreeType(mFontLibrary);
 
 		Ref<VertexBuffer> vbo = VertexBuffer::Create(sizeof(float) * 6 * 7, nullptr, BufferUsage::DynamicDraw);
 		vbo->SetLayout({
-			{ ShaderDataType::Float4, "aPosition" },
+			{ ShaderDataType::Float2, "aPosition" },
+			{ ShaderDataType::Float2, "aTexCoord" },
 			{ ShaderDataType::Float3, "aColor" }
 		});
 
