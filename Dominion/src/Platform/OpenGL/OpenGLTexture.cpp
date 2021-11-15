@@ -5,22 +5,73 @@
 
 namespace Dominion {
 
-	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: mWidth(width), mHeight(height)
+	uint32_t DominionInternalFormatToGL(InternalFormat internalFormat)
+	{
+		switch (internalFormat)
+		{
+			case InternalFormat::R8: return GL_R8;
+			case InternalFormat::RGB8: return GL_RGB8;
+			case InternalFormat::RGBA8: return GL_RGBA8;
+		}
+
+		DM_CORE_ASSERT(false, "Unknown InternalFormat");
+		return 0;
+	}
+
+	uint32_t DominionDataFormatToGL(DataFormat dataFormat)
+	{
+		switch (dataFormat)
+		{
+			case DataFormat::R: return GL_RED;
+			case DataFormat::RG: return GL_RG;
+			case DataFormat::RGB: return GL_RGB;
+			case DataFormat::RGBA: return GL_RGBA;
+		}
+
+		DM_CORE_ASSERT(false, "Unknown DataFormat");
+		return 0;
+	}
+
+	uint32_t DominionTextureFilterToGL(TextureFilter textureFilter)
+	{
+		switch (textureFilter)
+		{
+			case TextureFilter::NEAREST: return GL_NEAREST;
+			case TextureFilter::LINEAR: return GL_LINEAR;
+		}
+
+		DM_CORE_ASSERT(false, "Unknown TextureFilter");
+		return 0;
+	}
+
+	uint32_t DominionWrappingToGL(Wrapping wrapping)
+	{
+		switch (wrapping)
+		{
+			case Wrapping::REPEAT: return GL_REPEAT;
+			case Wrapping::CLAMP_TO_EDGE: return GL_CLAMP_TO_EDGE;
+		}
+
+		DM_CORE_ASSERT(false, "Unknown Wrapping");
+		return 0;
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const Texture2DSpecification& specification)
+		: mSpecification(specification)
 	{
 		DM_PROFILE_FUNCTION();
 
-		mInternalFormat = GL_RGBA8;
-		mDataFormat = GL_RGBA;
+		uint32_t internalFormat = DominionInternalFormatToGL(specification.internalFormat);
+		mDataFormatNative = DominionDataFormatToGL(specification.dataFormat);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &mRendererID);
-		glTextureStorage2D(mRendererID, 1, mInternalFormat, mWidth, mHeight);
+		glTextureStorage2D(mRendererID, 1, internalFormat, specification.width, specification.height);
 
-		glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(mRendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, DominionTextureFilterToGL(specification.minFilter));
+		glTextureParameteri(mRendererID, GL_TEXTURE_MAG_FILTER, DominionTextureFilterToGL(specification.magFilter));
 
-		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_S, DominionWrappingToGL(specification.wrapS));
+		glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, DominionWrappingToGL(specification.wrapT));
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
@@ -40,28 +91,28 @@ namespace Dominion {
 		{
 			mIsLoaded = true;
 
-			mWidth = width;
-			mHeight = height;
+			mSpecification.width = width;
+			mSpecification.height = height;
 
-			GLenum internalFormat = 0, dataFormat = 0;
-			if (channels == 4)
+			auto GetFormatFromChannels = [](uint32_t channels) -> std::pair<uint32_t, uint32_t>
 			{
-				internalFormat = GL_RGBA8;
-				dataFormat = GL_RGBA;
-			}
-			else if (channels == 3)
-			{
-				internalFormat = GL_RGB8;
-				dataFormat = GL_RGB;
-			}
+				switch (channels)
+				{
+					case 4: return { GL_RGBA8, GL_RGBA };
+					case 3: return { GL_RGB8, GL_RGB };
+					case 2: return { GL_RG8, GL_RG };
+					case 1: return { GL_R8, GL_RED };
+				}
 
-			mInternalFormat = internalFormat;
-			mDataFormat = dataFormat;
+				DM_CORE_ASSERT(false, "Invalid number of channels. Format not supported");
+				return { 0, 0 };
+			};
 
-			DM_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			auto [internalFormat, dataFormat] = GetFormatFromChannels(channels);
+			mDataFormatNative = dataFormat;
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &mRendererID);
-			glTextureStorage2D(mRendererID, 1, internalFormat, mWidth, mHeight);
+			glTextureStorage2D(mRendererID, 1, internalFormat, mSpecification.width, mSpecification.height);
 
 			glTextureParameteri(mRendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTextureParameteri(mRendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -69,7 +120,7 @@ namespace Dominion {
 			glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(mRendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			glTextureSubImage2D(mRendererID, 0, 0, 0, mWidth, mHeight, dataFormat, GL_UNSIGNED_BYTE, data);
+			glTextureSubImage2D(mRendererID, 0, 0, 0, mSpecification.width, mSpecification.height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			stbi_image_free(data);
 		}
@@ -86,9 +137,23 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		uint32_t bpp = mDataFormat == GL_RGBA ? 4 : 3;
-		DM_CORE_ASSERT(size == mWidth * mHeight * bpp, "Data must be entire texture!");
-		glTextureSubImage2D(mRendererID, 0, 0, 0, mWidth, mHeight, mDataFormat, GL_UNSIGNED_BYTE, data);
+	#ifdef DM_ENABLE_ASSERTS
+		auto GetBytesPerPixel = [](uint32_t dataFormat) -> uint32_t
+		{
+			switch (dataFormat)
+			{
+				case GL_RED: return 1;
+				case GL_RG: return 2;
+				case GL_RGB: return 3;
+				case GL_RGBA: return 4;
+			}
+
+			DM_CORE_ASSERT(false, "Unknown DataFormat");
+			return 0;
+		};
+		DM_CORE_ASSERT(size == mSpecification.width * mSpecification.height * GetBytesPerPixel(mDataFormatNative), "Data must be entire texture!");
+	#endif
+		glTextureSubImage2D(mRendererID, 0, 0, 0, mSpecification.width, mSpecification.height, mDataFormatNative, GL_UNSIGNED_BYTE, data);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const

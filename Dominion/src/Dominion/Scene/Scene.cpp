@@ -18,7 +18,7 @@
 
 namespace Dominion {
 
-	FontRenderer mFontRenderer;
+	FontRenderer* mFontRenderer = nullptr;
 
 	static b2BodyType DominionRigidbody2DTypeToBox2DBodyType(Rigidbody2DComponent::BodyType bodyType)
 	{
@@ -35,7 +35,11 @@ namespace Dominion {
 
 	Scene::Scene()
 	{
-		mFontRenderer.LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
+		if (mFontRenderer == nullptr)
+		{
+			mFontRenderer = new FontRenderer();
+			mFontRenderer->LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
+		}
 	}
 
 	template<typename Component>
@@ -214,16 +218,6 @@ namespace Dominion {
 				transform.rotation.z = body->GetAngle();
 			}
 		}
-
-		// Render 2D
-		/*Entity mainCameraEntity = GetPrimaryCameraEntity();
-		if (mainCameraEntity)
-		{
-			TransformComponent& tc = mainCameraEntity.GetComponent<TransformComponent>();
-			CameraComponent& cc = mainCameraEntity.GetComponent<CameraComponent>();
-
-			Render(cc.camera, tc.GetTransform());
-		}*/
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
@@ -277,43 +271,20 @@ namespace Dominion {
 		return {};
 	}
 
-	/*void Scene::Render()
-	{
-		// Draw sprites
-		{
-			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, static_cast<int>(entity));
-			}
-		}
-
-		// Draw circles
-		{
-			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
-			}
-		}
-	}*/
-
 	void Scene::Render(const EditorCamera& editorCamera)
 	{
 		Renderer2D::BeginScene(editorCamera);
-		//RenderInternal();
+		RenderInternal();
+		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		Renderer2D::EndScene();
-		mFontRenderer.RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	}
 
 	void Scene::Render(const Camera& camera, const glm::mat4& cameraTransform)
 	{
 		Renderer2D::BeginScene(camera, cameraTransform);
-		//RenderInternal();
+		RenderInternal();
+		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 		Renderer2D::EndScene();
-		mFontRenderer.RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	}
 
 	void Scene::RenderInternal()

@@ -3,6 +3,7 @@
 
 #include "Dominion/Renderer/Camera.h"
 #include "Dominion/Renderer/RenderCommand.h"
+#include "Dominion/Renderer/Texture.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -14,7 +15,7 @@ namespace Dominion {
 
 	struct Character
 	{
-		uint32_t textureID;  // ID handle of the glyph texture
+		Ref<Texture2D> texture;
 		glm::ivec2 size;       // Size of glyph
 		glm::ivec2 bearing;    // Offset from baseline to left/top of glyph
 		uint32_t advance;    // Offset to advance to next glyph
@@ -73,9 +74,22 @@ namespace Dominion {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			Texture2DSpecification spec;
+			spec.width = face->glyph->bitmap.width;
+			spec.height = face->glyph->bitmap.rows;
+			spec.wrapS = Wrapping::CLAMP_TO_EDGE;
+			spec.wrapT = Wrapping::CLAMP_TO_EDGE;
+			spec.minFilter = TextureFilter::LINEAR;
+			spec.magFilter = TextureFilter::LINEAR;
+			spec.dataFormat = DataFormat::R;
+			spec.internalFormat = InternalFormat::R8;
+
+			Ref<Texture2D> tex = Texture2D::Create(spec);
+			tex->SetData(face->glyph->bitmap.buffer, spec.height * spec.width);
 			// now store character for later use
 			Character character = {
-				texture,
+				tex,
 				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 				static_cast<uint32_t>(face->glyph->advance.x)
@@ -129,7 +143,8 @@ namespace Dominion {
 			};
 
 			// render glyph texture over quad
-			glBindTextureUnit(0, ch.textureID);
+			//glBindTextureUnit(0, ch.textureID);
+			ch.texture->Bind(0);
 			// update content of VBO memory
 			glBindBuffer(GL_ARRAY_BUFFER, VBO);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData

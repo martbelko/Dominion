@@ -24,10 +24,49 @@ namespace Dominion {
 		virtual bool operator==(const Texture& other) const = 0;
 	};
 
+	enum class DataFormat
+	{
+		R = 0,
+		RG,
+		RGB,
+		RGBA
+	};
+
+	enum class InternalFormat
+	{
+		R8 = 0,
+		RGB8,
+		RGBA8
+	};
+
+	enum class Wrapping
+	{
+		REPEAT = 0,
+		CLAMP_TO_EDGE
+		// TODO: Add moooooree
+	};
+
+	enum class TextureFilter
+	{
+		NEAREST = 0,
+		LINEAR
+	};
+
+	struct Texture2DSpecification
+	{
+		uint32_t width, height;
+		InternalFormat internalFormat;
+		DataFormat dataFormat;
+		Wrapping wrapS;
+		Wrapping wrapT;
+		TextureFilter minFilter;
+		TextureFilter magFilter;
+	};
+
 	class Texture2D : public Texture
 	{
 	public:
-		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
+		static Ref<Texture2D> Create(const Texture2DSpecification& textureSpecification);
 		static Ref<Texture2D> Create(const std::string& path);
 	};
 

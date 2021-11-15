@@ -154,7 +154,17 @@ namespace Dominion {
 		sData.quadVertexArray->AddVertexBuffer(sData.quadVertexBuffer);
 		sData.quadVertexArray->SetIndexBuffer(quadIB);
 		// Textures
-		sData.whiteTexture = Texture2D::Create(1, 1);
+		Texture2DSpecification spec;
+		spec.width = 1;
+		spec.height = 1;
+		spec.internalFormat = InternalFormat::RGBA8;
+		spec.dataFormat = DataFormat::RGBA;
+		spec.minFilter = TextureFilter::LINEAR;
+		spec.magFilter = TextureFilter::LINEAR;
+		spec.wrapS = Wrapping::REPEAT;
+		spec.wrapT = Wrapping::REPEAT;
+
+		sData.whiteTexture = Texture2D::Create(spec);
 		uint32_t whiteTextureData = 0xffffffff;
 		sData.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 		// Set first texture slot to 0
