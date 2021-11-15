@@ -9,8 +9,8 @@ namespace Dominion {
 	{
 		switch (usage)
 		{
-			case BufferUsage::Static: return GL_STATIC_DRAW;
-			case BufferUsage::Dynamic: return GL_DYNAMIC_DRAW;
+			case BufferUsage::StaticDraw: return GL_STATIC_DRAW;
+			case BufferUsage::DynamicDraw: return GL_DYNAMIC_DRAW;
 		}
 
 		DM_CORE_ASSERT(false, "Unknown BufferUsage");

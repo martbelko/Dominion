@@ -53,10 +53,10 @@ namespace Dominion {
 			Texture2DSpecification spec;
 			spec.width = face->glyph->bitmap.width;
 			spec.height = face->glyph->bitmap.rows;
-			spec.wrapS = Wrapping::CLAMP_TO_EDGE;
-			spec.wrapT = Wrapping::CLAMP_TO_EDGE;
-			spec.minFilter = TextureFilter::LINEAR;
-			spec.magFilter = TextureFilter::LINEAR;
+			spec.wrapS = Wrapping::ClampToEdge;
+			spec.wrapT = Wrapping::ClampToEdge;
+			spec.minFilter = TextureFilter::Linear;
+			spec.magFilter = TextureFilter::Linear;
 			spec.dataFormat = DataFormat::R;
 			spec.internalFormat = InternalFormat::R8;
 
@@ -75,7 +75,7 @@ namespace Dominion {
 		FT_Done_Face(face);
 		FT_Done_FreeType(mFontLibrary);
 
-		Ref<VertexBuffer> vbo = VertexBuffer::Create(sizeof(float) * 6 * 4, nullptr, BufferUsage::Dynamic);
+		Ref<VertexBuffer> vbo = VertexBuffer::Create(sizeof(float) * 6 * 4, nullptr, BufferUsage::DynamicDraw);
 		vbo->SetLayout({
 			{ ShaderDataType::Float4, "aPosition" }
 		});
@@ -120,7 +120,7 @@ namespace Dominion {
 			mVao->GetVertexBuffers()[0]->SetData(vertices, sizeof(vertices));
 
 			// render quad
-			RenderCommand::Draw(Topology::TRIANGLES, mVao, 6);
+			RenderCommand::Draw(Topology::Triangles, mVao, 6);
 			// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 			position.x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 		}

@@ -41,15 +41,15 @@ namespace Dominion {
 
 	enum class Wrapping
 	{
-		REPEAT = 0,
-		CLAMP_TO_EDGE
+		Repeat = 0,
+		ClampToEdge
 		// TODO: Add moooooree
 	};
 
 	enum class TextureFilter
 	{
-		NEAREST = 0,
-		LINEAR
+		Nearest = 0,
+		Linear
 	};
 
 	struct Texture2DSpecification

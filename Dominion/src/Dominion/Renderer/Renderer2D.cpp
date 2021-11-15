@@ -123,7 +123,7 @@ namespace Dominion {
 		sData.quadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
 		sData.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 		// VertexBuffer
-		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_QUAD_VERTICES * sizeof(QuadVertex), nullptr, BufferUsage::Dynamic);
+		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_QUAD_VERTICES * sizeof(QuadVertex), nullptr, BufferUsage::DynamicDraw);
 		sData.quadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aPosition"     },
 			{ ShaderDataType::Float4, "aColor"        },
@@ -159,10 +159,10 @@ namespace Dominion {
 		spec.height = 1;
 		spec.internalFormat = InternalFormat::RGBA8;
 		spec.dataFormat = DataFormat::RGBA;
-		spec.minFilter = TextureFilter::LINEAR;
-		spec.magFilter = TextureFilter::LINEAR;
-		spec.wrapS = Wrapping::REPEAT;
-		spec.wrapT = Wrapping::REPEAT;
+		spec.minFilter = TextureFilter::Linear;
+		spec.magFilter = TextureFilter::Linear;
+		spec.wrapS = Wrapping::Repeat;
+		spec.wrapT = Wrapping::Repeat;
 
 		sData.whiteTexture = Texture2D::Create(spec);
 		uint32_t whiteTextureData = 0xffffffff;
@@ -178,7 +178,7 @@ namespace Dominion {
 		// Init
 		sData.circleVertexBufferBase = new CircleVertex[sData.MAX_CIRCLE_VERTICES];
 		// VertexBuffer
-		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex), nullptr, BufferUsage::Dynamic);
+		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex), nullptr, BufferUsage::DynamicDraw);
 		sData.circleVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aWorldPosition" },
 			{ ShaderDataType::Float2, "aWorldScale" },
@@ -214,7 +214,7 @@ namespace Dominion {
 		// Init
 		sData.lineVertexBufferBase = new LineVertex[sData.MAX_LINE_VERTICES];
 		// VertexBuffer
-		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_LINE_VERTICES * sizeof(LineVertex), nullptr, BufferUsage::Dynamic);
+		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_LINE_VERTICES * sizeof(LineVertex), nullptr, BufferUsage::DynamicDraw);
 		sData.lineVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aPosition" },
 			{ ShaderDataType::Float4, "aColor" },
@@ -289,7 +289,7 @@ namespace Dominion {
 				sData.textureSlots[i]->Bind(i);
 
 			sData.quadShader->Bind();
-			RenderCommand::DrawIndexed(Topology::TRIANGLES, sData.quadVertexArray, sData.quadIndexCount);
+			RenderCommand::DrawIndexed(Topology::Triangles, sData.quadVertexArray, sData.quadIndexCount);
 			++sData.stats.drawCalls;
 		}
 	}
@@ -302,7 +302,7 @@ namespace Dominion {
 			sData.circleVertexBuffer->SetData(sData.circleVertexBufferBase, dataSize);
 
 			sData.circleShader->Bind();
-			RenderCommand::DrawIndexed(Topology::TRIANGLES, sData.circleVertexArray, sData.circleIndexCount);
+			RenderCommand::DrawIndexed(Topology::Triangles, sData.circleVertexArray, sData.circleIndexCount);
 			++sData.stats.drawCalls;
 		}
 	}
@@ -315,7 +315,7 @@ namespace Dominion {
 			sData.lineVertexBuffer->SetData(sData.lineVertexBufferBase, dataSize);
 
 			sData.lineShader->Bind();
-			RenderCommand::Draw(Topology::LINES, sData.lineVertexArray, sData.lineVertexCount);
+			RenderCommand::Draw(Topology::Lines, sData.lineVertexArray, sData.lineVertexCount);
 			++sData.stats.drawCalls;
 		}
 	}

@@ -9,8 +9,8 @@ namespace Dominion {
 
 	enum class BufferUsage
 	{
-		Static = 0,
-		Dynamic
+		StaticDraw = 0,
+		DynamicDraw
 	};
 
 	static uint32_t ShaderDataTypeSize(ShaderDataType type)

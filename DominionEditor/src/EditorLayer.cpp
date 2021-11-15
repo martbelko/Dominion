@@ -90,7 +90,7 @@ namespace Dominion {
 		Renderer2D::ResetStats();
 		mFramebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-		RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
+		RenderCommand::Clear(RenderTarget::Color | RenderTarget::Depth);
 
 		// Clear entity ID attachment to -1
 		mFramebuffer->ClearAttachment(1, -1);
@@ -113,7 +113,7 @@ namespace Dominion {
 				if (primaryCameraEntity && mCameraViewViewportSize.x > 0 && mCameraViewViewportSize.y > 0)
 				{
 					mCameraFramebuffer->Bind();
-					RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
+					RenderCommand::Clear(RenderTarget::Color | RenderTarget::Depth);
 
 					TransformComponent& tc = primaryCameraEntity.Transform();
 					CameraComponent& cc = primaryCameraEntity.GetComponent<CameraComponent>();

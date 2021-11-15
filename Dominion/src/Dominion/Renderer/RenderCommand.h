@@ -27,7 +27,7 @@ namespace Dominion {
 			sRendererAPI->SetClearColor(color);
 		}
 
-		static void Clear(RenderTarget target = RenderTarget::COLOR)
+		static void Clear(RenderTarget target = RenderTarget::Color)
 		{
 			sRendererAPI->Clear(target);
 		}

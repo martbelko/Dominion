@@ -29,18 +29,18 @@ namespace Dominion {
 	{
 		switch (topology)
 		{
-			case Topology::POINTS: return GL_POINTS;
-			case Topology::LINE_STRIP: return GL_LINE_STRIP;
-			case Topology::LINE_LOOP: return GL_LINE_LOOP;
-			case Topology::LINES: return GL_LINES;
-			case Topology::LINE_STRIP_ADJACENCY: return GL_LINE_STRIP_ADJACENCY;
-			case Topology::LINES_ADJACENCY: return GL_LINES_ADJACENCY;
-			case Topology::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
-			case Topology::TRIANGLE_FAN: return GL_TRIANGLE_FAN;
-			case Topology::TRIANGLES: return GL_TRIANGLES;
-			case Topology::TRIANGLE_STRIP_ADJACENCY: return GL_TRIANGLE_STRIP_ADJACENCY;
-			case Topology::TRIANGLES_ADJACENCY: return GL_TRIANGLES_ADJACENCY;
-			case Topology::PATCHES: return GL_PATCHES;
+			case Topology::Points: return GL_POINTS;
+			case Topology::LineStrip: return GL_LINE_STRIP;
+			case Topology::LineLoop: return GL_LINE_LOOP;
+			case Topology::Lines: return GL_LINES;
+			case Topology::LineStripAdjacency: return GL_LINE_STRIP_ADJACENCY;
+			case Topology::LinesAdjacency: return GL_LINES_ADJACENCY;
+			case Topology::TriangleStrip: return GL_TRIANGLE_STRIP;
+			case Topology::TriangleFan: return GL_TRIANGLE_FAN;
+			case Topology::Triangles: return GL_TRIANGLES;
+			case Topology::TriangleStripAdjacency: return GL_TRIANGLE_STRIP_ADJACENCY;
+			case Topology::TrianglesAdjacency: return GL_TRIANGLES_ADJACENCY;
+			case Topology::Patches: return GL_PATCHES;
 		}
 
 		DM_ASSERT(false, "Unknown topology");
@@ -50,11 +50,11 @@ namespace Dominion {
 	static GLbitfield DominionRenderTargetToGLRenderTarget(RenderTarget target)
 	{
 		GLbitfield mask = 0;
-		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::DEPTH))
+		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::Depth))
 			mask |= GL_DEPTH_BUFFER_BIT;
-		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::STENCIL))
+		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::Stencil))
 			mask |= GL_STENCIL_BUFFER_BIT;
-		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::COLOR))
+		if (static_cast<uint32_t>(target) & static_cast<uint32_t>(RenderTarget::Color))
 			mask |= GL_COLOR_BUFFER_BIT;
 
 		return mask;

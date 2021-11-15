@@ -36,8 +36,8 @@ namespace Dominion {
 	{
 		switch (textureFilter)
 		{
-			case TextureFilter::NEAREST: return GL_NEAREST;
-			case TextureFilter::LINEAR: return GL_LINEAR;
+			case TextureFilter::Nearest: return GL_NEAREST;
+			case TextureFilter::Linear: return GL_LINEAR;
 		}
 
 		DM_CORE_ASSERT(false, "Unknown TextureFilter");
@@ -48,8 +48,8 @@ namespace Dominion {
 	{
 		switch (wrapping)
 		{
-			case Wrapping::REPEAT: return GL_REPEAT;
-			case Wrapping::CLAMP_TO_EDGE: return GL_CLAMP_TO_EDGE;
+			case Wrapping::Repeat: return GL_REPEAT;
+			case Wrapping::ClampToEdge: return GL_CLAMP_TO_EDGE;
 		}
 
 		DM_CORE_ASSERT(false, "Unknown Wrapping");
