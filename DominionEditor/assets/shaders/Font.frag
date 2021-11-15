@@ -8,14 +8,14 @@ struct VertexOutput
 
 layout (location = 0) in VertexOutput Input;
 
-out vec4 color;
+layout (binding = 0) uniform sampler2D uText;
 
-uniform sampler2D text;
+layout (location = 0) out vec4 oColor;
 
 void main()
 {
-	float alpha = texture(text, Input.texCoord).r;
+	float alpha = texture(uText, Input.texCoord).r;
 	if (alpha == 0.0)
 		discard;
-	color = vec4(Input.color, 1.0) * vec4(1.0, 1.0, 1.0, alpha);
+	oColor = vec4(Input.color, 1.0) * vec4(1.0, 1.0, 1.0, alpha);
 }

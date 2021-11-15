@@ -36,7 +36,7 @@ namespace Dominion {
 
 	void FontRenderer::LoadFont(const std::filesystem::path& fontPath)
 	{
-		mShader = NativeShader("assets/shaders/Font.vert", "assets/shaders/Font.frag");
+		mShader = Shader::Create("assets/shaders/Font.vert", "assets/shaders/Font.frag");
 
 		FT_Face face;
 		FT_New_Face(mFontLibrary, fontPath.string().c_str(), 0, &face);
@@ -94,8 +94,7 @@ namespace Dominion {
 		RenderCommand::GetViewport(x, y, width, height);
 		mFontRendererData.projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 		mFontRendererUniformBuffer->SetData(&mFontRendererData, sizeof(FontRendererData));
-		mShader.use();
-		//mShader.setVec3("textColor", color);
+		mShader->Bind();
 		mVao->Bind();
 
 		// iterate through all characters
