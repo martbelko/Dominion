@@ -106,7 +106,8 @@ namespace Dominion {
 				mEditorScene->OnUpdateEditor(ts, mEditorCamera);
 
 				mEditorScene->Render(mEditorCamera);
-				RenderDebug(mEditorCamera);
+				if (mSettinsPanel.ShowPhysicsColliders())
+					RenderDebug(mEditorCamera);
 
 				Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
 				if (primaryCameraEntity && mCameraViewViewportSize.x > 0 && mCameraViewViewportSize.y > 0)
@@ -119,10 +120,7 @@ namespace Dominion {
 					cc.camera.SetViewportSize(mCameraViewViewportSize.x, mCameraViewViewportSize.y);;
 					mEditorScene->Render(cc.camera, tc.GetTransform());
 					if (mSettinsPanel.ShowPhysicsColliders())
-					{
-						mEditorScene->Render(cc.camera, tc.GetTransform());
 						RenderDebug(cc.camera, tc.GetTransform());
-					}
 
 					mFramebuffer->Bind();
 				}

@@ -123,7 +123,7 @@ namespace Dominion {
 		sData.quadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
 		sData.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 		// VertexBuffer
-		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_QUAD_VERTICES * sizeof(QuadVertex));
+		sData.quadVertexBuffer = VertexBuffer::Create(sData.MAX_QUAD_VERTICES * sizeof(QuadVertex), nullptr, BufferUsage::Dynamic);
 		sData.quadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aPosition"     },
 			{ ShaderDataType::Float4, "aColor"        },
@@ -178,7 +178,7 @@ namespace Dominion {
 		// Init
 		sData.circleVertexBufferBase = new CircleVertex[sData.MAX_CIRCLE_VERTICES];
 		// VertexBuffer
-		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex));
+		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex), nullptr, BufferUsage::Dynamic);
 		sData.circleVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aWorldPosition" },
 			{ ShaderDataType::Float2, "aWorldScale" },
@@ -214,7 +214,7 @@ namespace Dominion {
 		// Init
 		sData.lineVertexBufferBase = new LineVertex[sData.MAX_LINE_VERTICES];
 		// VertexBuffer
-		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_LINE_VERTICES * sizeof(LineVertex));
+		sData.lineVertexBuffer = VertexBuffer::Create(sData.MAX_LINE_VERTICES * sizeof(LineVertex), nullptr, BufferUsage::Dynamic);
 		sData.lineVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aPosition" },
 			{ ShaderDataType::Float4, "aColor" },

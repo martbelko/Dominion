@@ -7,6 +7,7 @@
 namespace Dominion {
 
 	class Camera;
+	class VertexArray;
 
 	class FontRenderer
 	{
@@ -19,8 +20,7 @@ namespace Dominion {
 		void RenderText(const std::string& text, glm::vec2 position, float scale, const glm::vec3& color);
 	private:
 		NativeShader mShader;
-		unsigned int VAO;
-		unsigned int VBO;
+		Ref<VertexArray> mVao;
 	};
 
 }
