@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Dominion/Renderer/NativeShader.h"
+#include "Dominion/Renderer/UniformBuffer.h"
 
 #include <filesystem>
 
@@ -21,6 +22,14 @@ namespace Dominion {
 	private:
 		NativeShader mShader;
 		Ref<VertexArray> mVao;
+
+		struct FontRendererData
+		{
+			glm::mat4 projection;
+		};
+
+		FontRendererData mFontRendererData;
+		Ref<UniformBuffer> mFontRendererUniformBuffer;
 	};
 
 }

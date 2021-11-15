@@ -1,12 +1,24 @@
 #version 460 core
 
-layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
-out vec2 TexCoords;
+layout (location = 0) in vec4 aVertex; // <vec2 pos, vec2 tex>
+layout (location = 1) in vec3 aColor;
 
-uniform mat4 projection;
+layout(std140, binding = 1) uniform FontRenderer
+{
+	mat4 projection;
+};
+
+struct VertexOutput
+{
+	vec3 color;
+	vec2 texCoord;
+};
+
+layout (location = 0) out VertexOutput oVertexOutput;
 
 void main()
 {
-	gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
-	TexCoords = vertex.zw;
+	gl_Position = projection * vec4(aVertex.xy, 0.0, 1.0);
+	oVertexOutput.color = aColor;
+	oVertexOutput.texCoord = aVertex.zw;
 }

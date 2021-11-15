@@ -103,7 +103,9 @@ namespace Dominion {
 
 		struct CameraData
 		{
-			glm::mat4 viewProjection;
+			glm::mat4 viewMatrix;
+			glm::mat4 projectionMatrix;
+			glm::mat4 viewProjectionMatrix;
 		};
 		CameraData cameraBuffer;
 		Ref<UniformBuffer> cameraUniformBuffer;
@@ -244,7 +246,9 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		sData.cameraBuffer.viewProjection = camera.GetViewProjectionMatrix();
+		sData.cameraBuffer.viewMatrix = camera.GetViewMatrix();
+		sData.cameraBuffer.projectionMatrix = camera.GetProjectionMatrix();
+		sData.cameraBuffer.viewProjectionMatrix = camera.GetViewProjectionMatrix();
 		sData.cameraUniformBuffer->SetData(&sData.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
@@ -254,7 +258,9 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		sData.cameraBuffer.viewProjection = camera.GetProjection() * glm::inverse(transform);
+		sData.cameraBuffer.viewMatrix = glm::inverse(transform);
+		sData.cameraBuffer.projectionMatrix = camera.GetProjection();
+		sData.cameraBuffer.viewProjectionMatrix = sData.cameraBuffer.projectionMatrix * sData.cameraBuffer.viewMatrix;
 		sData.cameraUniformBuffer->SetData(&sData.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
@@ -264,7 +270,9 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		sData.cameraBuffer.viewProjection = camera.GetViewProjection();
+		sData.cameraBuffer.viewMatrix = camera.GetViewMatrix();
+		sData.cameraBuffer.projectionMatrix = camera.GetProjection();
+		sData.cameraBuffer.viewProjectionMatrix = camera.GetViewProjection();
 		sData.cameraUniformBuffer->SetData(&sData.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();

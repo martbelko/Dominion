@@ -5,6 +5,7 @@
 #include "Dominion/Renderer/RenderCommand.h"
 #include "Dominion/Renderer/Texture.h"
 #include "Dominion/Renderer/VertexArray.h"
+#include "Dominion/Renderer/Shader.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -29,6 +30,8 @@ namespace Dominion {
 		{
 			DM_CORE_ASSERT(false, "Could not init FreeType Library");
 		}
+
+		mFontRendererUniformBuffer = UniformBuffer::Create(sizeof(FontRendererData), 1);
 	}
 
 	void FontRenderer::LoadFont(const std::filesystem::path& fontPath)
@@ -75,9 +78,10 @@ namespace Dominion {
 		FT_Done_Face(face);
 		FT_Done_FreeType(mFontLibrary);
 
-		Ref<VertexBuffer> vbo = VertexBuffer::Create(sizeof(float) * 6 * 4, nullptr, BufferUsage::DynamicDraw);
+		Ref<VertexBuffer> vbo = VertexBuffer::Create(sizeof(float) * 6 * 7, nullptr, BufferUsage::DynamicDraw);
 		vbo->SetLayout({
-			{ ShaderDataType::Float4, "aPosition" }
+			{ ShaderDataType::Float4, "aPosition" },
+			{ ShaderDataType::Float3, "aColor" }
 		});
 
 		mVao = VertexArray::Create();
@@ -86,11 +90,12 @@ namespace Dominion {
 
 	void FontRenderer::RenderText(const std::string& text, glm::vec2 position, float scale, const glm::vec3& color)
 	{
-		mShader.use();
 		uint32_t x, y, width, height;
 		RenderCommand::GetViewport(x, y, width, height);
-		mShader.setMat4("projection", glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height)));
-		mShader.setVec3("textColor", color);
+		mFontRendererData.projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+		mFontRendererUniformBuffer->SetData(&mFontRendererData, sizeof(FontRendererData));
+		mShader.use();
+		//mShader.setVec3("textColor", color);
 		mVao->Bind();
 
 		// iterate through all characters
@@ -104,14 +109,14 @@ namespace Dominion {
 			float w = ch.size.x * scale;
 			float h = ch.size.y * scale;
 			// update VBO for each character
-			float vertices[6][4] = {
-				{ xpos,     ypos + h,   0.0f, 0.0f },
-				{ xpos,     ypos,       0.0f, 1.0f },
-				{ xpos + w, ypos,       1.0f, 1.0f },
+			float vertices[6][7] = {
+				{ xpos,     ypos + h,   0.0f, 0.0f, color.r, color.g, color.b },
+				{ xpos,     ypos,       0.0f, 1.0f, color.r, color.g, color.b },
+				{ xpos + w, ypos,       1.0f, 1.0f, color.r, color.g, color.b },
 
-				{ xpos,     ypos + h,   0.0f, 0.0f },
-				{ xpos + w, ypos,       1.0f, 1.0f },
-				{ xpos + w, ypos + h,   1.0f, 0.0f }
+				{ xpos,     ypos + h,   0.0f, 0.0f, color.r, color.g, color.b },
+				{ xpos + w, ypos,       1.0f, 1.0f, color.r, color.g, color.b },
+				{ xpos + w, ypos + h,   1.0f, 0.0f, color.r, color.g, color.b }
 			};
 
 			// render glyph texture over quad

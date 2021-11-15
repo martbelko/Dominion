@@ -1,7 +1,7 @@
 #version 460 core
 
-layout(location = 0) out vec4 oColor;
-layout(location = 1) out int oEntityID;
+layout (location = 0) out vec4 oColor;
+layout (location = 1) out int oEntityID;
 
 struct VertexOutput
 {
