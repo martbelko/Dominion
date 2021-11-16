@@ -15,9 +15,9 @@ namespace Dominion {
 	struct Character
 	{
 		Ref<Texture2D> texture;
-		glm::ivec2 size; // Size of glyph
-		glm::ivec2 bearing; // Offset from baseline to left/top of glyph
-		uint32_t advance; // Offset to advance to next glyph
+		glm::ivec2 size;
+		glm::ivec2 bearing;
+		uint32_t advance;
 	};
 	std::unordered_map<char, Character> Characters;
 
@@ -35,12 +35,13 @@ namespace Dominion {
 
 	FontRenderer::~FontRenderer()
 	{
-		FT_Done_FreeType(mFontLibrary);
+		if (sCount == 0)
+			FT_Done_FreeType(mFontLibrary);
 	}
 
 	void FontRenderer::LoadFont(const std::filesystem::path& fontPath)
 	{
-		mShader = Shader::Create("assets/shaders/Font.vert", "assets/shaders/Font.frag");
+		mShader = Shader::Create("assets/shaders/FontRenderer.vert", "assets/shaders/FontRenderer.frag");
 
 		FT_Face face;
 		FT_New_Face(mFontLibrary, fontPath.string().c_str(), 0, &face);
@@ -69,6 +70,7 @@ namespace Dominion {
 
 			Ref<Texture2D> texture = Texture2D::Create(spec);
 			texture->SetData(face->glyph->bitmap.buffer, spec.height * spec.width);
+
 			// now store character for later use
 			Character character = {
 				texture,
@@ -113,13 +115,13 @@ namespace Dominion {
 			float h = ch.size.y * scale;
 			// update VBO for each character
 			float vertices[6][7] = {
-				{ xpos,     ypos + h,   0.0f, 0.0f, color.r, color.g, color.b },
-				{ xpos,     ypos,       0.0f, 1.0f, color.r, color.g, color.b },
-				{ xpos + w, ypos,       1.0f, 1.0f, color.r, color.g, color.b },
+				{ xpos,     ypos + h, 0.0f, 0.0f, color.r, color.g, color.b },
+				{ xpos,     ypos,     0.0f, 1.0f, color.r, color.g, color.b },
+				{ xpos + w, ypos,     1.0f, 1.0f, color.r, color.g, color.b },
 
-				{ xpos,     ypos + h,   0.0f, 0.0f, color.r, color.g, color.b },
-				{ xpos + w, ypos,       1.0f, 1.0f, color.r, color.g, color.b },
-				{ xpos + w, ypos + h,   1.0f, 0.0f, color.r, color.g, color.b }
+				{ xpos,     ypos + h, 0.0f, 0.0f, color.r, color.g, color.b },
+				{ xpos + w, ypos,     1.0f, 1.0f, color.r, color.g, color.b },
+				{ xpos + w, ypos + h, 1.0f, 0.0f, color.r, color.g, color.b }
 			};
 
 			// render glyph texture over quad
@@ -133,5 +135,7 @@ namespace Dominion {
 			position.x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 		}
 	}
+
+	uint32_t FontRenderer::sCount = 0;
 
 }

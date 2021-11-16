@@ -4,7 +4,8 @@
 #include "Dominion/Core/UUID.h"
 
 #include "Dominion/Renderer/EditorCamera.h"
-#include "Dominion/Renderer/FontRenderer.h"
+
+#include "Dominion/Renderer/Font/FontRenderer.h"
 
 #include "entt.hpp"
 

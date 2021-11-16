@@ -15,11 +15,15 @@ namespace Dominion {
 	{
 	public:
 		FontRenderer();
+		FontRenderer(const FontRenderer&) = delete;
+		FontRenderer(FontRenderer&&) = delete;
+
+		FontRenderer& operator=(const FontRenderer&) = delete;
+		FontRenderer& operator=(FontRenderer&&) = delete;
+
 		~FontRenderer();
-		// TODO: Rule of 5
 	public:
 		void LoadFont(const std::filesystem::path& fontPath);
-
 		void RenderText(const std::string& text, glm::vec2 position, float scale, const glm::vec3& color);
 	private:
 		Ref<Shader> mShader;
@@ -32,6 +36,8 @@ namespace Dominion {
 
 		FontRendererData mFontRendererData;
 		Ref<UniformBuffer> mFontRendererUniformBuffer;
+	private:
+		static uint32_t sCount;
 	};
 
 }
