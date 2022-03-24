@@ -779,6 +779,12 @@ namespace Dominion {
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (!mEditorScene->GetPrimaryCameraEntity())
+		{
+			FileDialogs::MessageBox(MessageBoxType::Error, "Primary camera", "No primary camera entity found!");
+			return;
+		}
+
 		mActiveScene = CreateRef<Scene>(*mEditorScene);
 		const FramebufferSpecification& spec = mFramebuffer->GetSpecification();
 		mActiveScene->OnViewportResize(spec.width, spec.height);

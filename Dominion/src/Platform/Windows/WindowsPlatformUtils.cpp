@@ -2,6 +2,7 @@
 #include "Dominion/Utils/PlatformUtils.h"
 
 #include <commdlg.h>
+#include <winuser.h>
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
@@ -11,6 +12,24 @@
 #include <filesystem>
 
 namespace Dominion {
+
+	namespace Utils {
+
+		static UINT DominionMessageBoxTypeToWinType(MessageBoxType type)
+		{
+			switch (type)
+			{
+				case Dominion::MessageBoxType::Info: return MB_ICONINFORMATION;
+				case Dominion::MessageBoxType::Question: return MB_ICONQUESTION;
+				case Dominion::MessageBoxType::Warning: return MB_ICONWARNING;
+				case Dominion::MessageBoxType::Error: return MB_ICONERROR;
+			}
+
+			DM_CORE_ASSERT(false, "Unknown MessageBoxType!");
+			return 0;
+		}
+
+	}
 
 	std::filesystem::path FileDialogs::OpenFile(const char* filter)
 	{
@@ -58,6 +77,13 @@ namespace Dominion {
 			return std::filesystem::path(ofn.lpstrFile);
 
 		return std::filesystem::path("");
+	}
+
+	void FileDialogs::MessageBox(MessageBoxType type, const char* title, const char* text)
+	{
+		HWND owner = glfwGetWin32Window((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow());
+		UINT winType = Utils::DominionMessageBoxTypeToWinType(type);
+		MessageBoxA(owner, text, title, winType);
 	}
 
 }
