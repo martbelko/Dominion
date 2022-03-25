@@ -183,14 +183,11 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		// Note: Switch this to true to enable dockspace
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
@@ -404,12 +401,12 @@ namespace Dominion {
 		ImGui::End();
 		ImGui::PopStyleVar();
 
-		UI_Toolbar();
+		DrawToolbar();
 
 		ImGui::End();
 	}
 
-	void EditorLayer::UI_Toolbar()
+	void EditorLayer::DrawToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
@@ -518,6 +515,7 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(mEditorCamera);
 		RenderDebugInternal(editorCamera.GetDistance() > 0.0f);
+		Renderer2D::EndScene();
 	}
 
 	void EditorLayer::RenderDebug(const SceneCamera& sceneCamera, const glm::mat4& transform)
@@ -532,14 +530,16 @@ namespace Dominion {
 			Math::DecomposeTransform(transform, translation, rotation, scale);
 			RenderDebugInternal(translation.z > 0.0f);
 		}
+
+		Renderer2D::EndScene();
 	}
 
 	void EditorLayer::RenderDebugInternal(bool positiveCamera)
 	{
 		Renderer2D::SetLineWidth(mSettinsPanel.GetDebugLineThickness());
-		constexpr float zOffset = 0.001f;
-		const glm::mat4& positiveOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, zOffset));
-		const glm::mat4& negativeOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -zOffset));
+		static constexpr float zOffset = 0.001f;
+		const glm::mat4 positiveOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, zOffset));
+		const glm::mat4 negativeOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -zOffset));
 		// Draw box2d colliders
 		{
 			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
@@ -549,11 +549,11 @@ namespace Dominion {
 				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
 					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z))) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.scale), 1.0f));
-				glm::mat4 finalMatrix = transformMatrix *
+				transformMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(boxCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * boxCollider2d.size.x, 2.0f * boxCollider2d.size.y, 1.0f));
 
-				Renderer2D::DrawRect((positiveCamera ? positiveOffset : negativeOffset) * finalMatrix,
+				Renderer2D::DrawRect((positiveCamera ? positiveOffset : negativeOffset) * transformMatrix,
 					mSettinsPanel.Get2DPhysicsCollidersColor(), static_cast<int>(eid));
 			}
 		}
@@ -574,8 +574,6 @@ namespace Dominion {
 					mSettinsPanel.Get2DPhysicsCollidersColor(), 0.0125f * mSettinsPanel.GetDebugLineThickness(), 0.0f, (int)eid);
 			}
 		}
-
-		Renderer2D::EndScene();
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)

@@ -52,7 +52,7 @@ namespace Dominion {
 		void OnSceneReload();
 
 		// UI Panels
-		void UI_Toolbar();
+		void DrawToolbar();
 	private:
 		OrthographicCameraController mCameraController;
 
