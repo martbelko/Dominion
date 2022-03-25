@@ -7,6 +7,7 @@
 #include "ScriptableEntity.h"
 
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Dominion/Core/Input.h"
 
 #include <glm/glm.hpp>
 
@@ -77,6 +78,7 @@ namespace Dominion {
 			CopyComponentIfExists<Rigidbody2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<BoxCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<CircleCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<InputComponent>(mRegistry, newEntity, other.mRegistry, eid);
 		}
 	}
 
@@ -196,6 +198,32 @@ namespace Dominion {
 			});
 		}
 
+		// Update input component
+		{
+			mRegistry.view<InputComponent>().each([=](auto entity, InputComponent& ic)
+			{
+				TagComponent& tc = mRegistry.get<TagComponent>(entity);
+
+				Rigidbody2DComponent* pRbc = mRegistry.has<Rigidbody2DComponent>(entity) ?
+					&mRegistry.get<Rigidbody2DComponent>(entity) :
+					reinterpret_cast<Rigidbody2DComponent*>(nullptr);
+
+				if (pRbc)
+				{
+					b2Body* body = reinterpret_cast<b2Body*>(pRbc->runtimeBody);
+					if (Input::IsKeyPressed(Key::W))
+						body->ApplyForce(b2Vec2(0, ic.verticalSpeed), body->GetWorldCenter(), true);
+					else if (Input::IsKeyPressed(Key::S))
+						body->ApplyForce(b2Vec2(0, -ic.verticalSpeed), body->GetWorldCenter(), true);
+
+					if (Input::IsKeyPressed(Key::A))
+						body->ApplyForce(b2Vec2(-ic.horizontalSpeed, 0), body->GetWorldCenter(), true);
+					else if (Input::IsKeyPressed(Key::D))
+						body->ApplyForce(b2Vec2(ic.horizontalSpeed, 0), body->GetWorldCenter(), true);
+				}
+			});
+		}
+
 		// Physics
 		{
 			// TODO: Expose these editor physics settings
@@ -223,7 +251,6 @@ namespace Dominion {
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 	}
-
 
 	void Scene::OnUpdateEditor(Timestep ts, const Camera& camera, const glm::mat4& transform)
 	{
@@ -322,6 +349,11 @@ namespace Dominion {
 	}
 
 	template<>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+
+	template<>
 	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
 	{
 	}
@@ -359,7 +391,7 @@ namespace Dominion {
 	}
 
 	template<>
-	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	void Scene::OnComponentAdded<InputComponent>(Entity entity, InputComponent& component)
 	{
 	}
 
@@ -367,6 +399,5 @@ namespace Dominion {
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
 	{
 	}
-
 
 }

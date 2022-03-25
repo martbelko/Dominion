@@ -37,8 +37,8 @@ namespace Dominion {
 		{
 			mContext->mRegistry.each([&](auto entityID)
 			{
-					Entity entity{ entityID , mContext.get() };
-					DrawEntityNode(entity);
+				Entity entity{ entityID , mContext.get() };
+				DrawEntityNode(entity);
 			});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
@@ -309,6 +309,17 @@ namespace Dominion {
 				}
 			}
 
+			if (!mSelectionContext.HasComponent<InputComponent>())
+			{
+				if (ImGui::MenuItem("Input"))
+				{
+					Command* command = new AddComponentCommand<InputComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			ImGui::EndPopup();
 		}
 
@@ -455,6 +466,12 @@ namespace Dominion {
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<InputComponent>("Input", entity, [](InputComponent& ic)
+		{
+			ImGui::DragFloat("Vertical speed", &ic.verticalSpeed, 0.01f, 0.0f);
+			ImGui::DragFloat("Horizontal speed", &ic.horizontalSpeed, 0.01f, 0.0f);
 		});
 	}
 

@@ -259,6 +259,18 @@ namespace Dominion {
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
 
+		if (entity.HasComponent<InputComponent>())
+		{
+			out << YAML::Key << "InputComponent";
+			out << YAML::BeginMap; // InputComponent
+
+			InputComponent& ic = entity.GetComponent<InputComponent>();
+			out << YAML::Key << "HorizontalSpeed" << YAML::Value << ic.horizontalSpeed;
+			out << YAML::Key << "VerticalSpeed" << YAML::Value << ic.verticalSpeed;
+
+			out << YAML::EndMap; // InputComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -399,6 +411,14 @@ namespace Dominion {
 					cc2d.friction = circleCollider2DComponent["Friction"].as<float>();
 					cc2d.restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc2d.restitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+				}
+
+				auto inputComponentNode = entity["InputComponent"];
+				if (inputComponentNode)
+				{
+					InputComponent& ic = deserializedEntity.AddComponent<InputComponent>();
+					ic.horizontalSpeed = inputComponentNode["HorizontalSpeed"].as<float>();
+					ic.verticalSpeed = inputComponentNode["VerticalSpeed"].as<float>();
 				}
 			}
 		}

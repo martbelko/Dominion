@@ -154,4 +154,10 @@ namespace Dominion {
 		void* runtimeFixture = nullptr;
 	};
 
+	struct InputComponent
+	{
+		float verticalSpeed = 20.0f;
+		float horizontalSpeed = 20.0f;
+	};
+
 }

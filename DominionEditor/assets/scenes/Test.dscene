@@ -20,7 +20,7 @@ Entities:
       FixedAspectRatio: false
   - Entity: 11297388612142955501
     TagComponent:
-      Tag: Empty Entity
+      Tag: T
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0.0837758034, 0, 0.37524578]
@@ -35,8 +35,11 @@ Entities:
       Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
-      Restitution: 1
+      Restitution: 0
       RestitutionThreshold: 0.5
+    InputComponent:
+      HorizontalSpeed: 20
+      VerticalSpeed: 20
   - Entity: 11887140858350091552
     TagComponent:
       Tag: Empty Entity
