@@ -58,4 +58,6 @@ void main()
 
 	color = texColor;
 	color2 = v_EntityID;
+	if (color.a < 0.01)
+		discard;
 }
