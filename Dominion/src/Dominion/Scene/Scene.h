@@ -16,7 +16,7 @@ class b2World;
 namespace Dominion {
 
 	class Entity;
-	class CameraComponent;
+	struct CameraComponent;
 
 	template<typename T>
 	concept CameraConcept = std::same_as<T, CameraComponent>;
