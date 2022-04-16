@@ -153,17 +153,17 @@ namespace Dominion {
 			out << YAML::EndMap; // TagComponent
 		}
 
-		if (entity.HasComponent<TransformComponent>())
+		if (entity.HasComponent<TransformComponent2D>())
 		{
-			out << YAML::Key << "TransformComponent";
-			out << YAML::BeginMap; // TransformComponent
+			out << YAML::Key << "TransformComponent2D";
+			out << YAML::BeginMap; // TransformComponent2D
 
-			auto& tc = entity.GetComponent<TransformComponent>();
+			auto& tc = entity.GetComponent<TransformComponent2D>();
 			out << YAML::Key << "Translation" << YAML::Value << tc.translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.scale;
 
-			out << YAML::EndMap; // TransformComponent
+			out << YAML::EndMap; // TransformComponent2D
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -335,14 +335,14 @@ namespace Dominion {
 
 				Entity deserializedEntity = mScene->CreateEntity(uuid, name);
 
-				auto transformComponent = entity["TransformComponent"];
+				auto transformComponent = entity["TransformComponent2D"];
 				if (transformComponent)
 				{
 					// Entities always have transforms
-					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-					tc.translation = transformComponent["Translation"].as<glm::vec3>();
-					tc.rotation = transformComponent["Rotation"].as<glm::vec3>();
-					tc.scale = transformComponent["Scale"].as<glm::vec3>();
+					auto& tc = deserializedEntity.GetComponent<TransformComponent2D>();
+					tc.translation = transformComponent["Translation"].as<glm::vec2>();
+					tc.rotation = transformComponent["Rotation"].as<float>();
+					tc.scale = transformComponent["Scale"].as<glm::vec2>();
 				}
 
 				auto cameraComponent = entity["CameraComponent"];

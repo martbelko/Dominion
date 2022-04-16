@@ -32,24 +32,24 @@ namespace Dominion {
 			: tag(tag) {}
 	};
 
-	struct TransformComponent
+	struct TransformComponent2D
 	{
-		glm::vec3 translation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 rotation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 scale = { 1.0f, 1.0f, 1.0f };
+		glm::vec2 translation = { 0.0f, 0.0f };
+		glm::vec2 scale = { 1.0f, 1.0f };
+		float rotation = 0.0f;
 
-		TransformComponent() = default;
-		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::vec3& translation)
+		TransformComponent2D() = default;
+		TransformComponent2D(const TransformComponent2D&) = default;
+		TransformComponent2D(const glm::vec2& translation)
 			: translation(translation) {}
 
 		glm::mat4 GetTransform() const
 		{
-			glm::mat4 rotationMatrix = glm::toMat4(glm::quat(rotation));
+			glm::mat4 rotationMatrix = glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, rotation)));
 
-			return glm::translate(glm::mat4(1.0f), translation)
+			return glm::translate(glm::mat4(1.0f), glm::vec3(translation, 0.0f))
 				* rotationMatrix
-				* glm::scale(glm::mat4(1.0f), scale);
+				* glm::scale(glm::mat4(1.0f), glm::vec3(scale, 1.0f));
 		}
 	};
 

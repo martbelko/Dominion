@@ -3,10 +3,10 @@ Entities:
   - Entity: 12870652643481371810
     TagComponent:
       Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 0]
+      Rotation: 0
+      Scale: [1, 1]
     CameraComponent:
       Camera:
         ProjectionType: 1
@@ -21,10 +21,10 @@ Entities:
   - Entity: 11297388612142955501
     TagComponent:
       Tag: T
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0.0837758034, 0, 0.37524578]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 0]
+      Rotation: 0.37524578
+      Scale: [1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
     Rigidbody2DComponent:
@@ -43,10 +43,10 @@ Entities:
   - Entity: 11887140858350091552
     TagComponent:
       Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, -1.70000005, 0]
-      Rotation: [0, 0, 0]
-      Scale: [9, 1.20000005, 4]
+    TransformComponent2D:
+      Translation: [0, -1.70000005]
+      Rotation: 0
+      Scale: [9, 1.20000005]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
     Rigidbody2DComponent:

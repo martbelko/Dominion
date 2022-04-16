@@ -5,6 +5,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
+
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/SceneSerializer.h"
 
@@ -115,7 +118,7 @@ namespace Dominion {
 					mCameraFramebuffer->Bind();
 					RenderCommand::Clear(RenderTarget::Color | RenderTarget::Depth);
 
-					TransformComponent& tc = primaryCameraEntity.Transform();
+					TransformComponent2D& tc = primaryCameraEntity.Transform();
 					CameraComponent& cc = primaryCameraEntity.GetComponent<CameraComponent>();
 					cc.camera.SetViewportSize(mCameraViewViewportSize.x, mCameraViewViewportSize.y);;
 					mEditorScene->Render(cc.camera, tc.GetTransform());
@@ -140,7 +143,7 @@ namespace Dominion {
 					if (primaryCameraEntity)
 					{
 						const SceneCamera& sceneCamera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
-						glm::mat4 transform = primaryCameraEntity.GetComponent<TransformComponent>().GetTransform();
+						glm::mat4 transform = primaryCameraEntity.GetComponent<TransformComponent2D>().GetTransform();
 						RenderDebug(sceneCamera, transform);
 					}
 				}
@@ -370,7 +373,7 @@ namespace Dominion {
 			glm::mat4 cameraView = mEditorCamera.GetViewMatrix();
 
 			// Entity transform
-			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			auto& tc = selectedEntity.Transform();
 			glm::mat4 transform = tc.GetTransform();
 
 			// Snapping
@@ -542,12 +545,12 @@ namespace Dominion {
 		const glm::mat4 negativeOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -zOffset));
 		// Draw box2d colliders
 		{
-			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent2D, BoxCollider2DComponent>();
 			for (auto eid : view)
 			{
-				auto [transform, boxCollider2d] = view.get<TransformComponent, BoxCollider2DComponent>(eid);
+				auto [transform, boxCollider2d] = view.get<TransformComponent2D, BoxCollider2DComponent>(eid);
 				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
-					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z))) *
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation))) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.scale), 1.0f));
 				transformMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(boxCollider2d.offset, 0.0f)) *
@@ -560,12 +563,12 @@ namespace Dominion {
 
 		// Draw circle colliders
 		{
-			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent2D, CircleCollider2DComponent>();
 			for (auto eid : view)
 			{
-				auto [transform, circleCollider2d] = view.get<TransformComponent, CircleCollider2DComponent>(eid);
-				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
-					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z)));
+				auto [transform, circleCollider2d] = view.get<TransformComponent2D, CircleCollider2DComponent>(eid);
+				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(transform.translation, 0.0f)) *
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation)));
 				glm::mat4 finalMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(circleCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius, 1.0f));

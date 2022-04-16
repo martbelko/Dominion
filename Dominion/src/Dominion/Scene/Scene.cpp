@@ -71,7 +71,7 @@ namespace Dominion {
 			const auto& name = entity.GetComponent<TagComponent>().tag;
 
 			Entity newEntity = CreateEntity(uuid, name);
-			CopyComponentIfExists<TransformComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<TransformComponent2D>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<CameraComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<SpriteRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<CircleRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
@@ -102,7 +102,7 @@ namespace Dominion {
 		Entity entity = { mRegistry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
-		entity.AddComponent<TransformComponent>();
+		entity.AddComponent<TransformComponent2D>();
 		return entity;
 	}
 
@@ -119,13 +119,13 @@ namespace Dominion {
 		for (auto eid : view)
 		{
 			Entity entity = Entity(eid, this);
-			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& transform = entity.GetComponent<TransformComponent2D>();
 			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 
 			b2BodyDef bodyDef;
 			bodyDef.type = DominionRigidbody2DTypeToBox2DBodyType(rb2d.bodyType);
 			bodyDef.position.Set(transform.translation.x, transform.translation.y);
-			bodyDef.angle = transform.rotation.z;
+			bodyDef.angle = transform.rotation;
 			bodyDef.fixedRotation = rb2d.fixedRotation;
 
 			b2Body* physicsBody = mPhysics2DWorld->CreateBody(&bodyDef);
@@ -236,14 +236,14 @@ namespace Dominion {
 			for (auto eid : view)
 			{
 				Entity entity = Entity(eid, this);
-				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& transform = entity.Transform();
 				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 
 				b2Body* body = static_cast<b2Body*>(rb2d.runtimeBody);
 				const auto& position = body->GetPosition();
 				transform.translation.x = position.x;
 				transform.translation.y = position.y;
-				transform.rotation.z = body->GetAngle();
+				transform.rotation = body->GetAngle();
 			}
 		}
 	}
@@ -275,7 +275,7 @@ namespace Dominion {
 	{
 		Entity newEntity = CreateEntity(entity.Name());
 
-		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<TransformComponent2D>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
@@ -318,20 +318,20 @@ namespace Dominion {
 	{
 		// Draw sprites
 		{
-			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = mRegistry.group<TransformComponent2D>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = group.get<TransformComponent2D, SpriteRendererComponent>(entity);
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, static_cast<int>(entity));
 			}
 		}
 
 		// Draw circles
 		{
-			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
+			auto view = mRegistry.view<TransformComponent2D, CircleRendererComponent>();
 			for (auto entity : view)
 			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				auto [transform, circle] = view.get<TransformComponent2D, CircleRendererComponent>(entity);
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
 			}
 		}

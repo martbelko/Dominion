@@ -3,28 +3,28 @@ Entities:
   - Entity: 951570595911019198
     TagComponent:
       Tag: Left
-    TransformComponent:
-      Translation: [-0.354999989, 0, 0.349999994]
-      Rotation: [0, -0.785398185, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [-0.354999989, 0]
+      Rotation: 0
+      Scale: [1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0.949807167, 1]
   - Entity: 10127227112698677640
     TagComponent:
       Tag: Right
-    TransformComponent:
-      Translation: [0.351999998, 0, 0.349999994]
-      Rotation: [0, 0.785398185, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0.351999998, 0]
+      Rotation: 0
+      Scale: [1, 1]
     SpriteRendererComponent:
       Color: [0.54842025, 0, 0.586872578, 1]
   - Entity: 10733129212253279219
     TagComponent:
       Tag: Camera
-    TransformComponent:
-      Translation: [0, 1.70000005, 4]
-      Rotation: [-0.404916406, 0, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 1.70000005]
+      Rotation: 0
+      Scale: [1, 1]
     CameraComponent:
       Camera:
         ProjectionType: 0
@@ -39,9 +39,9 @@ Entities:
   - Entity: 2925860684668467572
     TagComponent:
       Tag: Top
-    TransformComponent:
-      Translation: [0, 0.5, 0]
-      Rotation: [1.57079637, 0.785398185, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 0.5]
+      Rotation: 0
+      Scale: [1, 1]
     SpriteRendererComponent:
       Color: [0.876447856, 0, 0.834712803, 1]

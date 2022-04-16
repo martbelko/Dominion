@@ -114,7 +114,7 @@ namespace Dominion {
 		}
 	}
 
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	static void DrawFloatControl(const std::string& label, float& value, float resetValue = 0.0f, float columnWidth = 100.0f)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
@@ -126,57 +126,87 @@ namespace Dominion {
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
 
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+		ImVec2 buttonSize = { 4.0f, lineHeight };
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize))
-			values.x = resetValue;
+		if (ImGui::Button("", buttonSize))
+			value = resetValue;
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize))
-			values.y = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Z", buttonSize))
-			values.z = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
+		ImGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f, "%.2f");
 
 		ImGui::PopStyleVar();
 
 		ImGui::Columns(1);
 
+		ImGui::PopID();
+	}
+
+	template<typename T>
+	concept Vectorable = requires(T a)
+	{
+		std::same_as<T, glm::vec1>;
+		std::same_as<T, glm::vec2>;
+		std::same_as<T, glm::vec3>;
+		std::same_as<T, glm::vec4>;
+	};
+
+	template<Vectorable T>
+	static void DrawVecControl(const std::string& label, T& values, const T& resetValue = T(0), float columnWidth = 100.0f)
+	{
+		constexpr uint32_t cols = values.length();
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		constexpr float spacing = 5.0f;
+
+ 		float maxWidth = std::max(1.0f, ImGui::GetContentRegionAvail().x - spacing * (cols - 1));
+
+		ImGui::PushMultiItemsWidths(cols, maxWidth);
+		const ImVec4 colors[] = { ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f }, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f }, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f }, ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f } };
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 size = { 4.0f, lineHeight };
+		for (uint32_t i = 0; i < cols; ++i)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+
+			const ImVec4& color = colors[i];
+
+			ImGui::PushStyleColor(ImGuiCol_Button, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+			ImGui::Button("", size);
+			ImGui::PopStyleColor(3);
+
+			ImGui::SameLine();
+			ImGui::PopStyleVar();
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ spacing, 0 });
+
+			std::string id = "##" + std::to_string(i);
+			ImGui::DragFloat(id.c_str(), &values[i], 0.1f, 0.0f, 0.0f, "%.2f");
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+			ImGui::PopStyleVar();
+		}
+
+		ImGui::NewLine();
+		ImGui::Columns(1);
 		ImGui::PopID();
 	}
 
@@ -325,13 +355,23 @@ namespace Dominion {
 
 		ImGui::PopItemWidth();
 
-		DrawComponent<TransformComponent>("Transform", entity, [](TransformComponent& component)
+		DrawComponent<TransformComponent2D>("Transform", entity, [](TransformComponent2D& component)
 		{
-			DrawVec3Control("Translation", component.translation);
-			glm::vec3 rotation = glm::degrees(component.rotation);
-			DrawVec3Control("Rotation", rotation);
+			glm::vec1 x;
+			glm::vec2 y;
+			glm::vec3 z;
+			glm::vec4 w;
+			DrawVecControl("Translation 1", x);
+			DrawVecControl("Translation 2", y);
+			DrawVecControl("Translation 3", z);
+			DrawVecControl("Translation 4", w);
+
+			/*DrawVecControl("Translation", component.translation);
+			float rotation = glm::degrees(component.rotation);
+			glm::vec1 x;
+			DrawVecControl("Rotation", x);
 			component.rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.scale, 1.0f);
+			DrawVecControl("Scale", component.scale, glm::vec2(1.0f, 1.0f));*/
 		});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
