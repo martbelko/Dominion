@@ -28,7 +28,6 @@ namespace Dominion {
 	struct CircleVertex
 	{
 		glm::vec3 worldPosition;
-		glm::vec2 worldScale;
 		glm::vec2 localPosition;
 		glm::vec4 color;
 		float thickness;
@@ -183,7 +182,6 @@ namespace Dominion {
 		sData.circleVertexBuffer = VertexBuffer::Create(sData.MAX_CIRCLE_VERTICES * sizeof(CircleVertex), nullptr, BufferUsage::DynamicDraw);
 		sData.circleVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "aWorldPosition" },
-			{ ShaderDataType::Float2, "aWorldScale" },
 			{ ShaderDataType::Float2, "aLocalPosition" },
 			{ ShaderDataType::Float4, "aColor" },
 			{ ShaderDataType::Float,  "aThickness" },
@@ -553,7 +551,6 @@ namespace Dominion {
 		for (size_t i = 0; i < CIRCLE_VERTEX_COUNT; ++i)
 		{
 			sData.circleVertexBufferPtr->worldPosition = transform * sData.quadVertexPositions[i];
-			sData.circleVertexBufferPtr->worldScale = scale;
 			sData.circleVertexBufferPtr->localPosition = sData.quadVertexPositions[i] * 2.0f;
 			sData.circleVertexBufferPtr->color = color;
 			sData.circleVertexBufferPtr->thickness = thickness;
