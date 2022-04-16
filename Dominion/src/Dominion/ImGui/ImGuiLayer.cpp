@@ -36,8 +36,8 @@ namespace Dominion {
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
 		float fontSize = 14.0f;// *2.0f;
-		io.Fonts->AddFontFromFileTTF("assets/fonts/consolas/Consolas.ttf", fontSize);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/consolas/Consolas.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF("assets/fonts/consolas/CONSOLA.TTF", fontSize);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/consolas/CONSOLA.TTF", fontSize);
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
