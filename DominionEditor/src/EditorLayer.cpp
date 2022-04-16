@@ -394,9 +394,8 @@ namespace Dominion {
 				glm::vec3 translation, rotation, scale;
 				Math::DecomposeTransform(transform, translation, rotation, scale);
 
-				glm::vec3 deltaRotation = rotation - tc.rotation;
 				tc.translation = translation;
-				tc.rotation += deltaRotation;
+				tc.rotation = rotation.z;
 				tc.scale = scale;
 			}
 		}
