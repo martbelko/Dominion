@@ -124,7 +124,7 @@ namespace Dominion {
 	};
 
 	template<Vectorable T>
-	static void DrawVecControl(const std::string& label, T& values, const T& resetValue = T(0), float columnWidth = 100.0f)
+	static void DrawVecControl(const std::string& label, T& values, const T& resetValue = T(0), const char* format = "%.2f", float columnWidth = 100.0f)
 	{
 		constexpr uint32_t cols = values.length();
 
@@ -162,7 +162,7 @@ namespace Dominion {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ spacing, 0 });
 
 			std::string id = "##" + std::to_string(i);
-			ImGui::DragFloat(id.c_str(), &values[i], 0.1f, 0.0f, 0.0f, "%.2f");
+			ImGui::DragFloat(id.c_str(), &values[i], 0.1f, 0.0f, 0.0f, format);
 			ImGui::PopItemWidth();
 
 			ImGui::SameLine();
@@ -323,7 +323,7 @@ namespace Dominion {
 		{
 			DrawVecControl("Translation", component.translation);
 			glm::vec1 rotation = glm::vec1(glm::degrees(component.rotation));
-			DrawVecControl("Rotation", rotation);
+			DrawVecControl("Rotation", rotation, glm::vec1(0), "%.2f \xc2\xb0");
 			component.rotation = glm::radians(rotation.x);
 			DrawVecControl("Scale", component.scale, glm::vec2(1.0f, 1.0f));
 		});
