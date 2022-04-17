@@ -679,19 +679,19 @@ namespace Dominion {
 				case Key::W:
 				{
 					if (!ImGuizmo::IsUsing())
-						mGizmoType = ImGuizmo::OPERATION::TRANSLATE;
+						mGizmoType = ImGuizmo::OPERATION::TRANSLATE_X | ImGuizmo::OPERATION::TRANSLATE_Y;
 					break;
 				}
 				case Key::E:
 				{
 					if (!ImGuizmo::IsUsing())
-						mGizmoType = ImGuizmo::OPERATION::ROTATE;
+						mGizmoType = ImGuizmo::OPERATION::ROTATE_Z;
 					break;
 				}
 				case Key::R:
 				{
 					if (!ImGuizmo::IsUsing())
-						mGizmoType = ImGuizmo::OPERATION::SCALE;
+						mGizmoType = ImGuizmo::OPERATION::SCALE_X | ImGuizmo::OPERATION::SCALE_Y;
 					break;
 				}
 			}
