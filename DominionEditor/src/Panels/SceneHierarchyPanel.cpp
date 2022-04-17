@@ -13,9 +13,18 @@ namespace Dominion {
 
 	extern const std::filesystem::path gAssetPath;
 
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context, CommandStack& commandStack)
-		: mCommandStack(&commandStack)
+	Ref<Texture2D> g_ResetIcon = nullptr;
+
+	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
+		if (!g_ResetIcon)
+			g_ResetIcon = Texture2D::Create("Resources/Icons/Reset.png");
+	}
+
+	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context, CommandStack& commandStack)
+		: SceneHierarchyPanel()
+	{
+		mCommandStack = &commandStack;
 		SetContext(context);
 	}
 
@@ -139,12 +148,14 @@ namespace Dominion {
 
 		constexpr float spacing = 5.0f;
 
- 		float maxWidth = std::max(1.0f, ImGui::GetContentRegionAvail().x - spacing * (cols - 1));
+		float maxWidth = std::max(1.0f, ImGui::GetContentRegionAvail().x - spacing * (cols - 1));
 
-		ImGui::PushMultiItemsWidths(cols, maxWidth);
 		const ImVec4 colors[] = { ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f }, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f }, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f }, ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f } };
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 size = { 4.0f, lineHeight };
+		ImVec2 colorSize = { 4.0f, lineHeight };
+		float resetIconSize = lineHeight;
+
+		ImGui::PushMultiItemsWidths(cols, maxWidth - resetIconSize - spacing);
 		for (uint32_t i = 0; i < cols; ++i)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
@@ -154,7 +165,7 @@ namespace Dominion {
 			ImGui::PushStyleColor(ImGuiCol_Button, color);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
-			ImGui::Button("", size);
+			ImGui::Button("", colorSize);
 			ImGui::PopStyleColor(3);
 
 			ImGui::SameLine();
@@ -169,7 +180,12 @@ namespace Dominion {
 			ImGui::PopStyleVar();
 		}
 
-		ImGui::NewLine();
+		ImGui::SetNextItemWidth(resetIconSize);
+		if (ImGui::ImageButton((ImTextureID)g_ResetIcon->GetRendererID(), ImVec2(resetIconSize, resetIconSize), ImVec2(0, 1), ImVec2(1, 0), 0))
+		{
+			values = resetValue;
+		}
+
 		ImGui::Columns(1);
 		ImGui::PopID();
 	}
