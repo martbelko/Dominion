@@ -9,9 +9,9 @@ namespace Dominion {
 
 	enum class RenderTarget : uint32_t
 	{
-		DEPTH = BIT(0),
-		STENCIL = BIT(1),
-		COLOR = BIT(2)
+		Depth = BIT(0),
+		Stencil = BIT(1),
+		Color = BIT(2)
 	};
 
 	static RenderTarget operator|(RenderTarget a, RenderTarget b)

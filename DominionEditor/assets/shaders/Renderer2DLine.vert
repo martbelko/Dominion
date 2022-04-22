@@ -6,6 +6,8 @@ layout(location = 2) in int aEntityID;
 
 layout(std140, binding = 0) uniform Camera
 {
+	mat4 u_View;
+	mat4 u_Projection;
 	mat4 u_ViewProjection;
 };
 

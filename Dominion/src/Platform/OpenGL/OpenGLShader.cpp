@@ -15,17 +15,6 @@ namespace Dominion {
 
 	namespace Utils {
 
-		static GLenum ShaderTypeFromString(const std::string& type)
-		{
-			if (type == "vertex")
-				return GL_VERTEX_SHADER;
-			if (type == "fragment" || type == "pixel")
-				return GL_FRAGMENT_SHADER;
-
-			DM_CORE_ASSERT(false, "Unknown shader type!");
-			return 0;
-		}
-
 		static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
 		{
 			switch (stage)
@@ -34,8 +23,8 @@ namespace Dominion {
 				case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
 			}
 
-			DM_CORE_ASSERT(false);
-			return (shaderc_shader_kind)0;
+			DM_CORE_ASSERT(false, "Unknwon shader type!");
+			return static_cast<shaderc_shader_kind>(0);
 		}
 
 		static const char* GLShaderStageToString(GLenum stage)
@@ -46,13 +35,13 @@ namespace Dominion {
 				case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 			}
 
-			DM_CORE_ASSERT(false);
+			DM_CORE_ASSERT(false, "Unknwon shader type!");
 			return nullptr;
 		}
 
 		static const char* GetCacheDirectory()
 		{
-			// TODO: make sure the assets directory is valid
+			// TODO: Validate assets directory
 			return "assets/cache/shader/opengl";
 		}
 
@@ -71,7 +60,7 @@ namespace Dominion {
 				case GL_FRAGMENT_SHADER:  return ".cached_opengl.frag";
 			}
 
-			DM_CORE_ASSERT(false);
+			DM_CORE_ASSERT(false, "Unknown shader type!");
 			return "";
 		}
 
@@ -83,7 +72,7 @@ namespace Dominion {
 				case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
 			}
 
-			DM_CORE_ASSERT(false);
+			DM_CORE_ASSERT(false, "Unknown shader type!");
 			return "";
 		}
 
@@ -342,7 +331,7 @@ namespace Dominion {
 			const auto& bufferType = compiler.get_type(resource.base_type_id);
 			uint32_t bufferSize = compiler.get_declared_struct_size(bufferType);
 			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			int memberCount = bufferType.member_types.size();
+			size_t memberCount = bufferType.member_types.size();
 
 			DM_CORE_TRACE("  {0}", resource.name);
 			DM_CORE_TRACE("    Size = {0}", bufferSize);

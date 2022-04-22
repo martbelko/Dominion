@@ -7,6 +7,7 @@
 #include "ScriptableEntity.h"
 
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Dominion/Core/Input.h"
 
 #include <glm/glm.hpp>
 
@@ -17,6 +18,8 @@
 #include "box2D/b2_circle_shape.h"
 
 namespace Dominion {
+
+	FontRenderer* mFontRenderer = nullptr;
 
 	static b2BodyType DominionRigidbody2DTypeToBox2DBodyType(Rigidbody2DComponent::BodyType bodyType)
 	{
@@ -33,6 +36,11 @@ namespace Dominion {
 
 	Scene::Scene()
 	{
+		if (mFontRenderer == nullptr)
+		{
+			mFontRenderer = new FontRenderer();
+			mFontRenderer->LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
+		}
 	}
 
 	template<typename Component>
@@ -63,13 +71,14 @@ namespace Dominion {
 			const auto& name = entity.GetComponent<TagComponent>().tag;
 
 			Entity newEntity = CreateEntity(uuid, name);
-			CopyComponentIfExists<TransformComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<TransformComponent2D>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<CameraComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<SpriteRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<CircleRendererComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<Rigidbody2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<BoxCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
 			CopyComponentIfExists<CircleCollider2DComponent>(mRegistry, newEntity, other.mRegistry, eid);
+			CopyComponentIfExists<InputComponent>(mRegistry, newEntity, other.mRegistry, eid);
 		}
 	}
 
@@ -93,7 +102,7 @@ namespace Dominion {
 		Entity entity = { mRegistry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
-		entity.AddComponent<TransformComponent>();
+		entity.AddComponent<TransformComponent2D>();
 		return entity;
 	}
 
@@ -110,13 +119,13 @@ namespace Dominion {
 		for (auto eid : view)
 		{
 			Entity entity = Entity(eid, this);
-			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& transform = entity.GetComponent<TransformComponent2D>();
 			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 
 			b2BodyDef bodyDef;
 			bodyDef.type = DominionRigidbody2DTypeToBox2DBodyType(rb2d.bodyType);
 			bodyDef.position.Set(transform.translation.x, transform.translation.y);
-			bodyDef.angle = transform.rotation.z;
+			bodyDef.angle = transform.rotation;
 			bodyDef.fixedRotation = rb2d.fixedRotation;
 
 			b2Body* physicsBody = mPhysics2DWorld->CreateBody(&bodyDef);
@@ -189,6 +198,32 @@ namespace Dominion {
 			});
 		}
 
+		// Update input component
+		{
+			mRegistry.view<InputComponent>().each([=](auto entity, InputComponent& ic)
+			{
+				TagComponent& tc = mRegistry.get<TagComponent>(entity);
+
+				Rigidbody2DComponent* pRbc = mRegistry.has<Rigidbody2DComponent>(entity) ?
+					&mRegistry.get<Rigidbody2DComponent>(entity) :
+					reinterpret_cast<Rigidbody2DComponent*>(nullptr);
+
+				if (pRbc)
+				{
+					b2Body* body = reinterpret_cast<b2Body*>(pRbc->runtimeBody);
+					if (Input::IsKeyPressed(Key::W))
+						body->ApplyForce(b2Vec2(0, ic.verticalSpeed), body->GetWorldCenter(), true);
+					else if (Input::IsKeyPressed(Key::S))
+						body->ApplyForce(b2Vec2(0, -ic.verticalSpeed), body->GetWorldCenter(), true);
+
+					if (Input::IsKeyPressed(Key::A))
+						body->ApplyForce(b2Vec2(-ic.horizontalSpeed, 0), body->GetWorldCenter(), true);
+					else if (Input::IsKeyPressed(Key::D))
+						body->ApplyForce(b2Vec2(ic.horizontalSpeed, 0), body->GetWorldCenter(), true);
+				}
+			});
+		}
+
 		// Physics
 		{
 			// TODO: Expose these editor physics settings
@@ -201,32 +236,21 @@ namespace Dominion {
 			for (auto eid : view)
 			{
 				Entity entity = Entity(eid, this);
-				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& transform = entity.Transform();
 				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 
 				b2Body* body = static_cast<b2Body*>(rb2d.runtimeBody);
 				const auto& position = body->GetPosition();
 				transform.translation.x = position.x;
 				transform.translation.y = position.y;
-				transform.rotation.z = body->GetAngle();
+				transform.rotation = body->GetAngle();
 			}
 		}
-
-		// Render 2D
-		/*Entity mainCameraEntity = GetPrimaryCameraEntity();
-		if (mainCameraEntity)
-		{
-			TransformComponent& tc = mainCameraEntity.GetComponent<TransformComponent>();
-			CameraComponent& cc = mainCameraEntity.GetComponent<CameraComponent>();
-
-			Render(cc.camera, tc.GetTransform());
-		}*/
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 	}
-
 
 	void Scene::OnUpdateEditor(Timestep ts, const Camera& camera, const glm::mat4& transform)
 	{
@@ -251,7 +275,7 @@ namespace Dominion {
 	{
 		Entity newEntity = CreateEntity(entity.Name());
 
-		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<TransformComponent2D>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
@@ -274,33 +298,11 @@ namespace Dominion {
 		return {};
 	}
 
-	/*void Scene::Render()
-	{
-		// Draw sprites
-		{
-			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, static_cast<int>(entity));
-			}
-		}
-
-		// Draw circles
-		{
-			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
-			}
-		}
-	}*/
-
 	void Scene::Render(const EditorCamera& editorCamera)
 	{
 		Renderer2D::BeginScene(editorCamera);
 		RenderInternal();
+		// mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
@@ -308,6 +310,7 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(camera, cameraTransform);
 		RenderInternal();
+		// mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
@@ -315,82 +318,23 @@ namespace Dominion {
 	{
 		// Draw sprites
 		{
-			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = mRegistry.group<TransformComponent2D>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = group.get<TransformComponent2D, SpriteRendererComponent>(entity);
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, static_cast<int>(entity));
 			}
 		}
 
 		// Draw circles
 		{
-			auto view = mRegistry.view<TransformComponent, CircleRendererComponent>();
+			auto view = mRegistry.view<TransformComponent2D, CircleRendererComponent>();
 			for (auto entity : view)
 			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				auto [transform, circle] = view.get<TransformComponent2D, CircleRendererComponent>(entity);
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
 			}
 		}
 	}
-
-	template<typename T>
-	void Scene::OnComponentAdded(Entity entity, T& component)
-	{
-		static_assert(false);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
-	{
-		if (mViewportWidth > 0 && mViewportHeight > 0)
-			component.camera.SetViewportSize(mViewportWidth, mViewportHeight);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<Rigidbody2DComponent>(Entity entity, Rigidbody2DComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
-	{
-	}
-
 
 }

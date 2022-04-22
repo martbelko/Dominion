@@ -11,7 +11,7 @@ namespace Dominion {
 	class SceneHierarchyPanel
 	{
 	public:
-		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel();
 		SceneHierarchyPanel(const Ref<Scene>& scene, CommandStack& commandStack);
 
 		void SetContext(const Ref<Scene>& scene);

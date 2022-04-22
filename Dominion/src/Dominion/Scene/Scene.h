@@ -2,7 +2,12 @@
 
 #include "Dominion/Core/Timestep.h"
 #include "Dominion/Core/UUID.h"
+
 #include "Dominion/Renderer/EditorCamera.h"
+
+#include "Dominion/Renderer/Font/FontRenderer.h"
+
+#include "Dominion/Scene/Components.h"
 
 #include "entt.hpp"
 
@@ -11,6 +16,10 @@ class b2World;
 namespace Dominion {
 
 	class Entity;
+	struct CameraComponent;
+
+	template<typename T>
+	concept CameraConcept = std::same_as<T, CameraComponent>;
 
 	class Scene
 	{
@@ -52,7 +61,16 @@ namespace Dominion {
 		void RenderInternal();
 
 		template<typename T>
-		void OnComponentAdded(Entity entity, T& component);
+		void OnComponentAdded(Entity entity, T& component)
+		{
+		}
+
+		template<typename T> requires std::same_as<T, CameraComponent>
+		void OnComponentAdded(Entity entity, CameraComponent& component)
+		{
+			if (mViewportWidth > 0 && mViewportHeight > 0)
+				component.camera.SetViewportSize(mViewportWidth, mViewportHeight);
+		}
 	private:
 		entt::registry mRegistry;
 		uint32_t mViewportWidth = 0, mViewportHeight = 0;

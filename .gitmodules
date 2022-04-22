@@ -19,3 +19,6 @@
 [submodule "Dominion/vendor/Box2D"]
 	path = Dominion/vendor/Box2D
 	url = https://github.com/martbelko/box2d
+[submodule "Dominion/vendor/FreeType"]
+	path = Dominion/vendor/FreeType
+	url = https://github.com/martbelko/freetype

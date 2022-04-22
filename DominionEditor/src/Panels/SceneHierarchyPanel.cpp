@@ -13,9 +13,18 @@ namespace Dominion {
 
 	extern const std::filesystem::path gAssetPath;
 
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context, CommandStack& commandStack)
-		: mCommandStack(&commandStack)
+	Ref<Texture2D> g_ResetIcon = nullptr;
+
+	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
+		if (!g_ResetIcon)
+			g_ResetIcon = Texture2D::Create("Resources/Icons/Reset.png");
+	}
+
+	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context, CommandStack& commandStack)
+		: SceneHierarchyPanel()
+	{
+		mCommandStack = &commandStack;
 		SetContext(context);
 	}
 
@@ -37,8 +46,8 @@ namespace Dominion {
 		{
 			mContext->mRegistry.each([&](auto entityID)
 			{
-					Entity entity{ entityID , mContext.get() };
-					DrawEntityNode(entity);
+				Entity entity{ entityID , mContext.get() };
+				DrawEntityNode(entity);
 			});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
@@ -114,10 +123,21 @@ namespace Dominion {
 		}
 	}
 
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	template<typename T>
+	concept Vectorable = requires(T a)
 	{
+		std::same_as<T, glm::vec1>;
+		std::same_as<T, glm::vec2>;
+		std::same_as<T, glm::vec3>;
+		std::same_as<T, glm::vec4>;
+	};
+
+	template<Vectorable T>
+	static void DrawVecControl(const std::string& label, T& values, const T& resetValue = T(0), const char* format = "%.2f", float columnWidth = 100.0f)
+	{
+		constexpr uint32_t cols = values.length();
+
 		ImGuiIO& io = ImGui::GetIO();
-		auto boldFont = io.Fonts->Fonts[0];
 
 		ImGui::PushID(label.c_str());
 
@@ -126,61 +146,50 @@ namespace Dominion {
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+		constexpr float spacing = 5.0f;
 
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+		float resetIconSize = lineHeight;
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize))
-			values.x = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+		float maxWidth = std::max(1.0f, ImGui::GetContentRegionAvail().x - spacing * (cols - 1));
+		ImGui::PushMultiItemsWidths(cols, maxWidth - resetIconSize - spacing);
+		const ImVec4 colors[] = { ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f }, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f }, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f }, ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f } };
+		ImVec2 colorSize = { 4.0f, lineHeight };
+		for (uint32_t i = 0; i < cols; ++i)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
 
-		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
+			const ImVec4& color = colors[i];
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize))
-			values.y = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			ImGui::PushStyleColor(ImGuiCol_Button, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+			ImGui::Button("", colorSize);
+			ImGui::PopStyleColor(3);
 
-		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
+			ImGui::SameLine();
+			ImGui::PopStyleVar();
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ spacing, 0 });
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Z", buttonSize))
-			values.z = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			std::string id = "##" + std::to_string(i);
+			ImGui::DragFloat(id.c_str(), &values[i], 0.1f, 0.0f, 0.0f, format);
+			ImGui::PopItemWidth();
 
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::PopStyleVar();
+		}
 
-		ImGui::PopStyleVar();
+		ImGui::SetNextItemWidth(resetIconSize);
+		if (ImGui::ImageButton((ImTextureID)g_ResetIcon->GetRendererID(), ImVec2(resetIconSize, resetIconSize), ImVec2(0, 1), ImVec2(1, 0), 0))
+		{
+			values = resetValue;
+		}
 
 		ImGui::Columns(1);
-
 		ImGui::PopID();
 	}
 
-	template<typename T, typename UIFunction>
+	template<typename T, std::invocable<T&> UIFunction>
 	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
@@ -309,18 +318,29 @@ namespace Dominion {
 				}
 			}
 
+			if (!mSelectionContext.HasComponent<InputComponent>())
+			{
+				if (ImGui::MenuItem("Input"))
+				{
+					Command* command = new AddComponentCommand<InputComponent>(mSelectionContext);
+					command->Do();
+					mCommandStack->PushCommand(command);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			ImGui::EndPopup();
 		}
 
 		ImGui::PopItemWidth();
 
-		DrawComponent<TransformComponent>("Transform", entity, [](TransformComponent& component)
+		DrawComponent<TransformComponent2D>("Transform", entity, [](TransformComponent2D& component)
 		{
-			DrawVec3Control("Translation", component.translation);
-			glm::vec3 rotation = glm::degrees(component.rotation);
-			DrawVec3Control("Rotation", rotation);
-			component.rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.scale, 1.0f);
+			DrawVecControl("Translation", component.translation);
+			glm::vec1 rotation = glm::vec1(glm::degrees(component.rotation));
+			DrawVecControl("Rotation", rotation, glm::vec1(0), "%.2f \xc2\xb0");
+			component.rotation = glm::radians(rotation.x);
+			DrawVecControl("Scale", component.scale, glm::vec2(1.0f, 1.0f));
 		});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
@@ -455,6 +475,12 @@ namespace Dominion {
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<InputComponent>("Input", entity, [](InputComponent& ic)
+		{
+			ImGui::DragFloat("Vertical speed", &ic.verticalSpeed, 0.01f, 0.0f);
+			ImGui::DragFloat("Horizontal speed", &ic.horizontalSpeed, 0.01f, 0.0f);
 		});
 	}
 

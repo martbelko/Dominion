@@ -3,28 +3,28 @@ Entities:
   - Entity: 15610426624843468715
     TagComponent:
       Tag: Green Square
-    TransformComponent:
-      Translation: [2.4000001, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [2.4000001, 0]
+      Rotation: 0
+      Scale: [1, 1]
     SpriteRendererComponent:
       Color: [0, 1, 0, 1]
   - Entity: 1912981584208231125
     TagComponent:
       Tag: Red Square
-    TransformComponent:
-      Translation: [0, 1.10000002, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 1.10000002]
+      Rotation: 0
+      Scale: [1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
   - Entity: 3807544725725297189
     TagComponent:
       Tag: Camera A
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 0]
+      Rotation: 0
+      Scale: [1, 1]
     CameraComponent:
       Camera:
         ProjectionType: 1
@@ -39,10 +39,10 @@ Entities:
   - Entity: 4992497556310371661
     TagComponent:
       Tag: Camera B
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+    TransformComponent2D:
+      Translation: [0, 0]
+      Rotation: 0
+      Scale: [1, 1]
     CameraComponent:
       Camera:
         ProjectionType: 1

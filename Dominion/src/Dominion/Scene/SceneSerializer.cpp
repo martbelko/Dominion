@@ -153,17 +153,17 @@ namespace Dominion {
 			out << YAML::EndMap; // TagComponent
 		}
 
-		if (entity.HasComponent<TransformComponent>())
+		if (entity.HasComponent<TransformComponent2D>())
 		{
-			out << YAML::Key << "TransformComponent";
-			out << YAML::BeginMap; // TransformComponent
+			out << YAML::Key << "TransformComponent2D";
+			out << YAML::BeginMap; // TransformComponent2D
 
-			auto& tc = entity.GetComponent<TransformComponent>();
+			auto& tc = entity.GetComponent<TransformComponent2D>();
 			out << YAML::Key << "Translation" << YAML::Value << tc.translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.scale;
 
-			out << YAML::EndMap; // TransformComponent
+			out << YAML::EndMap; // TransformComponent2D
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -259,6 +259,18 @@ namespace Dominion {
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
 
+		if (entity.HasComponent<InputComponent>())
+		{
+			out << YAML::Key << "InputComponent";
+			out << YAML::BeginMap; // InputComponent
+
+			InputComponent& ic = entity.GetComponent<InputComponent>();
+			out << YAML::Key << "HorizontalSpeed" << YAML::Value << ic.horizontalSpeed;
+			out << YAML::Key << "VerticalSpeed" << YAML::Value << ic.verticalSpeed;
+
+			out << YAML::EndMap; // InputComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -323,14 +335,14 @@ namespace Dominion {
 
 				Entity deserializedEntity = mScene->CreateEntity(uuid, name);
 
-				auto transformComponent = entity["TransformComponent"];
+				auto transformComponent = entity["TransformComponent2D"];
 				if (transformComponent)
 				{
 					// Entities always have transforms
-					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-					tc.translation = transformComponent["Translation"].as<glm::vec3>();
-					tc.rotation = transformComponent["Rotation"].as<glm::vec3>();
-					tc.scale = transformComponent["Scale"].as<glm::vec3>();
+					auto& tc = deserializedEntity.GetComponent<TransformComponent2D>();
+					tc.translation = transformComponent["Translation"].as<glm::vec2>();
+					tc.rotation = transformComponent["Rotation"].as<float>();
+					tc.scale = transformComponent["Scale"].as<glm::vec2>();
 				}
 
 				auto cameraComponent = entity["CameraComponent"];
@@ -338,7 +350,7 @@ namespace Dominion {
 				{
 					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
 
-					auto& cameraProps = cameraComponent["Camera"];
+					auto cameraProps = cameraComponent["Camera"];
 					cc.camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
 
 					cc.camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
@@ -399,6 +411,14 @@ namespace Dominion {
 					cc2d.friction = circleCollider2DComponent["Friction"].as<float>();
 					cc2d.restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc2d.restitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+				}
+
+				auto inputComponentNode = entity["InputComponent"];
+				if (inputComponentNode)
+				{
+					InputComponent& ic = deserializedEntity.AddComponent<InputComponent>();
+					ic.horizontalSpeed = inputComponentNode["HorizontalSpeed"].as<float>();
+					ic.verticalSpeed = inputComponentNode["VerticalSpeed"].as<float>();
 				}
 			}
 		}

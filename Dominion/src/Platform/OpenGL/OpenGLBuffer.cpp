@@ -5,26 +5,29 @@
 
 namespace Dominion {
 
+	uint32_t DominionUsageToGL(BufferUsage usage)
+	{
+		switch (usage)
+		{
+			case BufferUsage::StaticDraw: return GL_STATIC_DRAW;
+			case BufferUsage::DynamicDraw: return GL_DYNAMIC_DRAW;
+		}
+
+		DM_CORE_ASSERT(false, "Unknown BufferUsage");
+		return 0;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////
 	// VertexBuffer /////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, uint32_t size, BufferUsage usage)
 	{
 		DM_PROFILE_FUNCTION();
 
 		glCreateBuffers(1, &mRendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, mRendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
-	}
-
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
-	{
-		DM_PROFILE_FUNCTION();
-
-		glCreateBuffers(1, &mRendererID);
-		glBindBuffer(GL_ARRAY_BUFFER, mRendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, vertices, DominionUsageToGL(usage));
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()

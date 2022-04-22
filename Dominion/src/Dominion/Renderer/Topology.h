@@ -2,16 +2,16 @@
 
 enum class Topology
 {
-	POINTS = 0,
-	LINE_STRIP,
-	LINE_LOOP,
-	LINES,
-	LINE_STRIP_ADJACENCY,
-	LINES_ADJACENCY,
-	TRIANGLE_STRIP,
-	TRIANGLE_FAN,
-	TRIANGLES,
-	TRIANGLE_STRIP_ADJACENCY,
-	TRIANGLES_ADJACENCY,
-	PATCHES
+	Points = 0,
+	LineStrip,
+	LineLoop,
+	Lines,
+	LineStripAdjacency,
+	LinesAdjacency,
+	TriangleStrip,
+	TriangleFan,
+	Triangles,
+	TriangleStripAdjacency,
+	TrianglesAdjacency,
+	Patches
 };

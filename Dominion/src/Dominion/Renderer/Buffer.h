@@ -7,6 +7,12 @@ namespace Dominion {
 		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool
 	};
 
+	enum class BufferUsage
+	{
+		StaticDraw = 0,
+		DynamicDraw
+	};
+
 	static uint32_t ShaderDataTypeSize(ShaderDataType type)
 	{
 		switch (type)
@@ -112,9 +118,8 @@ namespace Dominion {
 
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
-
-		static Ref<VertexBuffer> Create(uint32_t size);
-		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
+	public:
+		static Ref<VertexBuffer> Create(uint32_t size, const float* vertices, BufferUsage usage);
 	};
 
 	// Currently Dominion only supports 32-bit index buffers

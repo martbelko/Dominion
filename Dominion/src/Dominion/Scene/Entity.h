@@ -75,7 +75,7 @@ namespace Dominion {
 
 		UUID GetUUID() { return GetComponent<IDComponent>().uuid; }
 		std::string& Name() { return GetComponent<TagComponent>().tag; }
-		TransformComponent& Transform() { return GetComponent<TransformComponent>(); }
+		TransformComponent2D& Transform() { return GetComponent<TransformComponent2D>(); }
 
 		bool operator==(const Entity& other) const
 		{

@@ -40,7 +40,7 @@ namespace Dominion {
 		shader->SetMat4("u_Transform", transform);
 
 		vertexArray->Bind();
-		RenderCommand::DrawIndexed(Topology::TRIANGLES, vertexArray);
+		RenderCommand::DrawIndexed(Topology::Triangles, vertexArray);
 	}
 
 }

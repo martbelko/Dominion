@@ -5,6 +5,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
+
 #include "Dominion/Scene/Scene.h"
 #include "Dominion/Scene/SceneSerializer.h"
 
@@ -90,7 +93,7 @@ namespace Dominion {
 		Renderer2D::ResetStats();
 		mFramebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-		RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
+		RenderCommand::Clear(RenderTarget::Color | RenderTarget::Depth);
 
 		// Clear entity ID attachment to -1
 		mFramebuffer->ClearAttachment(1, -1);
@@ -106,23 +109,21 @@ namespace Dominion {
 				mEditorScene->OnUpdateEditor(ts, mEditorCamera);
 
 				mEditorScene->Render(mEditorCamera);
-				RenderDebug(mEditorCamera);
+				if (mSettinsPanel.ShowPhysicsColliders())
+					RenderDebug(mEditorCamera);
 
 				Entity primaryCameraEntity = mEditorScene->GetPrimaryCameraEntity();
 				if (primaryCameraEntity && mCameraViewViewportSize.x > 0 && mCameraViewViewportSize.y > 0)
 				{
 					mCameraFramebuffer->Bind();
-					RenderCommand::Clear(RenderTarget::COLOR | RenderTarget::DEPTH);
+					RenderCommand::Clear(RenderTarget::Color | RenderTarget::Depth);
 
-					TransformComponent& tc = primaryCameraEntity.Transform();
+					TransformComponent2D& tc = primaryCameraEntity.Transform();
 					CameraComponent& cc = primaryCameraEntity.GetComponent<CameraComponent>();
 					cc.camera.SetViewportSize(mCameraViewViewportSize.x, mCameraViewViewportSize.y);;
 					mEditorScene->Render(cc.camera, tc.GetTransform());
 					if (mSettinsPanel.ShowPhysicsColliders())
-					{
-						mEditorScene->Render(cc.camera, tc.GetTransform());
 						RenderDebug(cc.camera, tc.GetTransform());
-					}
 
 					mFramebuffer->Bind();
 				}
@@ -142,7 +143,7 @@ namespace Dominion {
 					if (primaryCameraEntity)
 					{
 						const SceneCamera& sceneCamera = primaryCameraEntity.GetComponent<CameraComponent>().camera;
-						glm::mat4 transform = primaryCameraEntity.GetComponent<TransformComponent>().GetTransform();
+						glm::mat4 transform = primaryCameraEntity.GetComponent<TransformComponent2D>().GetTransform();
 						RenderDebug(sceneCamera, transform);
 					}
 				}
@@ -185,14 +186,11 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		// Note: Switch this to true to enable dockspace
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
@@ -362,20 +360,12 @@ namespace Dominion {
 
 			ImGuizmo::SetRect(mViewportBounds[0].x, mViewportBounds[0].y, mViewportBounds[1].x - mViewportBounds[0].x, mViewportBounds[1].y - mViewportBounds[0].y);
 
-			// Camera
-
-			// Runtime camera from entity
-			// auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			// const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-			// const glm::mat4& cameraProjection = camera.GetProjection();
-			// glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
-
 			// Editor camera
 			const glm::mat4& cameraProjection = mEditorCamera.GetProjection();
 			glm::mat4 cameraView = mEditorCamera.GetViewMatrix();
 
 			// Entity transform
-			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			auto& tc = selectedEntity.Transform();
 			glm::mat4 transform = tc.GetTransform();
 
 			// Snapping
@@ -387,18 +377,17 @@ namespace Dominion {
 
 			float snapValues[3] = { snapValue, snapValue, snapValue };
 
-			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+			bool manipulated = ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
 				(ImGuizmo::OPERATION)mGizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
-			if (ImGuizmo::IsUsing())
+			if (manipulated)
 			{
 				glm::vec3 translation, rotation, scale;
 				Math::DecomposeTransform(transform, translation, rotation, scale);
 
-				glm::vec3 deltaRotation = rotation - tc.rotation;
 				tc.translation = translation;
-				tc.rotation += deltaRotation;
+				tc.rotation = rotation.z;
 				tc.scale = scale;
 			}
 		}
@@ -406,12 +395,12 @@ namespace Dominion {
 		ImGui::End();
 		ImGui::PopStyleVar();
 
-		UI_Toolbar();
+		DrawToolbar();
 
 		ImGui::End();
 	}
 
-	void EditorLayer::UI_Toolbar()
+	void EditorLayer::DrawToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
@@ -520,6 +509,7 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(mEditorCamera);
 		RenderDebugInternal(editorCamera.GetDistance() > 0.0f);
+		Renderer2D::EndScene();
 	}
 
 	void EditorLayer::RenderDebug(const SceneCamera& sceneCamera, const glm::mat4& transform)
@@ -534,40 +524,42 @@ namespace Dominion {
 			Math::DecomposeTransform(transform, translation, rotation, scale);
 			RenderDebugInternal(translation.z > 0.0f);
 		}
+
+		Renderer2D::EndScene();
 	}
 
 	void EditorLayer::RenderDebugInternal(bool positiveCamera)
 	{
 		Renderer2D::SetLineWidth(mSettinsPanel.GetDebugLineThickness());
-		constexpr float zOffset = 0.001f;
-		const glm::mat4& positiveOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, zOffset));
-		const glm::mat4& negativeOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -zOffset));
+		static constexpr float zOffset = 0.001f;
+		const glm::mat4 positiveOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, zOffset));
+		const glm::mat4 negativeOffset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -zOffset));
 		// Draw box2d colliders
 		{
-			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent2D, BoxCollider2DComponent>();
 			for (auto eid : view)
 			{
-				auto [transform, boxCollider2d] = view.get<TransformComponent, BoxCollider2DComponent>(eid);
+				auto [transform, boxCollider2d] = view.get<TransformComponent2D, BoxCollider2DComponent>(eid);
 				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
-					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z))) *
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation))) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.scale), 1.0f));
-				glm::mat4 finalMatrix = transformMatrix *
+				transformMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(boxCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * boxCollider2d.size.x, 2.0f * boxCollider2d.size.y, 1.0f));
 
-				Renderer2D::DrawRect((positiveCamera ? positiveOffset : negativeOffset) * finalMatrix,
+				Renderer2D::DrawRect((positiveCamera ? positiveOffset : negativeOffset) * transformMatrix,
 					mSettinsPanel.Get2DPhysicsCollidersColor(), static_cast<int>(eid));
 			}
 		}
 
 		// Draw circle colliders
 		{
-			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+			auto view = mActiveScene->GetAllEntitiesWith<TransformComponent2D, CircleCollider2DComponent>();
 			for (auto eid : view)
 			{
-				auto [transform, circleCollider2d] = view.get<TransformComponent, CircleCollider2DComponent>(eid);
-				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec2(transform.translation), 0.0f)) *
-					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation.z)));
+				auto [transform, circleCollider2d] = view.get<TransformComponent2D, CircleCollider2DComponent>(eid);
+				glm::mat4 transformMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(transform.translation, 0.0f)) *
+					glm::toMat4(glm::quat(glm::vec3(0.0f, 0.0f, transform.rotation)));
 				glm::mat4 finalMatrix = transformMatrix *
 					glm::translate(glm::mat4(1.0f), glm::vec3(circleCollider2d.offset, 0.0f)) *
 					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f * circleCollider2d.radius, 2.0f * circleCollider2d.radius, 1.0f));
@@ -576,8 +568,6 @@ namespace Dominion {
 					mSettinsPanel.Get2DPhysicsCollidersColor(), 0.0125f * mSettinsPanel.GetDebugLineThickness(), 0.0f, (int)eid);
 			}
 		}
-
-		Renderer2D::EndScene();
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -681,19 +671,19 @@ namespace Dominion {
 				case Key::W:
 				{
 					if (!ImGuizmo::IsUsing())
-						mGizmoType = ImGuizmo::OPERATION::TRANSLATE;
+						mGizmoType = ImGuizmo::OPERATION::TRANSLATE_X | ImGuizmo::OPERATION::TRANSLATE_Y;
 					break;
 				}
 				case Key::E:
 				{
 					if (!ImGuizmo::IsUsing())
-						mGizmoType = ImGuizmo::OPERATION::ROTATE;
+						mGizmoType = ImGuizmo::OPERATION::ROTATE_Z;
 					break;
 				}
 				case Key::R:
 				{
 					if (!ImGuizmo::IsUsing())
-						mGizmoType = ImGuizmo::OPERATION::SCALE;
+						mGizmoType = ImGuizmo::OPERATION::SCALE_X | ImGuizmo::OPERATION::SCALE_Y;
 					break;
 				}
 			}
@@ -781,6 +771,12 @@ namespace Dominion {
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (!mEditorScene->GetPrimaryCameraEntity())
+		{
+			FileDialogs::MessageBox(MessageBoxType::Error, "Primary camera", "No primary camera entity found!");
+			return;
+		}
+
 		mActiveScene = CreateRef<Scene>(*mEditorScene);
 		const FramebufferSpecification& spec = mFramebuffer->GetSpecification();
 		mActiveScene->OnViewportResize(spec.width, spec.height);
