@@ -39,7 +39,7 @@ namespace Dominion {
 		if (mFontRenderer == nullptr)
 		{
 			mFontRenderer = new FontRenderer();
-			mFontRenderer->LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
+			mFontRenderer->LoadFont("assets/fonts/consolas/CONSOLA.ttf");
 		}
 	}
 
