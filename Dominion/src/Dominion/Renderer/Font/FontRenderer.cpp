@@ -103,7 +103,6 @@ namespace Dominion {
 		mShader->Bind();
 		mVao->Bind();
 
-		// iterate through all characters
 		for (char c : text)
 		{
 			Character ch = Characters[c];

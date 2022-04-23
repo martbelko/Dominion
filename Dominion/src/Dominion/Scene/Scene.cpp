@@ -184,7 +184,7 @@ namespace Dominion {
 	{
 		// Update scripts
 		{
-			mRegistry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			mRegistry.view<NativeScriptComponent>().each([=](entt::entity entity, NativeScriptComponent& nsc)
 			{
 				// TODO: Move to Scene::OnScenePlay
 				if (!nsc.instance)
@@ -200,7 +200,7 @@ namespace Dominion {
 
 		// Update input component
 		{
-			mRegistry.view<InputComponent>().each([=](auto entity, InputComponent& ic)
+			mRegistry.view<InputComponent>().each([=](entt::entity entity, InputComponent& ic)
 			{
 				TagComponent& tc = mRegistry.get<TagComponent>(entity);
 
@@ -282,6 +282,7 @@ namespace Dominion {
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<InputComponent>(newEntity, entity);
 
 		return newEntity;
 	}
@@ -302,7 +303,7 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(editorCamera);
 		RenderInternal();
-		// mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
+		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
@@ -310,7 +311,7 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(camera, cameraTransform);
 		RenderInternal();
-		// mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
+		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
