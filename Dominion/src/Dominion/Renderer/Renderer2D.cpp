@@ -417,9 +417,9 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		const float textureIndex = 0.0f; // White Texture
+		constexpr float textureIndex = 0.0f; // White Texture
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		const float tilingFactor = 1.0f;
+		constexpr float tilingFactor = 1.0f;
 
 		if (sData.quadIndexCount >= Renderer2DData::MAX_QUAD_INDICES)
 			NextQuadsBatch();
