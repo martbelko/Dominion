@@ -5,8 +5,6 @@
 
 #include "Dominion/Renderer/EditorCamera.h"
 
-#include "Dominion/Renderer/Font/FontRenderer.h"
-
 #include "Dominion/Scene/Components.h"
 
 #include "entt.hpp"

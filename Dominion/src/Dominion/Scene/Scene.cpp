@@ -19,8 +19,6 @@
 
 namespace Dominion {
 
-	FontRenderer* mFontRenderer = nullptr;
-
 	static b2BodyType DominionRigidbody2DTypeToBox2DBodyType(Rigidbody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
@@ -36,11 +34,6 @@ namespace Dominion {
 
 	Scene::Scene()
 	{
-		if (mFontRenderer == nullptr)
-		{
-			mFontRenderer = new FontRenderer();
-			mFontRenderer->LoadFont("assets/fonts/consolas/CONSOLA.ttf");
-		}
 	}
 
 	template<typename Component>
@@ -303,7 +296,6 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(editorCamera);
 		RenderInternal();
-		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
@@ -311,7 +303,6 @@ namespace Dominion {
 	{
 		Renderer2D::BeginScene(camera, cameraTransform);
 		RenderInternal();
-		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
