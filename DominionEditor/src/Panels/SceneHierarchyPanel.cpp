@@ -231,24 +231,34 @@ namespace Dominion {
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		if (entity.HasComponent<TagComponent>())
 		{
-			auto& tag = entity.GetComponent<TagComponent>().tag;
+			constexpr float rightPadding = 10.0f;
+			constexpr const char* addComponentText = "Add Component";
+			const float addComponentWidth = ImGui::CalcTextSize(addComponentText).x;
 
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
-			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+			if (entity.HasComponent<TagComponent>())
 			{
-				tag = std::string(buffer);
+				auto& tag = entity.GetComponent<TagComponent>().tag;
+
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+				float tagWidth = ImGui::GetContentRegionAvail().x - addComponentWidth - rightPadding;
+				ImGui::PushItemWidth(tagWidth);
+				if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+				{
+					tag = std::string(buffer);
+				}
+				ImGui::PopItemWidth();
 			}
+
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(addComponentWidth);
+			if (ImGui::Button(addComponentText))
+				ImGui::OpenPopup("AddComponent");
+			ImGui::PopItemWidth();
 		}
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(-1);
-
-		if (ImGui::Button("Add Component"))
-			ImGui::OpenPopup("AddComponent");
 
 		if (ImGui::BeginPopup("AddComponent"))
 		{
@@ -332,7 +342,7 @@ namespace Dominion {
 			ImGui::EndPopup();
 		}
 
-		ImGui::PopItemWidth();
+		//ImGui::PopItemWidth();
 
 		DrawComponent<TransformComponent2D>("Transform", entity, [](TransformComponent2D& component)
 		{
