@@ -234,24 +234,32 @@ namespace Dominion {
 			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 
-			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
-
-			uint64_t id = 0;
-			CombineHash(id, std::hash<std::string>{}(name));
-			CombineHash(id, std::hash<uint64_t>{}(entity.GetUUID()));
-			ImGui::PushID(id);
-			if (ImGui::ButtonEx("X", ImVec2{ lineHeight, lineHeight }))
+			if (allowModify)
 			{
-				ImGui::OpenPopup("ComponentSettings");
-			}
+				ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
 
-			bool removeComponent = false;
-			if (ImGui::BeginPopup("ComponentSettings"))
-			{
-				if (ImGui::MenuItem("Remove component"))
-					removeComponent = true;
+				uint64_t id = 0;
+				CombineHash(id, std::hash<std::string>{}(name));
+				CombineHash(id, std::hash<uint64_t>{}(entity.GetUUID()));
+				ImGui::PushID(id);
+				if (ImGui::ButtonEx("X", ImVec2{ lineHeight, lineHeight }))
+				{
+					ImGui::OpenPopup("ComponentSettings");
+				}
 
-				ImGui::EndPopup();
+				bool removeComponent = false;
+				if (ImGui::BeginPopup("ComponentSettings"))
+				{
+					if (ImGui::MenuItem("Remove component"))
+						removeComponent = true;
+
+					ImGui::EndPopup();
+				}
+
+				ImGui::PopID();
+
+				if (removeComponent)
+					entity.RemoveComponent<T>();
 			}
 
 			if (open)
@@ -259,11 +267,6 @@ namespace Dominion {
 				uiFunction(component, allowModify);
 				ImGui::TreePop();
 			}
-
-			ImGui::PopID();
-
-			if (removeComponent)
-				entity.RemoveComponent<T>();
 		}
 	}
 
