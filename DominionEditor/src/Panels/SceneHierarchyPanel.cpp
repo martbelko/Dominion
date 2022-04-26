@@ -16,7 +16,7 @@ namespace Dominion {
 	Ref<Texture2D> g_ResetIcon = nullptr;
 
 	template<typename T>
-	void CombineHash(std::size_t& seed, const T& v)
+	static void CombineHash(std::size_t& seed, const T& v)
 	{
 		std::hash<T> hasher;
 		seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -212,6 +212,59 @@ namespace Dominion {
 		ImGui::PopID();
 	}
 
+	template<typename T>
+	static void GetTreeNodeStatus(const std::string& componentName, Entity entity, std::string& description, std::string& error)
+	{
+		DM_ASSERT(entity.HasComponent<T>(), "Entity does not have this component!");
+		if (componentName == "Rigidbody 2D")
+		{
+			if (!entity.HasComponent<BoxCollider2DComponent>() && !entity.HasComponent<CircleCollider2DComponent>())
+			{
+				error = "The component also needs Box Collider 2D or Circle Collider 2D component to work correcly";
+			}
+		}
+		else if (componentName == "Input")
+		{
+			if (!entity.HasComponent<Rigidbody2DComponent>())
+			{
+				error = "The component also needs Rigid Body 2D component to work correcly";
+			}
+		}
+
+		if (componentName == "Transform")
+		{
+			description = "Takes care of position, scale and rotation";
+		}
+		else if (componentName == "Camera")
+		{
+			description = "Represents camera";
+		}
+		else if (componentName == "Sprite Renderer")
+		{
+			description = "Used for drawing quads with colors and/or textures";
+		}
+		else if (componentName == "Circle Renderer")
+		{
+			description = "Used for drawing circles with colors and/or textures";
+		}
+		else if (componentName == "Rigidbody 2D")
+		{
+			description = "Adds control of an object's position through physics simulation";
+		}
+		else if (componentName == "Box Collider 2D")
+		{
+			description = "Adds rectangular 2D collider";
+		}
+		else if (componentName == "Circle Collider 2D")
+		{
+			description = "Adds circle 2D collider";
+		}
+		else if (componentName == "Input")
+		{
+			description = "Adds input to entity with RigidBody 2D component";
+		}
+	}
+
 	template<typename T, std::invocable<T&, bool> UIFunction>
 	static void DrawComponent(const std::string& name, Entity entity, bool allowModify, UIFunction uiFunction)
 	{
@@ -231,7 +284,13 @@ namespace Dominion {
 
 			ImGui::Separator();
 
+			std::string desc, error;
+			GetTreeNodeStatus<T>(name, entity, desc, error);
+			const ImVec4 errorColor = ImVec4(1.0f, 0.1f, 0.2f, 1.0f);
+			ImVec4 color = error.empty() ? ImVec4(1.0f, 1.0f, 1.0f, 1.0f) : errorColor;
+			ImGui::PushStyleColor(ImGuiCol_Text, color);
 			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
+			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
 
 			if (allowModify)
@@ -242,9 +301,41 @@ namespace Dominion {
 				CombineHash(id, std::hash<std::string>{}(name));
 				CombineHash(id, std::hash<uint64_t>{}(entity.GetUUID()));
 				ImGui::PushID(id);
-				if (ImGui::ButtonEx("X", ImVec2{ lineHeight, lineHeight }))
+				if (ImGui::Button("X", ImVec2{ lineHeight, lineHeight }))
 				{
 					ImGui::OpenPopup("ComponentSettings");
+				}
+
+				if (!desc.empty())
+				{
+					ImGui::SameLine(contentRegionAvailable.x - lineHeight * 1.5f);
+					ImGui::PushStyleColor(ImGuiCol_TextDisabled, ImVec4(0.1f, 0.2f, 1.0f, 1.0f));
+					ImGui::TextDisabled("(?)");
+					ImGui::PopStyleColor();
+					if (ImGui::IsItemHovered())
+					{
+						ImGui::BeginTooltip();
+						ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+						ImGui::TextUnformatted(desc.c_str());
+						ImGui::PopTextWrapPos();
+						ImGui::EndTooltip();
+					}
+				}
+
+				if (!error.empty())
+				{
+					ImGui::SameLine(contentRegionAvailable.x - lineHeight * 2.5f);
+					ImGui::PushStyleColor(ImGuiCol_TextDisabled, errorColor);
+					ImGui::TextDisabled("(!)");
+					ImGui::PopStyleColor();
+					if (ImGui::IsItemHovered())
+					{
+						ImGui::BeginTooltip();
+						ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+						ImGui::TextUnformatted(error.c_str());
+						ImGui::PopTextWrapPos();
+						ImGui::EndTooltip();
+					}
 				}
 
 				bool removeComponent = false;
