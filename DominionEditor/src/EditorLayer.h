@@ -54,8 +54,6 @@ namespace Dominion {
 		// UI Panels
 		void DrawToolbar();
 	private:
-		OrthographicCameraController mCameraController;
-
 		// Temp
 		Ref<VertexArray> mSquareVA;
 		Ref<Shader> mFlatColorShader;

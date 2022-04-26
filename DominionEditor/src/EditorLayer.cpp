@@ -22,7 +22,7 @@ namespace Dominion {
 	extern const std::filesystem::path gAssetPath; // TODO: Move to project
 
 	EditorLayer::EditorLayer()
-		: Layer("EditorLayer"), mCameraController(1280.0f / 720.0f)
+		: Layer("EditorLayer")
 	{
 	}
 
@@ -78,7 +78,6 @@ namespace Dominion {
 			(spec.width != mViewportSize.x || spec.height != mViewportSize.y))
 		{
 			mFramebuffer->Resize(static_cast<uint32_t>(mViewportSize.x), static_cast<uint32_t>(mViewportSize.y));
-			mCameraController.OnResize(mViewportSize.x, mViewportSize.y);
 			mEditorCamera.SetViewportSize(mViewportSize.x, mViewportSize.y);
 		}
 
@@ -102,9 +101,6 @@ namespace Dominion {
 		{
 			case SceneState::Edit:
 			{
-				if (mViewportFocused)
-					mCameraController.OnUpdate(ts);
-
 				mEditorCamera.OnUpdate(ts);
 				mEditorScene->OnUpdateEditor(ts, mEditorCamera);
 
@@ -483,7 +479,6 @@ namespace Dominion {
 		EventDispatcher dispatcher(e);
 		if (mViewportFocused || mViewportHovered)
 		{
-			mCameraController.OnEvent(e);
 			mEditorCamera.OnEvent(e);
 			dispatcher.Dispatch<MouseButtonPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 		}
