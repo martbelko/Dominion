@@ -15,7 +15,7 @@ namespace Dominion {
 	private:
 		bool mShowPhysicsColliders = true;
 		float mDebugLineThickness = 2.0f;
-		glm::vec4 m2DPhysicsCollidersColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 m2DPhysicsCollidersColor = glm::vec4(0.1f, 0.2f, 0.8f, 1.0f);
 	};
 
 }
