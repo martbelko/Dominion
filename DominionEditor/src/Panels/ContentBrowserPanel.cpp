@@ -43,6 +43,8 @@ namespace Dominion {
 			const auto& path = directoryEntry.path();
 			auto relativePath = std::filesystem::relative(path, gAssetPath);
 			std::string filenameString = relativePath.filename().string();
+			if (filenameString == "cache")
+				continue;
 
 			ImGui::PushID(filenameString.c_str());
 			Ref<Texture2D> icon = directoryEntry.is_directory() ? mDirectoryIcon : mFileIcon;
