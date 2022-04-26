@@ -477,9 +477,13 @@ namespace Dominion {
 	void EditorLayer::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		if (mViewportFocused || mViewportHovered)
+		if (mViewportHovered)
 		{
 			mEditorCamera.OnEvent(e);
+		}
+
+		if (mViewportFocused || mViewportHovered)
+		{
 			dispatcher.Dispatch<MouseButtonPressedEvent>(DM_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 		}
 
