@@ -275,7 +275,8 @@ namespace Dominion {
 		}
 
 		// Render all panels
-		mSceneHierarchyPanel.OnImGuiRender();
+		bool allowModify = mSceneState == SceneState::Edit;
+		mSceneHierarchyPanel.OnImGuiRender(allowModify);
 		mContentBrowserPanel.OnImGuiRender();
 		mPerformancePanel.OnImGuiRender();
 		mSettinsPanel.OnImGuiRender();
@@ -582,7 +583,7 @@ namespace Dominion {
 		{
 			case Key::Z:
 			{
-				if (control)
+				if (control && mSceneState == SceneState::Edit)
 				{
 					Command* command = mCommandStack.GetLastCommand();
 					Entity deletedEntity;
@@ -607,7 +608,7 @@ namespace Dominion {
 			}
 			case Key::Y:
 			{
-				if (control)
+				if (control && mSceneState == SceneState::Edit)
 				{
 					Command* command = mCommandStack.GetNextCommand();
 					command->Do();
@@ -617,7 +618,7 @@ namespace Dominion {
 			}
 			case Key::D:
 			{
-				if (control)
+				if (control && mSceneState == SceneState::Edit)
 					OnDuplicateEntityCommand();
 
 				break;
@@ -703,6 +704,9 @@ namespace Dominion {
 
 	void EditorLayer::NewScene()
 	{
+		if (mSceneState != SceneState::Edit)
+			OnSceneStop();
+
 		mEditorScene = CreateRef<Scene>();
 		mEditorScene->OnViewportResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
 		mSceneHierarchyPanel.SetContext(mEditorScene);

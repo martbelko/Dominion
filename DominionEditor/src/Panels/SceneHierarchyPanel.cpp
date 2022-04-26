@@ -39,31 +39,34 @@ namespace Dominion {
 		mCommandStack = &commandStack;
 	}
 
-	void SceneHierarchyPanel::OnImGuiRender()
+	void SceneHierarchyPanel::OnImGuiRender(bool allowModify)
 	{
 		ImGui::Begin("Scene Hierarchy");
 		if (mContext)
 		{
 			mContext->mRegistry.each([&](auto entityID)
-			{
-				Entity entity{ entityID , mContext.get() };
-				DrawEntityNode(entity);
-			});
+				{
+					Entity entity{ entityID , mContext.get() };
+					DrawEntityNode(entity, allowModify);
+				});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 				mSelectionContext = {};
 
 			// Right-click on blank space
-			if (ImGui::BeginPopupContextWindow(0, 1, false))
+			if (allowModify)
 			{
-				if (ImGui::MenuItem("Create Empty Entity"))
+				if (ImGui::BeginPopupContextWindow(0, 1, false))
 				{
-					Command* command = new AddEntityCommand(mContext, "Empty Entity");
-					command->Do();
-					mCommandStack->PushCommand(command);
-				}
+					if (ImGui::MenuItem("Create Empty Entity"))
+					{
+						Command* command = new AddEntityCommand(mContext, "Empty Entity");
+						command->Do();
+						mCommandStack->PushCommand(command);
+					}
 
-				ImGui::EndPopup();
+					ImGui::EndPopup();
+				}
 			}
 		}
 		ImGui::End();
@@ -71,7 +74,7 @@ namespace Dominion {
 		ImGui::Begin("Properties");
 		if (mSelectionContext)
 		{
-			DrawComponents(mSelectionContext);
+			DrawComponents(mSelectionContext, allowModify);
 		}
 
 		ImGui::End();
@@ -82,7 +85,7 @@ namespace Dominion {
 		mSelectionContext = entity;
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool allowModify)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().tag;
 
@@ -96,7 +99,7 @@ namespace Dominion {
 
 		bool entityDeleted = false;
 		bool entityDuplicated = false;
-		if (ImGui::BeginPopupContextItem())
+		if (allowModify && ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				entityDeleted = true;
@@ -121,6 +124,12 @@ namespace Dominion {
 			if (mSelectionContext == entity)
 				mSelectionContext = {};
 		}
+		else if (entityDuplicated)
+		{
+			Command* command = new DuplicateEntityCommand(entity);
+			command->Do();
+			mCommandStack->PushCommand(command);
+		}
 	}
 
 	template<typename T>
@@ -133,7 +142,7 @@ namespace Dominion {
 	};
 
 	template<Vectorable T>
-	static void DrawVecControl(const std::string& label, T& values, const T& resetValue = T(0), const char* format = "%.2f", float columnWidth = 100.0f)
+	static void DrawVecControl(const std::string& label, bool allowModify, T& values, const T& resetValue = T(0), const char* format = "%.2f", float columnWidth = 100.0f)
 	{
 		constexpr uint32_t cols = values.length();
 
@@ -172,7 +181,14 @@ namespace Dominion {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ spacing, 0 });
 
 			std::string id = "##" + std::to_string(i);
-			ImGui::DragFloat(id.c_str(), &values[i], 0.1f, 0.0f, 0.0f, format);
+			if (allowModify)
+				ImGui::DragFloat(id.c_str(), &values[i], 0.1f, 0.0f, 0.0f, format);
+			else
+			{
+				float val = values[i];
+				ImGui::DragFloat(id.c_str(), &val, 0.1f, 0.0f, 0.0f, format);
+			}
+
 			ImGui::PopItemWidth();
 
 			ImGui::SameLine();
@@ -180,7 +196,7 @@ namespace Dominion {
 		}
 
 		ImGui::SetNextItemWidth(resetIconSize);
-		if (ImGui::ImageButton((ImTextureID)g_ResetIcon->GetRendererID(), ImVec2(resetIconSize, resetIconSize), ImVec2(0, 1), ImVec2(1, 0), 0))
+		if (ImGui::ImageButton((ImTextureID)g_ResetIcon->GetRendererID(), ImVec2(resetIconSize, resetIconSize), ImVec2(0, 1), ImVec2(1, 0), 0) && allowModify)
 		{
 			values = resetValue;
 		}
@@ -189,8 +205,8 @@ namespace Dominion {
 		ImGui::PopID();
 	}
 
-	template<typename T, std::invocable<T&> UIFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
+	template<typename T, std::invocable<T&, bool> UIFunction>
+	static void DrawComponent(const std::string& name, Entity entity, bool allowModify, UIFunction uiFunction)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 		if (entity.HasComponent<T>())
@@ -204,7 +220,7 @@ namespace Dominion {
 			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
-			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight }))
+			if (ImGui::Button("X", ImVec2{ lineHeight, lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
@@ -220,7 +236,7 @@ namespace Dominion {
 
 			if (open)
 			{
-				uiFunction(component);
+				uiFunction(component, allowModify);
 				ImGui::TreePop();
 			}
 
@@ -229,7 +245,7 @@ namespace Dominion {
 		}
 	}
 
-	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	void SceneHierarchyPanel::DrawComponents(Entity entity, bool allowModify)
 	{
 		{
 			constexpr float rightPadding = 10.0f;
@@ -245,7 +261,7 @@ namespace Dominion {
 				std::strncpy(buffer, tag.c_str(), sizeof(buffer));
 				float tagWidth = ImGui::GetContentRegionAvail().x - addComponentWidth - rightPadding;
 				ImGui::PushItemWidth(tagWidth);
-				if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+				if (ImGui::InputText("##Tag", buffer, sizeof(buffer)) && allowModify)
 				{
 					tag = std::string(buffer);
 				}
@@ -255,109 +271,116 @@ namespace Dominion {
 			ImGui::SameLine();
 
 			ImGui::PushItemWidth(addComponentWidth);
-			if (ImGui::Button(addComponentText))
+			if (ImGui::Button(addComponentText) && allowModify)
 				ImGui::OpenPopup("AddComponent");
 			ImGui::PopItemWidth();
 		}
 
-		if (ImGui::BeginPopup("AddComponent"))
+		if (allowModify)
 		{
-			if (!mSelectionContext.HasComponent<CameraComponent>())
+			if (ImGui::BeginPopup("AddComponent"))
 			{
-				if (ImGui::MenuItem("Camera"))
+				if (!mSelectionContext.HasComponent<CameraComponent>())
 				{
-					Command* command = new AddComponentCommand<CameraComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Camera"))
+					{
+						Command* command = new AddComponentCommand<CameraComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!mSelectionContext.HasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite Renderer"))
+				if (!mSelectionContext.HasComponent<SpriteRendererComponent>())
 				{
-					Command* command = new AddComponentCommand<SpriteRendererComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Sprite Renderer"))
+					{
+						Command* command = new AddComponentCommand<SpriteRendererComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!mSelectionContext.HasComponent<CircleRendererComponent>())
-			{
-				if (ImGui::MenuItem("Circle Renderer"))
+				if (!mSelectionContext.HasComponent<CircleRendererComponent>())
 				{
-					Command* command = new AddComponentCommand<CircleRendererComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Circle Renderer"))
+					{
+						Command* command = new AddComponentCommand<CircleRendererComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!mSelectionContext.HasComponent<Rigidbody2DComponent>())
-			{
-				if (ImGui::MenuItem("Rigidbody 2D"))
+				if (!mSelectionContext.HasComponent<Rigidbody2DComponent>())
 				{
-					Command* command = new AddComponentCommand<Rigidbody2DComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Rigidbody 2D"))
+					{
+						Command* command = new AddComponentCommand<Rigidbody2DComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!mSelectionContext.HasComponent<BoxCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Box Collider 2D"))
+				if (!mSelectionContext.HasComponent<BoxCollider2DComponent>())
 				{
-					Command* command = new AddComponentCommand<BoxCollider2DComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Box Collider 2D"))
+					{
+						Command* command = new AddComponentCommand<BoxCollider2DComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!mSelectionContext.HasComponent<CircleCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Circle Collider 2D"))
+				if (!mSelectionContext.HasComponent<CircleCollider2DComponent>())
 				{
-					Command* command = new AddComponentCommand<CircleCollider2DComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Circle Collider 2D"))
+					{
+						Command* command = new AddComponentCommand<CircleCollider2DComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!mSelectionContext.HasComponent<InputComponent>())
-			{
-				if (ImGui::MenuItem("Input"))
+				if (!mSelectionContext.HasComponent<InputComponent>())
 				{
-					Command* command = new AddComponentCommand<InputComponent>(mSelectionContext);
-					command->Do();
-					mCommandStack->PushCommand(command);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Input"))
+					{
+						Command* command = new AddComponentCommand<InputComponent>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			ImGui::EndPopup();
+				ImGui::EndPopup();
+			}
 		}
 
-		//ImGui::PopItemWidth();
-
-		DrawComponent<TransformComponent2D>("Transform", entity, [](TransformComponent2D& component)
+		DrawComponent<TransformComponent2D>("Transform", entity, allowModify, [](TransformComponent2D& component, bool allowModify)
 		{
-			DrawVecControl("Translation", component.translation);
+			DrawVecControl("Translation", allowModify, component.translation);
 			glm::vec1 rotation = glm::vec1(glm::degrees(component.rotation));
-			DrawVecControl("Rotation", rotation, glm::vec1(0), "%.2f \xc2\xb0");
+			DrawVecControl("Rotation", allowModify, rotation, glm::vec1(0), "%.2f \xc2\xb0");
 			component.rotation = glm::radians(rotation.x);
-			DrawVecControl("Scale", component.scale, glm::vec2(1.0f, 1.0f));
+			DrawVecControl("Scale", allowModify, component.scale, glm::vec2(1.0f, 1.0f));
 		});
 
-		DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
+		DrawComponent<CameraComponent>("Camera", entity, allowModify, [](CameraComponent& component, bool allowModify)
 		{
 			auto& camera = component.camera;
 
-			ImGui::Checkbox("Primary", &component.primary);
+			if (allowModify)
+				ImGui::Checkbox("Primary", &component.primary);
+			else
+			{
+				bool val = component.primary;
+				ImGui::Checkbox("Primary", &val);
+			}
 
 			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeStrings[static_cast<int>(camera.GetProjectionType())];
@@ -366,7 +389,7 @@ namespace Dominion {
 				for (int i = 0; i < 2; ++i)
 				{
 					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+					if (ImGui::Selectable(projectionTypeStrings[i], isSelected) && allowModify)
 					{
 						currentProjectionTypeString = projectionTypeStrings[i];
 						camera.SetProjectionType((SceneCamera::ProjectionType)i);
@@ -382,37 +405,43 @@ namespace Dominion {
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
 				float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
-				if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov))
+				if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov) && allowModify)
 					camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
 
 				float perspectiveNear = camera.GetPerspectiveNearClip();
-				if (ImGui::DragFloat("Near", &perspectiveNear))
+				if (ImGui::DragFloat("Near", &perspectiveNear) && allowModify)
 					camera.SetPerspectiveNearClip(perspectiveNear);
 
 				float perspectiveFar = camera.GetPerspectiveFarClip();
-				if (ImGui::DragFloat("Far", &perspectiveFar))
+				if (ImGui::DragFloat("Far", &perspectiveFar) && allowModify)
 					camera.SetPerspectiveFarClip(perspectiveFar);
 			}
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
 				float orthoSize = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Size", &orthoSize))
+				if (ImGui::DragFloat("Size", &orthoSize) && allowModify)
 					camera.SetOrthographicSize(orthoSize);
 
 				float orthoNear = camera.GetOrthographicNearClip();
-				if (ImGui::DragFloat("Near", &orthoNear))
+				if (ImGui::DragFloat("Near", &orthoNear) && allowModify)
 					camera.SetOrthographicNearClip(orthoNear);
 
 				float orthoFar = camera.GetOrthographicFarClip();
-				if (ImGui::DragFloat("Far", &orthoFar))
+				if (ImGui::DragFloat("Far", &orthoFar) && allowModify)
 					camera.SetOrthographicFarClip(orthoFar);
 
-				ImGui::Checkbox("Fixed Aspect Ratio", &component.fixedAspectRatio);
+				if (allowModify)
+					ImGui::Checkbox("Fixed Aspect Ratio", &component.fixedAspectRatio);
+				else
+				{
+					bool val = component.fixedAspectRatio;
+					ImGui::Checkbox("Fixed Aspect Ratio", &val);
+				}
 			}
 		});
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, allowModify, [](SpriteRendererComponent& component, bool allowModify)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
 
@@ -433,16 +462,18 @@ namespace Dominion {
 			}
 
 			ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, 0.0f, 100.0f);
+			float val = component.tilingFactor;
+			ImGui::DragFloat("Tiling Factor", &val, 0.1f, 0.0f, 100.0f);
 		});
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](CircleRendererComponent& component)
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, allowModify, [](CircleRendererComponent& component, bool allowModify)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
 			ImGui::DragFloat("Thickness", &component.thickness, 0.025f, 0.0f, 1.0f);
 			ImGui::DragFloat("Fade", &component.fade, 0.00025f, 0.0f, 1.0f);
 		});
 
-		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](Rigidbody2DComponent& component)
+		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, allowModify, [](Rigidbody2DComponent& component, bool allowModify)
 		{
 			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
 			const char* currentbodyTypeString = bodyTypeStrings[static_cast<int>(component.bodyType)];
@@ -451,7 +482,7 @@ namespace Dominion {
 				for (int i = 0; i < 2; ++i)
 				{
 					bool isSelected = currentbodyTypeString == bodyTypeStrings[i];
-					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					if (ImGui::Selectable(bodyTypeStrings[i], isSelected) && allowModify)
 					{
 						currentbodyTypeString = bodyTypeStrings[i];
 						component.bodyType = static_cast<Rigidbody2DComponent::BodyType>(i);
@@ -464,30 +495,64 @@ namespace Dominion {
 				ImGui::EndCombo();
 			}
 
-			ImGui::Checkbox("Fixed Rotation", &component.fixedRotation);
+			if (allowModify)
+				ImGui::Checkbox("Fixed Rotation", &component.fixedRotation);
+			else
+			{
+				bool val = component.fixedRotation;
+				ImGui::Checkbox("Fixed Rotation", &val);
+			}
 		});
 
-		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](BoxCollider2DComponent& component)
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, allowModify, [](BoxCollider2DComponent& component, bool allowModify)
 		{
-			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
-			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
-			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+			if (allowModify)
+			{
+				ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+				ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+				ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+			}
+			else
+			{
+				BoxCollider2DComponent bc2d = component;
+
+				ImGui::DragFloat2("Offset", glm::value_ptr(bc2d.offset));
+				ImGui::DragFloat2("Size", glm::value_ptr(bc2d.size));
+				ImGui::DragFloat("Density", &bc2d.density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &bc2d.friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &bc2d.restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("RestitutionThreshold", &bc2d.restitutionThreshold, 0.01f, 0.0f);
+			}
 		});
 
-		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](CircleCollider2DComponent& component)
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, allowModify, [](CircleCollider2DComponent& component, bool allowModify)
 		{
-			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
-			ImGui::DragFloat("Radius", &component.radius);
-			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+			if (allowModify)
+			{
+				ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+				ImGui::DragFloat("Radius", &component.radius);
+				ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("RestitutionThreshold", &component.restitutionThreshold, 0.01f, 0.0f);
+			}
+			else
+			{
+				CircleCollider2DComponent cc2d = component;
+
+				ImGui::DragFloat2("Offset", glm::value_ptr(cc2d.offset));
+				ImGui::DragFloat("Radius", &cc2d.radius);
+				ImGui::DragFloat("Density", &cc2d.density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &cc2d.friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &cc2d.restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("RestitutionThreshold", &cc2d.restitutionThreshold, 0.01f, 0.0f);
+			}
 		});
 
-		DrawComponent<InputComponent>("Input", entity, [](InputComponent& ic)
+		DrawComponent<InputComponent>("Input", entity, allowModify, [](InputComponent& ic, bool allowModify)
 		{
 			ImGui::DragFloat("Vertical speed", &ic.verticalSpeed, 0.01f, 0.0f);
 			ImGui::DragFloat("Horizontal speed", &ic.horizontalSpeed, 0.01f, 0.0f);

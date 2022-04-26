@@ -17,13 +17,13 @@ namespace Dominion {
 		void SetContext(const Ref<Scene>& scene);
 		void SetCommandStack(CommandStack& commandStack);
 
-		void OnImGuiRender();
+		void OnImGuiRender(bool allowModify = true);
 
 		Entity GetSelectedEntity() const { return mSelectionContext; }
 		void SetSelectedEntity(Entity entity);
 	private:
-		void DrawEntityNode(Entity entity);
-		void DrawComponents(Entity entity);
+		void DrawEntityNode(Entity entity, bool allowModify);
+		void DrawComponents(Entity entity, bool allowModify);
 	private:
 		Ref<Scene> mContext;
 		Entity mSelectionContext;
