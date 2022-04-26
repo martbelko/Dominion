@@ -52,10 +52,10 @@ namespace Dominion {
 		if (mContext)
 		{
 			mContext->mRegistry.each([&](auto entityID)
-				{
-					Entity entity{ entityID , mContext.get() };
-					DrawEntityNode(entity, allowModify);
-				});
+			{
+				Entity entity{ entityID , mContext.get() };
+				DrawEntityNode(entity, allowModify);
+			});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 				mSelectionContext = {};
@@ -67,7 +67,23 @@ namespace Dominion {
 				{
 					if (ImGui::MenuItem("Create Empty Entity"))
 					{
-						Command* command = new AddEntityCommand(mContext, "Empty Entity");
+						const std::string baseName = "Empty Entity";
+						std::string tag = baseName;
+						auto entities = mContext->GetAllEntitiesWith<TagComponent>();
+						uint32_t c = 1;
+
+					start:
+						for (auto eid : entities)
+						{
+							Entity ent{ eid, mContext.get() };
+							if (ent.GetComponent<TagComponent>().tag == tag)
+							{
+								tag = baseName + ' ' + std::to_string(c++);
+								goto start;
+							}
+						}
+
+						Command* command = new AddEntityCommand(mContext, tag);
 						command->Do();
 						mCommandStack->PushCommand(command);
 					}
