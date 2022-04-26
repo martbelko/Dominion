@@ -15,6 +15,13 @@ namespace Dominion {
 
 	Ref<Texture2D> g_ResetIcon = nullptr;
 
+	template<typename T>
+	void CombineHash(std::size_t& seed, const T& v)
+	{
+		std::hash<T> hasher;
+		seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		if (!g_ResetIcon)
@@ -208,7 +215,12 @@ namespace Dominion {
 	template<typename T, std::invocable<T&, bool> UIFunction>
 	static void DrawComponent(const std::string& name, Entity entity, bool allowModify, UIFunction uiFunction)
 	{
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+		const ImGuiTreeNodeFlags treeNodeFlags =
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_Framed |
+			ImGuiTreeNodeFlags_AllowItemOverlap |
+			ImGuiTreeNodeFlags_FramePadding;
+
 		if (entity.HasComponent<T>())
 		{
 			auto& component = entity.GetComponent<T>();
@@ -216,11 +228,19 @@ namespace Dominion {
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+
 			ImGui::Separator();
+
 			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
+
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
-			if (ImGui::Button("X", ImVec2{ lineHeight, lineHeight }))
+
+			uint64_t id = 0;
+			CombineHash(id, std::hash<std::string>{}(name));
+			CombineHash(id, std::hash<uint64_t>{}(entity.GetUUID()));
+			ImGui::PushID(id);
+			if (ImGui::ButtonEx("X", ImVec2{ lineHeight, lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
@@ -239,6 +259,8 @@ namespace Dominion {
 				uiFunction(component, allowModify);
 				ImGui::TreePop();
 			}
+
+			ImGui::PopID();
 
 			if (removeComponent)
 				entity.RemoveComponent<T>();
