@@ -18,9 +18,6 @@ namespace Dominion {
 	class Entity;
 	struct CameraComponent;
 
-	template<typename T>
-	concept CameraConcept = std::same_as<T, CameraComponent>;
-
 	class Scene
 	{
 	public:
