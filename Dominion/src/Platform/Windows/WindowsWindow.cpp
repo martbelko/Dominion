@@ -58,20 +58,20 @@ namespace Dominion {
 			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
 				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		#endif
-			mWindow = glfwCreateWindow((int)props.width, (int)props.height, mData.title.c_str(), nullptr, nullptr);
+			m_Window = glfwCreateWindow(static_cast<int>(props.width), static_cast<int>(props.height), mData.title.c_str(), nullptr, nullptr);
 			++sGLFWWindowCount;
 		}
 
-		mContext = GraphicsContext::Create(mWindow);
+		mContext = GraphicsContext::Create(m_Window);
 		mContext->Init();
 
-		glfwSetWindowUserPointer(mWindow, &mData);
+		glfwSetWindowUserPointer(m_Window, &mData);
 		SetVSync(true);
 
 		// Set GLFW callbacks
-		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height)
+		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			data.width = width;
 			data.height = height;
 
@@ -79,16 +79,16 @@ namespace Dominion {
 			data.eventCallback(event);
 		});
 
-		glfwSetWindowCloseCallback(mWindow, [](GLFWwindow* window)
+		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			WindowCloseEvent event;
 			data.eventCallback(event);
 		});
 
-		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
@@ -113,17 +113,17 @@ namespace Dominion {
 			}
 		});
 
-		glfwSetCharCallback(mWindow, [](GLFWwindow* window, unsigned int keycode)
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			KeyTypedEvent event(keycode);
 			data.eventCallback(event);
 		});
 
-		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
@@ -142,19 +142,19 @@ namespace Dominion {
 			}
 		});
 
-		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xOffset, double yOffset)
+		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-			MouseScrolledEvent event((float)xOffset, (float)yOffset);
+			MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			data.eventCallback(event);
 		});
 
-		glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xPos, double yPos)
+		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-			MouseMovedEvent event((float)xPos, (float)yPos);
+			MouseMovedEvent event(static_cast<float>(xPos), static_cast<float>(yPos));
 			data.eventCallback(event);
 		});
 	}
@@ -163,7 +163,7 @@ namespace Dominion {
 	{
 		DM_PROFILE_FUNCTION();
 
-		glfwDestroyWindow(mWindow);
+		glfwDestroyWindow(m_Window);
 		--sGLFWWindowCount;
 
 		if (sGLFWWindowCount == 0)

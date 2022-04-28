@@ -28,7 +28,7 @@ namespace Dominion {
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 	private:
-		GLFWwindow* mWindow;
+		GLFWwindow* m_Window;
 		Scope<GraphicsContext> mContext;
 
 		struct WindowData
