@@ -7,6 +7,8 @@
 #include "ScriptableEntity.h"
 
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Dominion/Renderer/RenderCommand.h"
+#include "Dominion/Renderer/Font/sdf/SdfFontRenderer.h"
 #include "Dominion/Core/Input.h"
 
 #include <glm/glm.hpp>
@@ -301,17 +303,25 @@ namespace Dominion {
 
 	void Scene::Render(const EditorCamera& editorCamera)
 	{
+		SdfFontRenderer::BeginScene(editorCamera.GetProjection() * editorCamera.GetViewMatrix());
+		SdfFontRenderer::DrawQuad(glm::vec2(0.0f, 0.0f), glm::vec2(5.0f, 5.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		SdfFontRenderer::EndScene();
+
 		Renderer2D::BeginScene(editorCamera);
 		RenderInternal();
-		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
+		// mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 
 	void Scene::Render(const Camera& camera, const glm::mat4& cameraTransform)
 	{
+		SdfFontRenderer::BeginScene(camera.GetProjection() * glm::inverse(cameraTransform));
+		SdfFontRenderer::DrawQuad(glm::vec2(0.0f, 0.0f), glm::vec2(5.0f, 5.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		SdfFontRenderer::EndScene();
+
 		Renderer2D::BeginScene(camera, cameraTransform);
 		RenderInternal();
-		mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
+		// mFontRenderer->RenderText("This is sample text", { 25.0f, 25.0f }, 1.0f, glm::vec3(1.0f, 0.3f, 0.2f));
 		Renderer2D::EndScene();
 	}
 

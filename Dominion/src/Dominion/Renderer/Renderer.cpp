@@ -1,6 +1,7 @@
 #include "dmpch.h"
 #include "Dominion/Renderer/Renderer.h"
 #include "Dominion/Renderer/Renderer2D.h"
+#include "Dominion/Renderer/Font/Sdf/SdfFontRenderer.h"
 
 namespace Dominion {
 
@@ -12,10 +13,12 @@ namespace Dominion {
 
 		RenderCommand::Init();
 		Renderer2D::Init();
+		SdfFontRenderer::Init();
 	}
 
 	void Renderer::Shutdown()
 	{
+		SdfFontRenderer::Shutdown();
 		Renderer2D::Shutdown();
 	}
 

@@ -1,0 +1,50 @@
+#pragma once
+
+#include "Dominion/Renderer/Texture.h"
+
+namespace Dominion {
+
+	class SdfFontRenderer
+	{
+	public:
+		static void Init();
+		static void Shutdown();
+
+		static void BeginScene(const glm::mat4& projection);
+		static void EndScene();
+		static void Flush();
+
+		// Primitives
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f), int entityID = -1);
+
+		// Stats
+		struct Statistics
+		{
+			uint32_t drawCalls = 0;
+			uint32_t quadCount = 0;
+			uint32_t circleCount = 0;
+			uint32_t lineCount = 0;
+
+			uint32_t GetTotalVertexCount() const;
+			uint32_t GetTotalIndexCount() const;
+		};
+		static void ResetStats();
+		static Statistics GetStats();
+	private:
+		static void StartBatch();
+		static void NextBatch();
+
+		static void StartQuadsBatch();
+
+		static void NextQuadsBatch();
+
+		static void FlushQuads();
+	};
+
+}
