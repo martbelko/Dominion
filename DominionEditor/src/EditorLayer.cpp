@@ -581,7 +581,7 @@ namespace Dominion {
 
 		switch (e.GetKeyCode())
 		{
-			case Key::Z:
+			/*case Key::Z:
 			{
 				if (control && mSceneState == SceneState::Edit)
 				{
@@ -615,7 +615,7 @@ namespace Dominion {
 				}
 
 				break;
-			}
+			}*/
 			case Key::D:
 			{
 				if (control && mSceneState == SceneState::Edit)

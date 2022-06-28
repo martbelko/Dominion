@@ -229,6 +229,7 @@ namespace Dominion {
 			for (auto eid : view)
 			{
 				Entity entity = Entity(eid, this);
+				bool x = entity.HasComponent<TransformComponent2D>();
 				auto& transform = entity.Transform();
 				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 

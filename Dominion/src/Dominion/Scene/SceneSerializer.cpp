@@ -158,7 +158,7 @@ namespace Dominion {
 			out << YAML::Key << "TransformComponent2D";
 			out << YAML::BeginMap; // TransformComponent2D
 
-			auto& tc = entity.GetComponent<TransformComponent2D>();
+			auto& tc = entity.Transform();
 			out << YAML::Key << "Translation" << YAML::Value << tc.translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.scale;
@@ -338,8 +338,7 @@ namespace Dominion {
 				auto transformComponent = entity["TransformComponent2D"];
 				if (transformComponent)
 				{
-					// Entities always have transforms
-					auto& tc = deserializedEntity.GetComponent<TransformComponent2D>();
+					auto& tc = deserializedEntity.AddOrGetComponent<TransformComponent2D>();
 					tc.translation = transformComponent["Translation"].as<glm::vec2>();
 					tc.rotation = transformComponent["Rotation"].as<float>();
 					tc.scale = transformComponent["Scale"].as<glm::vec2>();

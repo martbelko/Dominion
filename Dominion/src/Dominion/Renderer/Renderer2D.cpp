@@ -581,6 +581,8 @@ namespace Dominion {
 
 	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
 	{
+		DM_PROFILE_FUNCTION();
+
 		if (sData.lineVertexCount >= Renderer2DData::MAX_LINE_VERTICES)
 			NextLinesBatch();
 
@@ -629,6 +631,8 @@ namespace Dominion {
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
+		DM_PROFILE_FUNCTION();
+
 		glm::vec3 vertices[4];
 		for (size_t i = 0; i < 4; ++i)
 			vertices[i] = transform * sData.quadVertexPositions[i];

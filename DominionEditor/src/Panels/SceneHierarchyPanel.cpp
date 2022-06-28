@@ -317,7 +317,7 @@ namespace Dominion {
 				CombineHash(id, std::hash<std::string>{}(name));
 				CombineHash(id, std::hash<uint64_t>{}(entity.GetUUID()));
 				ImGui::PushID(id);
-				if (ImGui::Button("X", ImVec2{ lineHeight, lineHeight }))
+				if (typeid(T) != typeid(TransformComponent2D) && ImGui::Button("X", ImVec2{ lineHeight, lineHeight }))
 				{
 					ImGui::OpenPopup("ComponentSettings");
 				}
@@ -412,6 +412,17 @@ namespace Dominion {
 		{
 			if (ImGui::BeginPopup("AddComponent"))
 			{
+				if (!mSelectionContext.HasComponent<TransformComponent2D>())
+				{
+					if (ImGui::MenuItem("Transform"))
+					{
+						Command* command = new AddComponentCommand<TransformComponent2D>(mSelectionContext);
+						command->Do();
+						mCommandStack->PushCommand(command);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
 				if (!mSelectionContext.HasComponent<CameraComponent>())
 				{
 					if (ImGui::MenuItem("Camera"))
